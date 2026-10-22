@@ -74,3 +74,13 @@ uniseven_*.md
 .idea/
 .vscode/
 *.swp
+
+# 本地专用：真实学习记录、案例图、参考图、副本、采风产物
+**/feedback/
+**/knowledge/cases/**/*.png
+**/knowledge/cases/**/*.jpg
+算法/**/refs/*.jpg
+前端/历史版本/验图/
+**/*_副本/
+算法/全网搜花型/产物/
+后端/data/pattern-thumbs/
