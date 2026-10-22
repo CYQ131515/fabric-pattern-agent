@@ -89,3 +89,14 @@ uniseven_*.md
 算法/全网搜花型/inputs/
 
 **/config/.rev
+
+# 本地临时：备份、旧产物、个人文档、算法输入图
+uniseven*.md
+启动新版前端.command
+打开前端和后台.command
+归档_旧REA产物/
+*.docx
+*.tar.gz
+算法/全网搜花型_备份*/
+算法/**/inputs/
+**/knowledge/regression-assets/
