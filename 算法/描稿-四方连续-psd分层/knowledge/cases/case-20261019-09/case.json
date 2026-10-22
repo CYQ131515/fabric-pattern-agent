@@ -1,0 +1,30 @@
+{
+  "id": "case-20261019-09",
+  "date": "2026-10-19",
+  "title": "[用户打回] 描稿类：底色不干净（残留阴影/渐变）；图案元素风格 OK",
+  "source": "user-feedback",
+  "status": "mitigated",
+  "symptom": "描稿类：底色不干净（残留阴影/渐变）；图案元素风格 OK",
+  "root_cause": "描稿类底色不干净：原丝绸照片的褶皱阴影/光照渐变残留在背景（背景亮度 std 15.95）",
+  "fix": "新增 03c 底色干净度检测 + 06-clean-background 净化 + 额外 AI 平底色 pass；v2 背景 std 降至 4.9，底色接近平色；v3 增加'精准去光晕'（sat<0.13 & 低梯度 & 远离强饱和花瓣）→ 背景基本平色；v5：2048 平底印花重绘 + 窄带2×2修复 + 背景软平化 → 底色明显干净、风格保留",
+  "regression": "",
+  "tags": [
+    "background-dirty",
+    "style-ok",
+    "v2",
+    "v3",
+    "v5",
+    "2048-redraw"
+  ],
+  "delivery_id": "d-1792428836497",
+  "chosen_path": "描稿: clean(pass1 style) + flatten(pass2) → AI seam → band fix → PSD",
+  "features": {
+    "lowGradFrac": 0.55,
+    "hueConc": 0.28,
+    "satMean": 0.25,
+    "edgeMean": 12
+  },
+  "artifacts": [],
+  "file": "$HOME/deepseek herness/REA/.rea-web/samples/input13-iris-silk-colorlayers-9382.psd",
+  "next": "残余花周围紫色柔和阴影（可能属原画风格）；检测器阈值待标定（当前为 advisory）"
+}

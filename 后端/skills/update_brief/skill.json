@@ -1,0 +1,19 @@
+{
+  "name": "update_brief",
+  "version": "0.1.0",
+  "description": "把从用户话里识别出的维度写进需求卡。只填有把握的，值必须来自受控词表，否则会被拒绝。",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "style": {"type": "string", "description": "风格，如 法式浪漫 / 新中式国风 / 现代极简"},
+      "element": {"type": "string", "description": "元素，如 花卉 / 叶片藤蔓 / 几何 / 波点"},
+      "color": {"type": "string", "description": "配色，如 莫兰迪灰调 / 蓝白青花 / 大地色系"},
+      "scene": {"type": "string", "description": "场景，如 女装连衣裙 / 童装 / 家居布艺"},
+      "clear": {"type": "array", "items": {"type": "string"}, "description": "要清空的维度"}
+    },
+    "required": []
+  },
+  "confirm": false,
+  "cost": 0,
+  "handler": "handler.py"
+}

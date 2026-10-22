@@ -1,0 +1,20 @@
+{
+  "id": "case-20261019-05",
+  "date": "2026-10-19",
+  "title": "语义/色层 PSD『纯色+蒙版』丢失渐变并产生白边",
+  "source": "user-reported",
+  "status": "fixed",
+  "symptom": "语义分层合成图与原图差距大、渐变消失、边缘白线",
+  "root_cause": "每层用纯色+蒙版，层内渐变/明暗/颗粒被抹平，边界过渡像素无覆盖",
+  "fix": "改为每层保留原始像素+蒙版（Background 根层 + Colors 分组），合成 max_abs_diff=0",
+  "regression": "语法/色层两版均验证 max diff=0",
+  "artifacts": [
+    "../../../.rea-web/unisevenai-report.md#31"
+  ],
+  "tags": [
+    "fidelity",
+    "solid-color",
+    "halo",
+    "psd-layer"
+  ]
+}

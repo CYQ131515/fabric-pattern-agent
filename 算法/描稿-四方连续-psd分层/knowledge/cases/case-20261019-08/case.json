@@ -1,0 +1,38 @@
+{
+  "id": "case-20261019-08",
+  "date": "2026-10-19",
+  "title": "[用户打回] 缝带边界仍有多处直线切断/错位（豹纹斑点、花朵、背景）",
+  "source": "user-feedback",
+  "status": "fixed",
+  "symptom": "缝带边界仍有多处直线切断/错位（豹纹斑点、花朵、背景）",
+  "root_cause": "缝带是全高竖条/全宽横条：替换带内内容后，竖条上下边缘在平铺时必须自我衔接，而 AI 重绘内容上下不连续；带边界（与原图接壤处）又存在内容切断。任何『整条替换』都会留下这两类断口",
+  "fix": "已试：①重生成（布局干净但 tile 非无缝 wrap 59）；②确定性补缝（wrap 合格但出现细缝线）；③修复 seam-ai 合成 bug（内部十字变自然，边界仍切断）；④掩膜inpaint缝线（模型未遵守掩膜，整图重绘 diff44）；⑤offset+交叉淡化（十字带内替换导致 wrapX/Y 1.6-2.5 仍非无缝）。均未通过；⑥ quilting 原型（02-seam-quilt.py）：wrap 可做到 0，但 stitch 融合产生可见 smear 带，视觉不可接受 → 标记 experimental；方案1（B+二次inpaint）：线消除但 wrap 1.16/1.79 失败；方案2（C+2x2画布inpaint）：审查通过（wrap 0.87/1.13、无线），已出 PSD；C15：多采样区域修复失败后，用图内 donor 条带 + Poisson 修掉中心线，PSD 1:1 复检通过",
+  "regression": "wrap ratio <=1.2 才可交付；1:1 检查四条带边界线无切断",
+  "tags": [
+    "band-boundary",
+    "cut-seam",
+    "review-gap",
+    "wrap-constraint",
+    "inpaint-mask-ignored",
+    "crossfade-failed",
+    "quilt-experimental",
+    "stitch-smear",
+    "quilt-mosaic",
+    "C2-passed",
+    "psd-1to1-check",
+    "smear-band",
+    "C15-passed",
+    "donor-fill"
+  ],
+  "delivery_id": "d-1792408946057",
+  "chosen_path": "B-clean+ai(bugfix)",
+  "features": {
+    "satMean": 0.177,
+    "hueConc": 0.987,
+    "edgeMean": 25.44,
+    "lowGradFrac": 0.069
+  },
+  "artifacts": [],
+  "file": "$HOME/deepseek herness/REA/.rea-web/samples/input9-watercolor-colorlayers-9382.psd",
+  "next": "真正可行方向：a) wrap-aware 修复（竖条内部再做一次纵向 offset+淡化，使条带自身可平铺）；b) 图割/最小误差路径缝合（沿低对比路径切缝）；c) quilt 纹理合成；d) 让模型直接生成『可平铺 tile』并用 wrap 硬指标筛（多采样选优）；quilt v2：wrap=0 但有拼块马赛克（L14），下一步需 Poisson/路径融合 + 多尺度匹配；下一步：2048 分辨率重建（已确认支持），伪影宽度可缩一半以上；1:1 从 PSD 复检（L15）"
+}

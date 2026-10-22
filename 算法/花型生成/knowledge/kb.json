@@ -1,0 +1,774 @@
+{
+ "_meta": {
+  "version": 1,
+  "learned_at": "2026-10-20T17:51:28",
+  "skill_dir": "~/.agents/skills/pattern-design-atlas",
+  "sources": [
+   {
+    "file": "references/10-repeat-engineering.md",
+    "path": "~/.agents/skills/pattern-design-atlas/references/10-repeat-engineering.md",
+    "sha256": "b9f41f5b83605695",
+    "bytes": 9606,
+    "lines": 200,
+    "mtime": "2026-10-20T17:39:19"
+   },
+   {
+    "file": "references/40-style-recipes.md",
+    "path": "~/.agents/skills/pattern-design-atlas/references/40-style-recipes.md",
+    "sha256": "33ddc81236954ce8",
+    "bytes": 2973,
+    "lines": 30,
+    "mtime": "2026-10-20T17:51:25"
+   }
+  ],
+  "note": "由 pattern_studio.kb.learn() 自动生成；改 skill 后下次 run 会自动重学"
+ },
+ "skeletons": [
+  {
+   "name": "散点式",
+   "file": "references/10-repeat-engineering.md",
+   "line": 22,
+   "desc": "特征：单元内一个或多个纹样互相独立、不相连，像散点一样分布。分规则散点与自由散点。 规则散点——按固定骨架排布： 自由散点——疏密错落、方向旋转变化，无严格等分骨架，自然随性（碎花、野趣花常用）。 - ✅ 优点：清爽透气、主体突出 - ⚠️ 缺点：排布呆板时容易看出单元接缝（→ 用跳接 + 旋转翻转打破）",
+   "subtypes": [
+    "✅ 优点：清爽透气、主体突出",
+    "⚠️ 缺点：排布呆板时容易看出单元接缝（→ 用跳接 + 旋转翻转打破）"
+   ],
+   "tables": [
+    [
+     [
+      "类型",
+      "骨架",
+      "说明"
+     ],
+     [
+      "一点散点",
+      "一格一个",
+      "一个循环单位内只有一个主纹样"
+     ],
+     [
+      "两点散点",
+      "对角",
+      "单位内 2 个纹样，**对角排布最常见**"
+     ],
+     [
+      "三点散点",
+      "三角形",
+      "三角骨架排布"
+     ],
+     [
+      "四点散点",
+      "四边形四角",
+      "四角排布"
+     ],
+     [
+      "多点散点",
+      "复合骨架",
+      "主花 + 配花 + 点缀分级"
+     ]
+    ]
+   ]
+  },
+  {
+   "name": "连缀式",
+   "file": "references/10-repeat-engineering.md",
+   "line": 41,
+   "desc": "特征：纹样靠枝干 / 曲线 / 几何边框互相穿插连接，没有孤立的花，连绵不断。 - ✅ 优点：整体连贯、最不容易看出循环接缝 - ✅ 适合：复古、国风、欧式卷草",
+   "subtypes": [
+    "✅ 优点：整体连贯、最不容易看出循环接缝",
+    "✅ 适合：复古、国风、欧式卷草"
+   ],
+   "tables": [
+    [
+     [
+      "细分",
+      "骨架",
+      "典型"
+     ],
+     [
+      "波线连缀（缠枝式）",
+      "S 形 / 波浪曲线串联",
+      "缠枝莲、藤蔓花，流动感强"
+     ],
+     [
+      "菱形连缀",
+      "菱形网格",
+      "花放在菱形交点／边上"
+     ],
+     [
+      "阶梯连缀",
+      "阶梯状折线",
+      "阶梯骨架"
+     ],
+     [
+      "几何连缀",
+      "方形／六边形／多边形",
+      "网格互锁连续"
+     ]
+    ]
+   ]
+  },
+  {
+   "name": "重叠式",
+   "file": "references/10-repeat-engineering.md",
+   "line": 55,
+   "desc": "特征：两套纹样叠加，下层是地纹（底纹），上层是浮纹（主花）。 ⚠️ 要点：地纹必须弱化（低对比、低饱和、小尺寸），否则和浮纹抢视觉，画面变乱。 ---",
+   "subtypes": [],
+   "tables": [
+    [
+     [
+      "细分",
+      "做法"
+     ],
+     [
+      "同形重叠",
+      "同一纹样错位叠放（影纹、阴影效果）"
+     ],
+     [
+      "异形重叠",
+      "底层连缀 / 细点底纹 + 上层散点主花（**中高档花布的主流做法**）"
+     ]
+    ]
+   ]
+  }
+ ],
+ "repeat_modes": [
+  {
+   "ratio": "平接",
+   "name": "平排/方形回头",
+   "note": "单元上下左右直接对齐，拼接简单但网格感强；适合几何、定位花、简单小碎花",
+   "file": "references/10-repeat-engineering.md",
+   "line": 72
+  },
+  {
+   "ratio": "1/2",
+   "name": "半跳（最常用）",
+   "note": "下一行整体偏移半个花回宽度，梯形连续",
+   "file": "references/10-repeat-engineering.md",
+   "line": 80
+  },
+  {
+   "ratio": "1/3",
+   "name": "三一跳",
+   "note": "偏移 1/3 单元",
+   "file": "references/10-repeat-engineering.md",
+   "line": 80
+  },
+  {
+   "ratio": "1/4",
+   "name": "四一跳",
+   "note": "偏移 1/4 单元",
+   "file": "references/10-repeat-engineering.md",
+   "line": 80
+  },
+  {
+   "ratio": "2/5 等",
+   "name": "特殊比例",
+   "note": "高端家纺、真丝印花",
+   "file": "references/10-repeat-engineering.md",
+   "line": 80
+  }
+ ],
+ "cut_methods": [
+  {
+   "name": "四切法（方形开刀）",
+   "how": "方形单元四边伸出的纹样切下移到对边：上→下、左→右",
+   "use": "平接版专用",
+   "file": "references/10-repeat-engineering.md",
+   "line": 101
+  },
+  {
+   "name": "对角开刀（斜开刀）",
+   "how": "沿对角线切两半，互换位置重组",
+   "use": "对角两点散点",
+   "file": "references/10-repeat-engineering.md",
+   "line": 101
+  },
+  {
+   "name": "卷折法",
+   "how": "模拟纸张对折，处理连续边缘",
+   "use": "曲线连缀纹样",
+   "file": "references/10-repeat-engineering.md",
+   "line": 101
+  }
+ ],
+ "combos": [
+  {
+   "combo": "组合",
+   "how": "做法",
+   "effect": "效果",
+   "file": "references/10-repeat-engineering.md"
+  },
+  {
+   "combo": "散点 + 连缀",
+   "how": "主花散点分布，细藤蔓轻微连接",
+   "effect": "有流动感但仍清爽",
+   "file": "references/10-repeat-engineering.md"
+  },
+  {
+   "combo": "散点 + 重叠",
+   "how": "底纹细几何，上层散点花卉",
+   "effect": "层次丰富、高级",
+   "file": "references/10-repeat-engineering.md"
+  },
+  {
+   "combo": "连缀 + 跳接",
+   "how": "缠枝藤蔓 + 1/2 跳接回头",
+   "effect": "无缝感最强",
+   "file": "references/10-repeat-engineering.md"
+  }
+ ],
+ "selection": [
+  {
+   "arrangement": "平接一点散点",
+   "look": "规整、简单、网格明显",
+   "use": "小几何、简约印花、童装",
+   "file": "references/10-repeat-engineering.md"
+  },
+  {
+   "arrangement": "1/2 跳接两点散点",
+   "look": "均匀柔和、接缝隐蔽",
+   "use": "女装碎花、连衣裙面料（主流）",
+   "file": "references/10-repeat-engineering.md"
+  },
+  {
+   "arrangement": "缠枝连缀式",
+   "look": "流动复古、国风欧式",
+   "use": "旗袍、窗帘、沙发布",
+   "file": "references/10-repeat-engineering.md"
+  },
+  {
+   "arrangement": "重叠式（底纹 + 浮花）",
+   "look": "层次丰富、高级",
+   "use": "轻奢家纺、高定面料",
+   "file": "references/10-repeat-engineering.md"
+  }
+ ],
+ "pitfalls": [
+  {
+   "text": "单元边缘纹样必须可对接，不能有硬切断痕迹 —— 开刀就是解决这个。",
+   "file": "references/10-repeat-engineering.md",
+   "line": 139
+  },
+  {
+   "text": "跳接比例一旦确定，花回尺寸要严格匹配，否则印花对花不准。",
+   "file": "references/10-repeat-engineering.md",
+   "line": 139
+  },
+  {
+   "text": "散点不要所有元素同一朝向，适当旋转翻转，避免机械感。",
+   "file": "references/10-repeat-engineering.md",
+   "line": 139
+  },
+  {
+   "text": "大面积满版花优先跳接；小面积定位花、格子优先平接。",
+   "file": "references/10-repeat-engineering.md",
+   "line": 139
+  }
+ ],
+ "gates": [
+  {
+   "name": "平铺 2×2 无接缝",
+   "criterion": "与\"无限画布直接渲染\"逐像素比对 max_diff ≤ 2",
+   "file": "references/10-repeat-engineering.md"
+  },
+  {
+   "name": "花回尺寸",
+   "criterion": "像素整数；cm/2.54*ppi 换算后取整",
+   "file": "references/10-repeat-engineering.md"
+  },
+  {
+   "name": "跳接比例",
+   "criterion": "与规格一致（1/2、1/3…），错位量 = 单元宽 × 比例",
+   "file": "references/10-repeat-engineering.md"
+  },
+  {
+   "name": "边缘无硬切断",
+   "criterion": "跨界元素在对边有完整接续（无半朵花、无直线切口）",
+   "file": "references/10-repeat-engineering.md"
+  },
+  {
+   "name": "无网格感",
+   "criterion": "大面积平铺时看不出\"一格一格\"（看不出 → 平接没问题；看得出 → 换跳接）",
+   "file": "references/10-repeat-engineering.md"
+  },
+  {
+   "name": "朝向不机械",
+   "criterion": "元素有旋转/翻转变化，不完全同向",
+   "file": "references/10-repeat-engineering.md"
+  }
+ ],
+ "tool_map": [
+  {
+   "concept": "平接版（平排 / 方形回头）",
+   "param": "--presets grid（straight 等价）",
+   "status": "✅ 已实现",
+   "file": "references/10-repeat-engineering.md"
+  },
+  {
+   "concept": "1/2 跳接（半错位）",
+   "param": "--presets halfdrop",
+   "status": "✅ 已实现",
+   "file": "references/10-repeat-engineering.md"
+  },
+  {
+   "concept": "砖排（行错 1/2）",
+   "param": "--presets brick",
+   "status": "✅ 已实现（目前为 1/2 错位）",
+   "file": "references/10-repeat-engineering.md"
+  },
+  {
+   "concept": "1/3、1/4、2/5 跳接",
+   "param": "—",
+   "status": "⚠️ 未内置；需改 layout._lattice_positions 的偏移比例",
+   "file": "references/10-repeat-engineering.md"
+  },
+  {
+   "concept": "菱形回头（平行四边形）",
+   "param": "--presets diagonal（近似，非严格菱形骨架）",
+   "status": "⚠️ 近似",
+   "file": "references/10-repeat-engineering.md"
+  },
+  {
+   "concept": "对角两点散点",
+   "param": "--presets diagonal + --count 2 类低数",
+   "status": "⚠️ 需手调",
+   "file": "references/10-repeat-engineering.md"
+  },
+  {
+   "concept": "缠枝 / 波线连缀",
+   "param": "元素本身画成连枝 + --presets scatter",
+   "status": "⚠️ 依赖元素素材，骨架不强制连续",
+   "file": "references/10-repeat-engineering.md"
+  },
+  {
+   "concept": "放射 / 团花",
+   "param": "--presets radial",
+   "status": "✅ 已实现",
+   "file": "references/10-repeat-engineering.md"
+  },
+  {
+   "concept": "自由散点（蓝噪声）",
+   "param": "--presets scatter（+ 均匀化）",
+   "status": "✅ 已实现",
+   "file": "references/10-repeat-engineering.md"
+  },
+  {
+   "concept": "黄金角均匀散点",
+   "param": "--presets phyllotaxis",
+   "status": "✅ 已实现",
+   "file": "references/10-repeat-engineering.md"
+  },
+  {
+   "concept": "重叠式（地纹 + 浮纹）",
+   "param": "两层：底纹用 --bg-*；浮纹用 --overlap-mode layered",
+   "status": "✅ 已实现",
+   "file": "references/10-repeat-engineering.md"
+  },
+  {
+   "concept": "四切法 / 对角开刀 / 卷折法",
+   "param": "自动完成（元素 3×3 卫星绘制，等价于四切法）",
+   "status": "✅ 已实现",
+   "file": "references/10-repeat-engineering.md"
+  },
+  {
+   "concept": "旋转翻转防机械感",
+   "param": "--rotate-deg、--mirror-prob",
+   "status": "✅ 已实现",
+   "file": "references/10-repeat-engineering.md"
+  },
+  {
+   "concept": "循环尺寸 ↔ 花回",
+   "param": "--tile W H（换算：px = cm / 2.54 × ppi）",
+   "status": "✅ 已实现",
+   "file": "references/10-repeat-engineering.md"
+  }
+ ],
+ "styles": [
+  {
+   "name": "水墨植物",
+   "keywords": [
+    "水墨",
+    "植物",
+    "兰",
+    "竹",
+    "梅",
+    "荷",
+    "写意"
+   ],
+   "skeleton": "散点式",
+   "repeat": "1/2 跳接",
+   "presets": [
+    "halfdrop",
+    "scatter",
+    "phyllotaxis"
+   ],
+   "rotate": 8.0,
+   "layer": "无",
+   "density": 0.22,
+   "element_scale": 1.3,
+   "elements": "墨荷·兰叶·竹枝·梅枝·墨点芦苇",
+   "pitfalls": [
+    "留白要够",
+    "单色为主只加一点赭石",
+    "笔触干湿对比",
+    "别加金色",
+    "别画成灰阶照片"
+   ],
+   "file": "references/40-style-recipes.md",
+   "line": 7
+  },
+  {
+   "name": "浪漫小碎花",
+   "keywords": [
+    "小碎花",
+    "碎花",
+    "法式",
+    "浪漫",
+    "ditsy"
+   ],
+   "skeleton": "散点式",
+   "repeat": "1/2 跳接",
+   "presets": [
+    "scatter",
+    "halfdrop",
+    "brick"
+   ],
+   "rotate": 22.0,
+   "layer": "无",
+   "density": 0.78,
+   "element_scale": 0.9,
+   "elements": "小玫瑰·小雏菊·花苞·细叶·星点点缀·细枝",
+   "pitfalls": [
+    "元素要小才\"碎\"",
+    "颜色柔和不饱和",
+    "元素间留空气",
+    "避免高对比",
+    "避免大花"
+   ],
+   "file": "references/40-style-recipes.md",
+   "line": 7
+  },
+  {
+   "name": "Q版动物",
+   "keywords": [
+    "Q版",
+    "q版",
+    "卡通",
+    "动物",
+    "可爱",
+    "童装",
+    "chibi"
+   ],
+   "skeleton": "散点式",
+   "repeat": "1/2 跳接",
+   "presets": [
+    "scatter",
+    "halfdrop",
+    "phyllotaxis"
+   ],
+   "rotate": 13.0,
+   "layer": "无",
+   "density": 0.6,
+   "element_scale": 1.25,
+   "elements": "小猫·小兔·小熊·小鸭·爱心星星·爪印",
+   "pitfalls": [
+    "造型圆润无尖角",
+    "大脑袋小身体",
+    "线稿粗而浅",
+    "避免大面积深色",
+    "元素不要过小"
+   ],
+   "file": "references/40-style-recipes.md",
+   "line": 7
+  },
+  {
+   "name": "复古水彩层叠",
+   "keywords": [
+    "复古",
+    "水彩",
+    "豆沙",
+    "墨线",
+    "层叠"
+   ],
+   "skeleton": "重叠式",
+   "repeat": "1/2 跳接",
+   "presets": [
+    "scatter",
+    "halfdrop",
+    "phyllotaxis"
+   ],
+   "rotate": 8.0,
+   "layer": "层叠",
+   "density": 0.44,
+   "element_scale": 1.68,
+   "elements": "大花盛开·豆沙中花·四瓣小花·墨线叶·描边叶",
+   "pitfalls": [
+    "必须允许层叠才有手绘感",
+    "纯色底比 AI 背景干净",
+    "大花要够大（主次）",
+    "墨线叶是大号线条不是小叶子"
+   ],
+   "file": "references/40-style-recipes.md",
+   "line": 7
+  },
+  {
+   "name": "国风工笔",
+   "keywords": [
+    "工笔",
+    "重彩",
+    "国风",
+    "牡丹",
+    "荷花"
+   ],
+   "skeleton": "散点式",
+   "repeat": "1/2 跳接",
+   "presets": [
+    "halfdrop",
+    "brick",
+    "phyllotaxis"
+   ],
+   "rotate": 0.0,
+   "layer": "无",
+   "density": 0.35,
+   "element_scale": 1.2,
+   "elements": "主花·次花·花苞·双叶·蝴蝶",
+   "pitfalls": [
+    "线要闭合均匀",
+    "平涂不能有渐变",
+    "花心画足",
+    "旋转归零"
+   ],
+   "file": "references/40-style-recipes.md",
+   "line": 7
+  },
+  {
+   "name": "几何极简",
+   "keywords": [
+    "几何",
+    "极简",
+    "北欧",
+    "像素",
+    "条纹"
+   ],
+   "skeleton": "散点式",
+   "repeat": "平接",
+   "presets": [
+    "grid",
+    "stripes"
+   ],
+   "rotate": 0.0,
+   "layer": "无",
+   "density": 0.3,
+   "element_scale": 1.0,
+   "elements": "圆·弧·条·格·单线叶",
+   "pitfalls": [
+    "角度锁定 0/45/90",
+    "线宽统一",
+    "别加纹理",
+    "平接会有网格感，满版要慎用"
+   ],
+   "file": "references/40-style-recipes.md",
+   "line": 7
+  }
+ ],
+ "sections": [
+  {
+   "file": "references/10-repeat-engineering.md",
+   "h2": "",
+   "h3": "",
+   "title": "10 · 四方连续：排列骨式 · 接版 · 开刀（完整手册）",
+   "start": 1,
+   "end": 7,
+   "text": "定义：由一个或一组纹样组成最小循环单元（花回），向上、下、左、右四个方向无限重复延展，  铺满整个平面的面状纹样，俗称满版花。  体系 =【三大组织骨式】+【两大接版（回头）方式】+【开刀制作方法】，是面料印花 / 壁纸 / 包装的通用标准。  来源：用户提供的行业手册（抖音百科整理），本文件另补\"与工具实现的映射\"和\"验收自检\"。"
+  },
+  {
+   "file": "references/10-repeat-engineering.md",
+   "h2": "0. 先记住这张总表",
+   "h3": "",
+   "title": "0. 先记住这张总表",
+   "start": 8,
+   "end": 19,
+   "text": "一句话：骨式管好看，接版管无缝，开刀管做出来。 三者必须同时定，缺一个就返工。 ---"
+  },
+  {
+   "file": "references/10-repeat-engineering.md",
+   "h2": "一、三大基础组织骨式",
+   "h3": "",
+   "title": "一、三大基础组织骨式",
+   "start": 20,
+   "end": 21,
+   "text": ""
+  },
+  {
+   "file": "references/10-repeat-engineering.md",
+   "h2": "一、三大基础组织骨式",
+   "h3": "1. 散点式（最常用，面料印花主力）",
+   "title": "1. 散点式（最常用，面料印花主力）",
+   "start": 22,
+   "end": 40,
+   "text": "特征：单元内一个或多个纹样互相独立、不相连，像散点一样分布。分规则散点与自由散点。 规则散点——按固定骨架排布： 自由散点——疏密错落、方向旋转变化，无严格等分骨架，自然随性（碎花、野趣花常用）。 - ✅ 优点：清爽透气、主体突出 - ⚠️ 缺点：排布呆板时容易看出单元接缝（→ 用跳接 + 旋转翻转打破）"
+  },
+  {
+   "file": "references/10-repeat-engineering.md",
+   "h2": "一、三大基础组织骨式",
+   "h3": "2. 连缀式（线条连绵衔接）",
+   "title": "2. 连缀式（线条连绵衔接）",
+   "start": 41,
+   "end": 54,
+   "text": "特征：纹样靠枝干 / 曲线 / 几何边框互相穿插连接，没有孤立的花，连绵不断。 - ✅ 优点：整体连贯、最不容易看出循环接缝 - ✅ 适合：复古、国风、欧式卷草"
+  },
+  {
+   "file": "references/10-repeat-engineering.md",
+   "h2": "一、三大基础组织骨式",
+   "h3": "3. 重叠式（双层复合，层次感）",
+   "title": "3. 重叠式（双层复合，层次感）",
+   "start": 55,
+   "end": 67,
+   "text": "特征：两套纹样叠加，下层是地纹（底纹），上层是浮纹（主花）。 ⚠️ 要点：地纹必须弱化（低对比、低饱和、小尺寸），否则和浮纹抢视觉，画面变乱。 ---"
+  },
+  {
+   "file": "references/10-repeat-engineering.md",
+   "h2": "二、接版方式（回头方式）—— 印花行业的核心",
+   "h3": "",
+   "title": "二、接版方式（回头方式）—— 印花行业的核心",
+   "start": 68,
+   "end": 71,
+   "text": "散点式里，平排、斜排（跳接）是两种标准回头。"
+  },
+  {
+   "file": "references/10-repeat-engineering.md",
+   "h2": "二、接版方式（回头方式）—— 印花行业的核心",
+   "h3": "1. 平接版（平排法 / 方形回头）",
+   "title": "1. 平接版（平排法 / 方形回头）",
+   "start": 72,
+   "end": 79,
+   "text": "单元上下左右直接对齐拼接，横纵都不错位。 - 循环单元是正方形／矩形，拼接最简单，PS / AI 的图案工具原生支持 - ⚠️ 规律感强，大面积铺很容易看出一格一格的网格，呆板 - 适用：几何花、定位花、规则格子、简单小碎花"
+  },
+  {
+   "file": "references/10-repeat-engineering.md",
+   "h2": "二、接版方式（回头方式）—— 印花行业的核心",
+   "h3": "2. 跳接版（斜排法 / 阶梯错接法）——**行业最推荐**",
+   "title": "2. 跳接版（斜排法 / 阶梯错接法）——**行业最推荐**",
+   "start": 80,
+   "end": 100,
+   "text": "横向或纵向做固定比例错位，又叫移位排列。标准错位比例： - ✅ 错位后打破网格感，肉眼很难找到循环接缝，花型自然均匀 - ⚠️ 制版、分色工作量更高 - 两个方向：水平跳接（横向错）、垂直跳接（纵向错）  一句话区分：平接 = 瓷砖对齐铺；跳接 = 砖墙错缝铺。  ✅ 补充：菱形回头属于斜排的特殊变体，骨架为平行四边形。 ---"
+  },
+  {
+   "file": "references/10-repeat-engineering.md",
+   "h2": "三、开刀法（把边缘被裁断的花接回去的制图工艺）",
+   "h3": "",
+   "title": "三、开刀法（把边缘被裁断的花接回去的制图工艺）",
+   "start": 101,
+   "end": 117,
+   "text": "解决的问题：单元边缘伸出去的花，切格时被切断 → 靠开刀把它们移到对边接上，消除硬边。 实操要点： 1. 先定花回尺寸（像素整数），再开刀，否则半像素错位会出现细缝。 2. 开刀只处理跨界元素，单元内部元素不动。 3. 开刀后必须平铺 2×2 核对：接缝处不能有直线切断、亮度台阶、双影（见第 5 节）。 ---"
+  },
+  {
+   "file": "references/10-repeat-engineering.md",
+   "h2": "四、组合衍生形式（市面复合花型）",
+   "h3": "",
+   "title": "四、组合衍生形式（市面复合花型）",
+   "start": 118,
+   "end": 127,
+   "text": "---"
+  },
+  {
+   "file": "references/10-repeat-engineering.md",
+   "h2": "五、选型参考表（直接给客户 / 选花用）",
+   "h3": "",
+   "title": "五、选型参考表（直接给客户 / 选花用）",
+   "start": 128,
+   "end": 138,
+   "text": "---"
+  },
+  {
+   "file": "references/10-repeat-engineering.md",
+   "h2": "六、设计避坑要点（印花工厂要求）",
+   "h3": "",
+   "title": "六、设计避坑要点（印花工厂要求）",
+   "start": 139,
+   "end": 147,
+   "text": "1. 单元边缘纹样必须可对接，不能有硬切断痕迹 —— 开刀就是解决这个。 2. 跳接比例一旦确定，花回尺寸要严格匹配，否则印花对花不准。 3. 散点不要所有元素同一朝向，适当旋转翻转，避免机械感。 4. 大面积满版花优先跳接；小面积定位花、格子优先平接。 ---"
+  },
+  {
+   "file": "references/10-repeat-engineering.md",
+   "h2": "七、与工具实现的映射（`算法/花型生成` 的 pattern_studio）",
+   "h3": "",
+   "title": "七、与工具实现的映射（`算法/花型生成` 的 pattern_studio）",
+   "start": 148,
+   "end": 169,
+   "text": "结论：平接 / 1-2 跳接 / 散点 / 连缀素材 / 重叠这几类都能直接跑；  1/3、1/4、2/5 跳接和严格菱形回头还没内置，是下一步要补的（改一行偏移比例即可）。"
+  },
+  {
+   "file": "references/10-repeat-engineering.md",
+   "h2": "七、与工具实现的映射（`算法/花型生成` 的 pattern_studio）",
+   "h3": "补 1/3、1/4 跳接的最小改法（给后续实现）",
+   "title": "补 1/3、1/4 跳接的最小改法（给后续实现）",
+   "start": 170,
+   "end": 172,
+   "text": ""
+  },
+  {
+   "file": "references/10-repeat-engineering.md",
+   "h2": "",
+   "h3": "",
+   "title": "if r % 2 == 1: x += cw * shift",
+   "start": 176,
+   "end": 180,
+   "text": "---"
+  },
+  {
+   "file": "references/10-repeat-engineering.md",
+   "h2": "八、验收自检（每次做完必过）",
+   "h3": "",
+   "title": "八、验收自检（每次做完必过）",
+   "start": 181,
+   "end": 193,
+   "text": "---"
+  },
+  {
+   "file": "references/10-repeat-engineering.md",
+   "h2": "九、还缺什么（后续补写）",
+   "h3": "",
+   "title": "九、还缺什么（后续补写）",
+   "start": 194,
+   "end": 199,
+   "text": "- 各骨式的花回尺寸推荐值（按用途：女装 / 家纺 / 壁纸） - 连缀式的骨架画法（波线怎么定波幅与周期、菱形网格比例） - 重叠式的地纹强度量化（对比度/尺寸/密度上限，避免抢浮纹） - 1/3、1/4、2/5 跳接与严格菱形回头的代码实现 + 验证案例"
+  },
+  {
+   "file": "references/40-style-recipes.md",
+   "h2": "",
+   "h3": "",
+   "title": "40 · 风格配方表（工具可直接解析的\"决策表\"）",
+   "start": 1,
+   "end": 6,
+   "text": "本文件用固定表格书写，pattern_studio 的 knowledge 节点会解析成可执行规则：  命中关键词 → 采用该行的 骨式 / 接版 / 预设 / 旋转 / 层叠 / 目标覆盖 / 元素缩放。  改这张表 = 改工具的出图行为，不需要改代码。"
+  },
+  {
+   "file": "references/40-style-recipes.md",
+   "h2": "一、配方表",
+   "h3": "",
+   "title": "一、配方表",
+   "start": 7,
+   "end": 17,
+   "text": ""
+  },
+  {
+   "file": "references/40-style-recipes.md",
+   "h2": "二、怎么用这张表",
+   "h3": "",
+   "title": "二、怎么用这张表",
+   "start": 18,
+   "end": 24,
+   "text": "1. 关键词命中 → 光用这一行的参数：预设默认用前 3 个，旋转/层叠/密度/元素缩放都可被工具读取。 2. 用户显式传 --presets/--density/--rotate-deg/--overlap-mode/--element-scale → 覆盖表里的值。 3. 表里\"元素类型\"只是提示，具体元素仍由 spec（手写 spec 文件或 LLM 解析）决定。 4. 新增风格 = 加一行；改风格 = 改一格。"
+  },
+  {
+   "file": "references/40-style-recipes.md",
+   "h2": "三、还缺什么（后续补）",
+   "h3": "",
+   "title": "三、还缺什么（后续补）",
+   "start": 25,
+   "end": 29,
+   "text": "- 每个风格的配色 hex 组合（现在配色在 spec 里，没进这张表） - 每个风格的花回尺寸推荐（cm，按用途） - 每个风格的印花工艺限制（色数上限、最小线宽）"
+  }
+ ]
+}

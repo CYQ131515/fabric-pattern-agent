@@ -1,0 +1,25 @@
+{
+  "id": "case-20261019-11",
+  "date": "2026-10-19",
+  "title": "[用户打回] 反向展平还原方向仍不对；难度大先这样；要求以后扭曲面料先想象平铺图案再走流程",
+  "source": "user-feedback",
+  "status": "open",
+  "symptom": "反向展平还原方向仍不对；难度大先这样；要求以后扭曲面料先想象平铺图案再走流程",
+  "root_cause": "",
+  "fix": "",
+  "regression": "",
+  "tags": [
+    "unwarp-wrong",
+    "rule"
+  ],
+  "delivery_id": "d-1792445676224",
+  "chosen_path": "反向展平(undo warp)@2048 → AI缝带band200 → wrap stitch → PSD (v2)",
+  "features": {
+    "lowGradFrac": 0.3,
+    "hueConc": 0.35,
+    "satMean": 0.4,
+    "edgeMean": 20
+  },
+  "artifacts": [],
+  "file": "$HOME/deepseek herness/REA/.rea-web/samples/input16-paisley-silk-colorlayers-v2-9382.psd"
+}

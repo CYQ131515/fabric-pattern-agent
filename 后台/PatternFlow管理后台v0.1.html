@@ -1,0 +1,2408 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>PatternFlow 管理后台 v0.1 — 给运营自己用</title>
+<style>
+:root{
+  --ink:#211E1B; --ink-2:#3A342E; --ink-3:#6B635A; --ink-4:#9A9188;
+  --line:#E4DED6; --line-2:#EFEAE3; --paper:#F6F3EE; --card:#FFFFFF;
+  --accent:#C1553A; --accent-soft:#F6E7E2;
+  --jade:#3F6B5C; --jade-soft:#E4EDE9;
+  --gold:#B58A2B; --gold-soft:#F6EFDD;
+  --blue:#3B5D8F; --blue-soft:#E6EDF7;
+  --rail:#F1EEE9; --rail-hover:#E7E2D9; --rail-on:#DFD8CD; --stage:#EAE5DE;
+  --r-s:6px; --r-m:10px; --r-l:16px;
+  --sh-1:0 1px 2px rgba(33,30,27,.06), 0 1px 1px rgba(33,30,27,.04);
+  --sh-2:0 6px 18px rgba(33,30,27,.08), 0 2px 6px rgba(33,30,27,.04);
+  --sh-3:0 22px 48px rgba(33,30,27,.2), 0 6px 16px rgba(33,30,27,.08);
+  --fs:14px;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--paper);color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  font-size:var(--fs);line-height:1.62;-webkit-font-smoothing:antialiased;overflow:hidden}
+button{font-family:inherit;font-size:inherit;cursor:pointer;border:none;background:none;color:inherit}
+input,textarea,select{font-family:inherit;font-size:inherit;color:inherit}
+a{color:var(--blue);text-decoration:none}
+a:hover{text-decoration:underline}
+::-webkit-scrollbar{width:9px;height:9px}
+::-webkit-scrollbar-thumb{background:#CFC8BE;border-radius:8px}
+::-webkit-scrollbar-thumb:hover{background:#BDB5AA}
+::-webkit-scrollbar-track{background:transparent}
+
+/* ---------- 骨架 ---------- */
+#app{display:flex;height:100vh;overflow:hidden}
+.rail{width:220px;flex:0 0 220px;background:var(--rail);border-right:1px solid var(--line);
+  display:flex;flex-direction:column;min-height:0}
+.rail-head{padding:14px 14px 10px}
+.brand{display:flex;align-items:center;gap:9px}
+.brand .mark{width:28px;height:28px;border-radius:8px;flex:0 0 28px;
+  background:conic-gradient(from 210deg,#C1553A,#B58A2B,#3F6B5C,#C1553A);position:relative;overflow:hidden}
+.brand .mark::after{content:"";position:absolute;inset:6.5px;border-radius:3.5px;background:var(--rail)}
+.brand .tx b{display:block;font-size:13px;line-height:1.3}
+.brand .tx span{display:block;font-size:10px;color:var(--ink-4);letter-spacing:.4px}
+.rail-scroll{flex:1;overflow-y:auto;padding:8px 8px 12px;min-height:0}
+.nav-label{font-size:10.5px;color:var(--ink-4);padding:12px 8px 5px;letter-spacing:1px;font-weight:600}
+.nav{display:flex;align-items:center;gap:9px;width:100%;text-align:left;padding:8px 9px;
+  border-radius:9px;transition:background .14s}
+.nav:hover{background:var(--rail-hover)}
+.nav[aria-current="true"]{background:var(--rail-on);font-weight:600}
+.nav .ico{width:18px;text-align:center;color:var(--ink-3);font-size:13px;flex:0 0 18px}
+.nav .n{flex:1;min-width:0;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nav .cnt{font-size:10.5px;color:var(--ink-4);flex:0 0 auto}
+.rail-foot{padding:10px 12px 12px;border-top:1px solid var(--line);background:#EDE8E1;font-size:11px;color:var(--ink-3)}
+.rail-foot .st{display:flex;align-items:center;gap:6px;margin-bottom:6px}
+.rail-foot .dot{width:7px;height:7px;border-radius:50%;background:#C9C2B8;flex:0 0 7px}
+.rail-foot .dot.on{background:var(--jade)}
+.rail-foot .dot.off{background:var(--accent)}
+
+.stage{flex:1;display:flex;flex-direction:column;min-width:0;background:var(--stage)}
+.stage-head{height:56px;flex:0 0 56px;display:flex;align-items:center;gap:12px;padding:0 20px;
+  background:rgba(241,238,233,.94);border-bottom:1px solid var(--line);z-index:2}
+.stage-head .tt b{display:block;font-size:14.5px;font-weight:650;line-height:1.3}
+.stage-head .tt span{display:block;font-size:11.5px;color:var(--ink-4)}
+.stage-head .right{margin-left:auto;display:flex;align-items:center;gap:8px}
+.page-scroll{flex:1;overflow-y:auto;min-height:0}
+.wrap{max-width:1080px;margin:0 auto;padding:16px 20px 40px}
+
+/* ---------- 通用件 ---------- */
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r-m);box-shadow:var(--sh-1)}
+.card-pad{padding:16px}
+.card + .card{margin-top:12px}
+.card.mt{margin-top:12px}
+h3{margin:0;font-size:13.5px;font-weight:650}
+.sect-title{display:flex;align-items:baseline;gap:10px;margin:18px 2px 9px}
+.sect-title h3{font-size:13.5px}
+.sect-title .hint{font-size:11.5px;color:var(--ink-4)}
+.muted{color:var(--ink-3)}
+.small{font-size:12px}
+.tiny{font-size:11px;color:var(--ink-4)}
+.btn{padding:7px 14px;border-radius:8px;background:var(--ink);color:#fff;font-size:12.5px;
+  font-weight:600;transition:.16s}
+.btn:hover{background:#000}
+.btn.ghost{background:#fff;color:var(--ink-2);border:1px solid var(--line)}
+.btn.ghost:hover{border-color:var(--ink-4);background:#FCFAF7}
+.btn.sm{padding:5px 11px;font-size:12px}
+.btn.danger{background:#fff;color:var(--accent);border:1px solid #E7D3CC}
+.btn.danger:hover{background:var(--accent-soft);border-color:var(--accent)}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+.chip-btn{padding:5px 11px;border-radius:20px;border:1px solid var(--line);background:#fff;
+  font-size:12px;color:var(--ink-2);transition:.16s}
+.chip-btn:hover{border-color:var(--ink-4)}
+.chip-btn[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.tag{display:inline-block;padding:1.5px 8px;border-radius:20px;font-size:11px;
+  background:var(--line-2);color:var(--ink-3);margin:0 5px 5px 0}
+.tag.j{background:var(--jade-soft);color:var(--jade)}
+.tag.g{background:var(--gold-soft);color:#7A5C12}
+.tag.b{background:var(--blue-soft);color:var(--blue)}
+.tag.r{background:var(--accent-soft);color:var(--accent)}
+.kpi{display:flex;flex-direction:column;min-width:78px}
+.kpi b{font-size:21px;font-weight:660;line-height:1.2;letter-spacing:.3px}
+.kpi span{font-size:11px;color:var(--ink-4)}
+.empty{padding:34px;text-align:center;color:var(--ink-4)}
+.empty .big{font-size:26px;opacity:.5;margin-bottom:6px}
+.fld{margin-bottom:11px}
+.fld label{display:block;font-size:11.5px;color:var(--ink-3);margin-bottom:4px;font-weight:600}
+.fld input,.fld textarea,.fld select{width:100%;padding:7px 10px;border:1px solid var(--line);
+  border-radius:8px;background:#fff;font-size:13px;outline:none;transition:.14s}
+.fld input:focus,.fld textarea:focus{border-color:var(--ink-4);box-shadow:0 0 0 3px rgba(33,30,27,.05)}
+.fld textarea{resize:vertical;line-height:1.6;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12.5px}
+.fld .tip{font-size:11px;color:var(--ink-4);margin-top:3px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:11px}
+.rowline{display:flex;gap:11px;align-items:center;flex-wrap:wrap}
+.note{background:var(--gold-soft);border:1px solid #EBDCB6;color:#7A5C12;
+  padding:9px 12px;border-radius:8px;font-size:12px;line-height:1.6}
+.note.b{background:var(--blue-soft);border-color:#CFDCEF;color:#2C4A73}
+.note.r{background:var(--accent-soft);border-color:#E7D3CC;color:#8E3A24}
+.tbl{width:100%;border-collapse:collapse;font-size:12.5px}
+.tbl th{text-align:left;font-size:11px;color:var(--ink-4);font-weight:600;
+  padding:7px 9px;border-bottom:1px solid var(--line);white-space:nowrap}
+.tbl td{padding:8px 9px;border-bottom:1px solid var(--line-2);vertical-align:top}
+.tbl tr:last-child td{border-bottom:none}
+.ta-r{text-align:right}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11.5px}
+
+/* ---------- 模型与密钥：按机器人分组 ---------- */
+.rolehead{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.rolehead b{font-size:14.5px;font-weight:680}
+.rolehead .k{font-size:10.5px;padding:2px 9px;border-radius:20px;font-weight:600;
+  background:var(--gold-soft);color:#7A5C12}
+.rolehead.g .k{background:var(--jade-soft);color:var(--jade)}
+.rolehead.r .k{background:var(--accent-soft);color:var(--accent)}
+.grp{margin-top:13px;padding-top:12px;border-top:1px dashed var(--line)}
+.grp-h{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.grp-h b{font-size:13px;font-weight:660}
+.grp-h .k{font-size:10.5px;padding:1.5px 8px;border-radius:20px;font-weight:600;
+  background:var(--line-2);color:var(--ink-3)}
+.mrow{display:flex;gap:7px;align-items:center;flex-wrap:wrap;margin-top:9px}
+
+/* ---------- 概览 ---------- */
+.kpis{display:flex;gap:26px;flex-wrap:wrap;align-items:center}
+.check{display:flex;gap:9px;padding:8px 0;border-bottom:1px solid var(--line-2);font-size:12.5px;align-items:flex-start}
+.check:last-child{border-bottom:none}
+.check .mk{flex:0 0 16px;font-size:13px;line-height:1.5}
+.kpi .of{font-size:12px;font-weight:600;color:var(--ink-4)}
+.apigrp{font-size:10.5px;color:var(--ink-4);letter-spacing:1px;font-weight:600;
+  margin:12px 0 2px;padding-top:9px;border-top:1px dashed var(--line)}
+.apigrp:first-child{margin-top:0;padding-top:0;border-top:none}
+
+/* ---------- 数据看板 ---------- */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:start;margin-top:12px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:15px}
+.grid2 > .card + .card,.grid4 > .card + .card{margin-top:0}
+.dimh{font-size:11.5px;font-weight:600;color:var(--ink-3);margin-bottom:6px}
+.bars{display:flex;flex-direction:column;gap:5px}
+.brow{display:grid;grid-template-columns:82px 1fr 46px;gap:8px;align-items:center;font-size:12px}
+.bars.compact .brow{grid-template-columns:62px 1fr 28px;gap:6px;font-size:11.5px}
+.brow .bl{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--ink-2)}
+.brow .bt{background:var(--line-2);border-radius:4px;height:9px;overflow:hidden}
+.brow .bt i{display:block;height:100%;background:var(--blue);border-radius:4px}
+.brow .bv{text-align:right;color:var(--ink-3);font-size:11px}
+.tbl{width:100%;border-collapse:collapse;font-size:12px;margin-top:2px}
+.tbl th{text-align:left;font-weight:600;color:var(--ink-3);font-size:11.5px;
+  padding:5px 8px 5px 0;border-bottom:1px solid var(--line-2);white-space:nowrap}
+.tbl td{padding:5px 8px 5px 0;color:var(--ink-2);border-bottom:1px solid var(--line-2)}
+.tbl tr:last-child td{border-bottom:none}
+.tbl th.n,.tbl td.n{text-align:right;font-variant-numeric:tabular-nums}
+.tbl .hi{color:var(--accent);font-weight:600}
+.tbl .good{color:var(--jade);font-weight:600}
+/* 会话表的 ID 列别贴边（.tbl 的 td 左边距是 0，第一列会顶着卡片边缘） */
+.tbl.sess th:first-child,.tbl.sess td:first-child{padding-left:20px}
+.tbl.sess td:first-child{white-space:nowrap}
+/* 会话页的筛选条 */
+.sfilter{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:12px}
+.sfilter input{padding:6px 10px;border:1px solid var(--line);border-radius:8px;
+  background:#fff;font-size:12.5px;color:var(--ink);outline:none;transition:.14s}
+.sfilter input:focus{border-color:var(--ink-4);box-shadow:0 0 0 3px rgba(33,30,27,.05)}
+.sfilter .lbl{font-size:11.5px;color:var(--ink-3);font-weight:600}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:11.5px;color:var(--ink-3);margin:9px 0}
+.legend.col{flex-direction:column;gap:6px;margin:0}
+.legend span{display:flex;align-items:center;gap:6px}
+.legend i{width:9px;height:9px;border-radius:3px;display:inline-block;flex:0 0 9px}
+.legend b{color:var(--ink)}
+.trend{width:100%;height:auto;display:block;margin-top:6px}
+.donutwrap{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.donut{width:140px;height:140px;flex:0 0 140px}
+
+/* ---------- 人设 ---------- */
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.presets{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:9px}
+
+/* ---------- 知识库 ---------- */
+.kb-cols{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:900px){ .kb-cols{grid-template-columns:1fr} .two,.three{grid-template-columns:1fr}
+  .grid2{grid-template-columns:1fr} .grid4{grid-template-columns:1fr 1fr} }
+.docs .it{display:flex;gap:9px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--line-2)}
+.docs .it:last-child{border-bottom:none}
+.docs .it .t{flex:1;min-width:0}
+.docs .it .t b{display:block;font-size:12.5px}
+.qarow{display:grid;grid-template-columns:1fr 1.4fr auto;gap:9px;padding:7px 0;
+  border-bottom:1px solid var(--line-2);align-items:start}
+.qarow:last-child{border-bottom:none}
+.qarow input{width:100%;padding:5px 8px;border:1px solid var(--line);border-radius:7px;font-size:12.5px}
+.resultbox{margin-top:10px;padding:11px;border:1px solid var(--line);border-radius:8px;background:#FCFAF7}
+.resultbox pre{margin:0;white-space:pre-wrap;word-break:break-word;font-size:11.5px;line-height:1.65;
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;max-height:260px;overflow:auto}
+
+/* ---------- 花型库 ---------- */
+.lib-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:11px}
+.lib-card{display:block;background:#fff;border:1px solid var(--line);border-radius:var(--r-m);
+  overflow:hidden;text-align:left;transition:.16s;padding:0}
+.lib-card:hover{box-shadow:var(--sh-2);border-color:var(--ink-4)}
+.lib-card .ph{display:block;position:relative;aspect-ratio:1/1;background:var(--line-2);overflow:hidden}
+.lib-card .ph img{width:100%;height:100%;object-fit:cover;display:block}
+.lib-card .ph .warn{position:absolute;left:5px;top:5px;background:var(--gold);color:#fff;
+  font-size:10px;padding:1px 6px;border-radius:10px}
+.lib-card .body{display:block;padding:7px 9px 9px}
+.lib-card .nm{display:flex;gap:6px;align-items:baseline}
+.lib-card .nm b{font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;min-width:0}
+.lib-card .nm span{font-size:10.5px;color:var(--ink-4);flex:0 0 auto}
+.lib-card .tg{display:block;margin-top:4px}
+.lib-card .tg i{font-style:normal;display:inline-block;padding:1px 6px;border-radius:10px;
+  font-size:10px;background:var(--line-2);color:var(--ink-3);margin:0 4px 3px 0}
+.lib-card .tg i.j{background:var(--jade-soft);color:var(--jade)}
+.lib-card .tg i.g{background:var(--gold-soft);color:#7A5C12}
+.lib-card .tg i.b{background:var(--blue-soft);color:var(--blue)}
+.lib-search{position:relative;flex:1;min-width:220px}
+.lib-search input{width:100%;padding:8px 11px 8px 32px;border:1px solid var(--line);
+  border-radius:9px;background:#fff;font-size:13px;outline:none}
+.lib-search .ico{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--ink-4);display:flex}
+.lib-filters{margin-top:12px}
+.lib-dim{display:flex;gap:9px;padding:5px 0;align-items:flex-start}
+.lib-dim .k{flex:0 0 42px;font-size:11.5px;color:var(--ink-4);padding-top:4px}
+.lib-dim .chips{display:flex;gap:5px;flex-wrap:wrap;flex:1}
+.lib-chip{padding:3px 9px;border-radius:20px;border:1px solid var(--line);background:#fff;
+  font-size:11.5px;color:var(--ink-3);transition:.14s}
+.lib-chip:hover{border-color:var(--ink-4)}
+.lib-chip b{font-weight:400;color:var(--ink-4);margin-left:3px;font-size:10.5px}
+.lib-chip[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.lib-chip[aria-pressed="true"] b{color:rgba(255,255,255,.7)}
+.libx{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:820px){ .libx{grid-template-columns:1fr} }
+.bar{height:7px;border-radius:6px;background:var(--line-2);overflow:hidden;margin-top:8px}
+.bar i{display:block;height:100%;background:var(--jade);transition:width .3s}
+
+/* ---------- 弹层 ---------- */
+#layer{position:fixed;inset:0;z-index:60;display:none}
+#layer.on{display:block}
+.scrim{position:absolute;inset:0;background:rgba(33,30,27,.42)}
+.modal-wrap{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:24px;overflow:auto}
+.modal{background:#fff;border-radius:var(--r-l);box-shadow:var(--sh-3);width:100%;max-width:640px;
+  max-height:88vh;display:flex;flex-direction:column;overflow:hidden}
+.modal.wide{max-width:940px}
+.mh{padding:15px 18px 12px;border-bottom:1px solid var(--line)}
+.mh h3{font-size:15px}
+.mh p{margin:3px 0 0;font-size:11.5px;color:var(--ink-4)}
+.mb{padding:16px 18px;overflow-y:auto;flex:1;min-height:0}
+.mf{padding:12px 18px;border-top:1px solid var(--line);display:flex;gap:9px;justify-content:flex-end;background:#FCFAF7}
+
+/* ---------- toast ---------- */
+#toastbox{position:fixed;left:50%;bottom:34px;transform:translateX(-50%);z-index:90;
+  display:flex;flex-direction:column;gap:7px;align-items:center;pointer-events:none}
+.toast{background:var(--ink);color:#fff;padding:9px 16px;border-radius:20px;font-size:12.5px;
+  box-shadow:var(--sh-2);max-width:78vw}
+.toast.warn{background:var(--accent)}
+
+/* ---------- 登录门 ---------- */
+#authmask{position:fixed;inset:0;z-index:120;background:var(--bg);
+  display:flex;align-items:center;justify-content:center;padding:20px}
+.auth-card{width:100%;max-width:340px;box-shadow:var(--sh-2)}
+.auth-card h3{font-size:15px;margin:0}
+.err{color:var(--accent)}
+</style>
+</head>
+<body>
+<div id="app">
+  <aside class="rail">
+    <div class="rail-head">
+      <div class="brand">
+        <div class="mark"></div>
+        <div class="tx"><b>PatternFlow</b><span>管理后台 v0.1</span></div>
+      </div>
+    </div>
+    <div class="rail-scroll" id="nav"></div>
+    <div class="rail-foot">
+      <div class="st"><i class="dot" id="dot"></i><span id="sttxt">正在连接…</span></div>
+      <div class="tiny" id="stmodel"></div>
+    </div>
+  </aside>
+  <main class="stage">
+    <div class="stage-head">
+      <div class="tt"><b id="pttl">概览</b><span id="psub"></span></div>
+      <div class="right" id="pact"></div>
+    </div>
+    <div class="page-scroll"><div class="wrap" id="body"></div></div>
+  </main>
+</div>
+<div id="layer"></div>
+<div id="toastbox"></div>
+<div id="authmask" style="display:none"></div>
+
+<script>
+/* =========================================================================
+   PatternFlow 管理后台（B 端）
+   -------------------------------------------------------------------------
+   和 C 端原型（v0.7）是两份独立的 HTML、两个独立的进程：
+   - C 端（server.py，8787）给用户，只有对话，看不到花型库；
+   - 这份连的是后台服务（admin_server.py，8788），管密钥、人设、知识库、图库。
+
+   服务地址自动探测：先试同源，再试 8788、再试 8787。
+   认端口还不够 —— 8787 上也可能回 ok，但它没有后台接口，
+   所以认 /api/health 里的 who==='admin' 才算连对了。
+   ========================================================================= */
+var API = '';
+var ONLINE = false;
+var CANDIDATES = [];
+(function(){
+  if (location.protocol === 'http:' || location.protocol === 'https:') CANDIDATES.push(location.origin);
+  CANDIDATES.push('http://127.0.0.1:8788');
+  CANDIDATES.push('http://localhost:8788');
+  CANDIDATES.push('http://127.0.0.1:8787');
+  CANDIDATES.push('http://localhost:8787');
+  var q = (location.search || '').replace(/^\?/, '');
+  var m = /(?:^|&)api=([^&]+)/.exec(q);
+  if (m) CANDIDATES.unshift(decodeURIComponent(m[1]));
+})();
+
+/* 登录状态：后台是要口令的，没登录就只显示登录框，别的都不渲染 */
+var AUTH = {checked:false, has_password:true, authed:false, mode:'', busy:false, err:''};
+
+var S = {
+  page: 'overview',
+  st: null,            // /api/admin/state
+  personas: null,      // /api/admin/persona
+  personaCur: 'designer',
+  kb: null,            // /api/admin/kb
+  kbTest: null,
+  lib: {items:[], total:0, stats:{}, facets:{}, q:'', dim:{}, source:'',
+        page:1, size:60, loading:false, loaded:false, err:''},
+  libCur: '', libDel: '',
+  libprog: null,         // 上传/文件夹导入的进度（跟 scan 分开，两个可以同时跑）
+  scan: null, scanTimer: null,
+  sessions: null,
+  sessQ: '', sessD: '', sessTimer: null, sessTok: 0,   // 会话页的筛选条件
+  stats: null, statsErr: '', statsDays: 14,   // /api/admin/analytics（数据看板）
+  dirty: {}            // 某个页面有未保存改动 → 切页时提醒
+};
+
+var NAV = [
+  {key:'overview', ico:'◎', n:'概览',        sub:'服务状态与接口自检'},
+  {key:'stats',    ico:'▤', n:'数据看板',     sub:'用户使用、趋势与排行'},
+  {key:'model',    ico:'⚙', n:'模型与密钥',   sub:'接口地址、Key、参数'},
+  {key:'persona',  ico:'☺', n:'机器人人设',   sub:'说话风格 + 角色职责'},
+  {key:'kb',       ico:'❏', n:'知识库',       sub:'只按资料回答'},
+  {key:'lib',      ico:'▦', n:'花型库',       sub:'图片入库与打标签'},
+  {key:'sessions', ico:'≡', n:'会话',         sub:'看过聊天记录'}
+];
+var PAGE_META = {
+  overview: ['概览', '服务跑得怎么样、还差哪几个接口'],
+  stats:    ['数据看板', '用户在前台找什么、选什么、用了哪些能力'],
+  model:    ['模型与密钥', '改完点保存，服务会自动重新加载'],
+  persona:  ['机器人人设', '风格是档位、职责是人设全文，分开存'],
+  kb:       ['知识库', '机器人只按这里的资料回答，没有就说没有'],
+  lib:      ['花型库', '图片入库、AI 打标签、改标签'],
+  sessions: ['会话', '用户跟机器人聊过什么']
+};
+var AGENT_LABEL = {designer:'花型师', engineer:'织印师', assistant:'客服', auto:'路由器'};
+var LIBSRC = {import:'客户来图','ai-gen':'AI 生成','ai-edit':'AI 改图',
+              trace:'描稿成品', upload:'上传入库'};
+var DIMS4 = [{key:'style',label:'风格'},{key:'element',label:'元素'},
+             {key:'color',label:'配色'},{key:'scene',label:'场景'}];
+var STYLE_OPTS = ['法式浪漫','新中式国风','复古波普','现代极简','童趣插画','波西米亚','Y2K未来','田园草木'];
+var ELEM_OPTS  = ['花卉','叶片藤蔓','几何','动物纹','条纹格纹','波点','抽象笔触','海洋贝壳'];
+var COLOR_OPTS = ['莫兰迪灰调','马卡龙甜彩','黑白灰','高饱和撞色','大地色系','蓝白青花','粉紫梦幻','暖橙焦糖'];
+var SCENE_OPTS = ['女装连衣裙','衬衫','童装','家居布艺','箱包配饰','泳装','丝巾','运动服'];
+var PROD_OPTS = {
+  composition:['散点','满地','定位','条纹','边花'],
+  density:['疏','中','密'],
+  scale:['小碎花','中花','大花']
+};
+
+/* ---------- 小工具 ---------- */
+function esc(s){
+  return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+  });
+}
+function $(id){ return document.getElementById(id); }
+function toast(text, warn){
+  var box = $('toastbox');
+  if (!box) return;
+  var el = document.createElement('div');
+  el.className = 'toast' + (warn ? ' warn' : '');
+  el.textContent = text;
+  box.appendChild(el);
+  setTimeout(function(){ if (el.parentNode) el.parentNode.removeChild(el); }, 2600);
+}
+function later(fn, ms){ return setTimeout(fn, ms); }
+function hasFetch(){ return typeof fetch === 'function'; }
+function apiGet(path, cb){
+  if (!hasFetch() || !API){ cb(false, null); return; }
+  fetch(API + path, {credentials:'same-origin'}).then(function(r){ return r.json(); })
+    .then(function(d){ note(d); cb(true, d); }).catch(function(){ cb(false, null); });
+}
+function apiPost(path, body, cb){
+  if (!hasFetch() || !API){ cb(false, null); return; }
+  fetch(API + path, {method:'POST', credentials:'same-origin',
+    headers:{'Content-Type':'application/json'}, body:JSON.stringify(body || {})})
+    .then(function(r){ return r.json(); }).then(function(d){ note(d); cb(true, d); })
+    .catch(function(){ cb(false, null); });
+}
+/* 任何接口回「请先登录」都统一弹登录框，不用每个页面各处理一遍 */
+function note(d){
+  if (d && d.need_auth && AUTH.authed){ AUTH.authed = false; paintAuth('login'); }
+}
+function absURL(u){ if (!u) return u; return (u.indexOf('http') === 0) ? u : (API + u); }
+
+/* ---------- 启动：探测服务 ---------- */
+function boot(){
+  // 脚本一执行就会调 boot，测试环境可能还没有 fetch。
+  // 不守卫会直接抛 ReferenceError，整个页面连兜底提示都渲染不出来。
+  if (!hasFetch()){ onOffline(); return; }
+  var i = 0, loose = null;
+  (function next(){
+    if (i >= CANDIDATES.length){
+      // 没有明确标着 admin 的（比如跑的还是老版本服务）：退而求其次用第一个通的
+      if (loose){ API = loose; ONLINE = true; onOnline(); }
+      else onOffline();
+      return;
+    }
+    var base = CANDIDATES[i++];
+    fetch(base + '/api/health').then(function(r){ return r.json(); })
+      .then(function(d){
+        if (d && d.ok){
+          if (d.who === 'admin'){ API = base; ONLINE = true; onOnline(); return; }
+          if (!loose) loose = base;
+        }
+        next();
+      }).catch(function(){ next(); });
+  })();
+}
+function onOffline(){
+  ONLINE = false;
+  var dot = $('dot'); if (dot){ dot.className = 'dot off'; }
+  var t = $('sttxt'); if (t) t.textContent = '服务没连上';
+  $('body').innerHTML = '<div class="card card-pad" style="margin-top:12px">' +
+    '<h3>连不上后台服务</h3>' +
+    '<div class="small muted" style="margin-top:8px">后台是独立进程，要单独启动。' +
+    '先去 <span class="mono">后台/</span> 目录跑 ' +
+    '<span class="mono">python3 admin_server.py</span>，或者双击项目根的' +
+    '<span class="mono">启动后台.sh</span>，再回来刷新这一页。</div>' +
+    '<div class="tiny" style="margin-top:8px">试过的地址：' +
+      esc(CANDIDATES.join('、')) + '</div>' +
+    '<div style="margin-top:12px"><button class="btn sm" onclick="location.reload()">重新连接</button></div>' +
+    '</div>';
+}
+function onOnline(){
+  var dot = $('dot'); if (dot){ dot.className = 'dot on'; }
+  var t = $('sttxt'); if (t) t.textContent = '服务已连接';
+  checkAuth();
+}
+/* ---------- 登录 ---------- */
+function checkAuth(){
+  apiGet('/api/admin/session', function(ok, d){
+    if (!ok){ paintAuth('login'); return; }
+    AUTH.checked = true;
+    AUTH.has_password = !(d && d.has_password === false);
+    if (!AUTH.has_password){ paintAuth('set'); return; }
+    // 有没有登录：拿一次 state，401 就是没登录
+    apiGet('/api/admin/state', function(ok2, d2){
+      if (ok2 && d2 && d2.ok){
+        AUTH.authed = true; S.st = d2; syncModelLine();
+        paintAuth(null); render();
+      } else {
+        AUTH.authed = false; paintAuth('login');
+      }
+    });
+  });
+}
+function syncModelLine(){
+  var m = $('stmodel');
+  if (m && S.st && S.st.model) m.textContent = S.st.model.model || '';
+}
+function paintAuth(mode){
+  var box = $('authmask');
+  if (!box) return;
+  AUTH.mode = mode || '';
+  if (!mode){ box.style.display = 'none'; box.innerHTML = ''; return; }
+  var isSet = (mode === 'set');
+  box.style.display = '';
+  box.innerHTML =
+    '<div class="auth-card card card-pad">' +
+    '<h3>' + (isSet ? '先给后台设个口令' : '管理后台') + '</h3>' +
+    '<div class="small muted" style="margin-top:6px">' +
+      (isSet ? '这个后台能改密钥、改人设、删图，设了口令之后进页面都要输。'
+             : '输口令进后台。') + '</div>' +
+    '<div class="fld" style="margin-top:14px"><label>口令</label>' +
+      '<input id="authpw" type="password" autocomplete="current-password"' +
+      ' placeholder="' + (isSet ? '至少 4 位' : '请输入口令') + '"></div>' +
+    (isSet ? '<div class="fld"><label>再输一遍</label>' +
+      '<input id="authpw2" type="password" autocomplete="new-password"></div>' : '') +
+    '<div id="autherr" class="tiny err" style="min-height:16px;margin-top:6px"></div>' +
+    '<div style="margin-top:10px"><button class="btn pri" id="authgo">' +
+      (isSet ? '设置并进入' : '进入') + '</button></div>' +
+    '<div class="tiny muted" style="margin-top:10px">' +
+      (isSet ? '忘了只能去 config/secrets.json 里删掉 admin_password 那一行。' :
+               '后台默认只监听 127.0.0.1，跟用户对话的服务是两个进程。') +
+    '</div></div>';
+  var inp = $('authpw'); if (inp) inp.focus();
+  var go = $('authgo');
+  if (go) go.onclick = doAuth;
+  var pw = $('authpw');
+  if (pw) pw.onkeydown = function(e){ if (e.key === 'Enter') doAuth(); };
+  var pw2 = $('authpw2');
+  if (pw2) pw2.onkeydown = function(e){ if (e.key === 'Enter') doAuth(); };
+}
+function doAuth(){
+  if (AUTH.busy) return;
+  var pw = $('authpw') ? $('authpw').value : '';
+  var err = $('autherr');
+  if (!pw){ if (err) err.textContent = '口令不能为空'; return; }
+  if (AUTH.mode === 'set'){
+    var pw2 = $('authpw2') ? $('authpw2').value : '';
+    if (pw !== pw2){ if (err) err.textContent = '两次输的不一样'; return; }
+    if (pw.length < 4){ if (err) err.textContent = '至少 4 位'; return; }
+  }
+  AUTH.busy = true;
+  var path = (AUTH.mode === 'set') ? '/api/admin/set-password' : '/api/admin/login';
+  apiPost(path, {password: pw}, function(ok, d){
+    AUTH.busy = false;
+    if (d && d.ok){
+      if (AUTH.mode === 'set'){
+        // 设完口令还要再登一次，拿 cookie
+        apiPost('/api/admin/login', {password: pw}, function(ok2, d2){
+          if (d2 && d2.ok){ AUTH.has_password = true; afterAuth(); }
+          else if (err) err.textContent = (d2 && d2.error) || '登录失败';
+        });
+        return;
+      }
+      afterAuth();
+      return;
+    }
+    if (err) err.textContent = (d && d.error) || '没进去，再试一次';
+  });
+}
+function afterAuth(){
+  AUTH.authed = true;
+  paintAuth(null);
+  loadState(function(){ render(); });
+}
+function logout(){
+  apiPost('/api/admin/logout', {}, function(){
+    AUTH.authed = false; S.st = null; paintAuth('login');
+  });
+}
+function loadState(cb){
+  apiGet('/api/admin/state', function(ok, d){
+    if (ok && d && d.ok){
+      S.st = d;
+      var m = $('stmodel');
+      if (m) m.textContent = (d.model && d.model.model) ? d.model.model : '';
+    }
+    if (cb) cb();
+  });
+}
+
+/* ---------- 导航与骨架 ---------- */
+function renderNav(){
+  var h = '<div class="nav-label">配置</div>';
+  NAV.forEach(function(it){
+    var cnt = '';
+    if (it.key === 'kb' && S.st && S.st.kb) cnt = (S.st.kb.docs || 0) + '篇';
+    if (it.key === 'lib' && S.st && S.st.library) cnt = (S.st.library.count || 0) + '张';
+    if (it.key === 'sessions' && S.st) cnt = S.st.sessions || 0;
+    h += '<button class="nav" data-nav="' + it.key + '" aria-current="' +
+      String(S.page === it.key) + '" title="' + esc(it.sub) + '">' +
+      '<span class="ico">' + it.ico + '</span><span class="n">' + esc(it.n) + '</span>' +
+      (cnt ? '<span class="cnt">' + esc(String(cnt)) + '</span>' : '') + '</button>';
+  });
+  h += '<div class="nav-label" style="margin-top:14px">用户端</div>';
+  h += '<button class="nav" data-nav="__client"><span class="ico">↗</span>' +
+       '<span class="n">打开对话页</span>' +
+       '<span class="cnt">8787</span></button>';
+  h += '<button class="nav" data-act="logout"><span class="ico">⏻</span>' +
+       '<span class="n">退出登录</span></button>';
+  $('nav').innerHTML = h;
+}
+function go(key){
+  if (key === '__client'){
+    // 后台和对话页是两个进程两个端口，不能拿当前 origin 去开
+    var u = (S.st && S.st.client_url) ? S.st.client_url
+          : (location.protocol === 'http:' ? location.protocol + '//' +
+             (location.hostname || '127.0.0.1') + ':8787/' : 'index.html');
+    window.open(u, '_blank');
+    return;
+  }
+  S.page = key;
+  if (key === 'lib') ensureLib();
+  if (key === 'kb') ensureKb();
+  if (key === 'persona') ensurePersona();
+  if (key === 'sessions') ensureSessions();
+  if (key === 'stats') ensureStats();
+  render();
+}
+function render(){
+  var meta = PAGE_META[S.page] || ['', ''];
+  $('pttl').textContent = meta[0];
+  $('psub').textContent = meta[1];
+  renderNav();
+  var fn = {overview:viewOverview, stats:viewStats, model:viewModel,
+            persona:viewPersona, kb:viewKb, lib:viewLib,
+            sessions:viewSessions}[S.page] || viewOverview;
+  $('body').innerHTML = fn();
+  $('pact').innerHTML = (S.page === 'lib') ? libActions() : '';
+  // 页面自己的初始化（比如知识库检索框的回车）
+  if (S.page === 'model') bindModel();
+  if (S.page === 'persona') bindPersona();
+  if (S.page === 'kb') bindKb();
+  if (S.page === 'lib') bindLib();
+}
+
+/* =========================================================================
+   1. 概览
+   ========================================================================= */
+function viewOverview(){
+  var d = S.st;
+  if (!d) return '<div class="card card-pad">正在读取…</div>';
+  var lib = d.library || {}, kb = d.kb || {};
+  var rows = apiRows(d);
+  var okN = rows.filter(function(r){ return r.ok; }).length;
+  var h = '<div class="card card-pad"><div class="kpis">' +
+    '<div class="kpi"><b>' + okN + '<span class="of">/' + rows.length + '</span></b>' +
+      '<span>接口已就绪</span></div>' +
+    '<div class="kpi"><b>' + (lib.count || 0) + '</b><span>花型库图片</span></div>' +
+    '<div class="kpi"><b>' + (kb.docs || 0) + '</b><span>知识库资料</span></div>' +
+    '<div class="kpi"><b>' + (kb.qa || 0) + '</b><span>标准问答</span></div>' +
+    '<div class="kpi"><b>' + (d.sessions || 0) + '</b><span>会话</span></div>' +
+    '<div class="kpi"><b>' + (d.skills || []).length + '</b><span>已挂载技能</span></div>' +
+    '</div></div>';
+
+  h += '<div class="sect-title"><h3>接口自检</h3><span class="hint">' +
+       '配好了就打勾；具体网关地址和密钥不在这页显示</span></div>';
+  h += '<div class="card card-pad">';
+  var last = '';
+  rows.forEach(function(r){
+    if (r.group !== last){
+      last = r.group;
+      h += '<div class="apigrp">' + esc(r.group) + '</div>';
+    }
+    h += checkRow(r.ok, r.name, r.note);
+  });
+  h += '<div class="tiny" style="margin-top:10px">要看接口地址、Key、点数这些具体值，' +
+       '去左边的「模型与密钥」——这一页是给截图用的，不放敏感信息。</div>';
+  h += '</div>';
+
+  h += '<div class="sect-title"><h3>当前配置</h3>' +
+       '<span class="hint">各接口实际在用的参数（不含地址与 Key）</span></div>';
+  h += '<div class="card card-pad"><div class="rowline small">' +
+    rows.filter(function(r){ return r.info; }).map(function(r){
+      return '<span class="tag">' + esc(r.name + ' · ' + r.info) + '</span>';
+    }).join('') +
+    '<span class="tag b">知识库 ' + (kb.enabled ? '严格模式' : '关') + '</span>' +
+    '<span class="tag">花型库 ' + ((d.library && d.library.enabled) ? '开' : '关') + '</span>' +
+    '<span class="tag g">温度 ' + esc(String(d.model.temperature)) + '</span>' +
+    '<span class="tag g">单轮上限 ' + esc(String(d.model.max_tokens)) + '</span>' +
+    '</div>' +
+    '<div class="tiny" style="margin-top:9px">想改哪一项，去「模型与密钥」页对应分组里改，' +
+    '保存后服务会自动重新加载。</div></div>';
+  return h;
+}
+/* 全接口自检清单。老版本服务没有 apis 字段时给一份兜底，页面不至于空着。 */
+function apiRows(d){
+  if (d && d.apis && d.apis.length) return d.apis;
+  var m = (d && d.model) || {}, im = (d && d.image) || {}, kb = (d && d.kb) || {};
+  return [
+    {group:'通用', name:'对话大模型', ok:!!m.llm_enabled,
+     note: m.llm_enabled ? '已配置' : '没配 Key，只能用本地规则兜底'},
+    {group:'花型设计师', name:'生图接口', ok:!!im.enabled,
+     note: im.enabled ? '已配置' : '没配，出不了图'},
+    {group:'其它', name:'知识库', ok:(kb.docs || 0) + (kb.qa || 0) > 0,
+     note: '空的话机器人只能靠模型自己的知识，会编'}
+  ];
+}
+function agName(a){ return AGENT_LABEL[a] || a; }
+function checkRow(ok, title, detail){
+  return '<div class="check"><span class="mk" style="color:' +
+    (ok ? 'var(--jade)' : 'var(--accent)') + '">' + (ok ? '✓' : '!') + '</span>' +
+    '<span><b>' + esc(title) + '</b><br><span class="small muted">' + esc(detail) + '</span></span></div>';
+}
+
+/* =========================================================================
+   1b. 数据看板
+   数据全部来自后端 /api/admin/analytics —— 它只统计磁盘上真有的东西：
+   会话记录、花型库索引、出图目录。注册/充值这类后端还没有的就如实空着。
+   ========================================================================= */
+var DONUT_COLORS = ['#3B5D8F', '#C1553A', '#3F6B5C', '#B58A2B', '#6B635A', '#7A6E8F'];
+var TREND_KEYS = [{k:'turns', c:'#3B5D8F', n:'对话轮次'},
+                  {k:'gen', c:'#C1553A', n:'出图'},
+                  {k:'ingest', c:'#3F6B5C', n:'入库'}];
+var ENG_KEYS = [{k:'seamless', c:'#3F6B5C', n:'四方连续'},
+                {k:'psd', c:'#B58A2B', n:'分层 PSD'}];
+/* 出图成败与来访也按天画 —— 这两条线只在埋点上线之后才有 */
+var GEN_KEYS = [{k:'ok', c:'#3F6B5C', n:'出图成功'},
+                {k:'fail', c:'#C1553A', n:'出图失败'}];
+var VISIT_KEYS = [{k:'visit', c:'#3B5D8F', n:'来访'}];
+/* 埋点里记的是 data-act 的原始值，这里换成运营看得懂的说法 */
+var ACT_LABEL = {'confirm-gen':'确认生成', 'cancel-gen':'先不要', 'regen':'重新生成',
+  'send':'发送消息', 'upload':'上传参考图', 'set-cnt':'改出图张数', 'set-fid':'改还原度',
+  'set-eng':'换四方连续路线', 'handoff':'交给织印师', 'pick-use':'拿这张改图',
+  'eng-seamless':'去做四方连续', 'eng-psd':'去做分层 PSD', 'to-psd':'送去分层',
+  'open-picker':'打开花型选择', 'picker-confirm':'确认选的款', 'stop-run':'终止这一轮',
+  'explain-picks':'让机器人解释候选', 'reset-brief':'重置需求卡', 'new-task':'新建落地任务',
+  'recharge':'充值', 'invoice':'申请发票', 'export-book':'导出花型清单',
+  'help':'新手指引', 'goto-engineer':'切到织印师', 'goto-designer':'切到花型师',
+  'goto-assistant':'切到客服', 'goto-tasks':'去任务中心', 'zoom-dl':'下载大图',
+  'trend':'套用趋势', 'say':'点了快捷话术', 'pick':'查看花型'};
+
+function ensureStats(){ if (!S.stats) loadStats(); }
+function loadStats(){
+  apiGet('/api/admin/analytics?days=' + (S.statsDays || 14), function(ok, d){
+    if (ok && d && d.ok){ S.stats = d; S.statsErr = ''; }
+    else S.statsErr = '读不到统计数据 —— 后台服务没连上，或者登录过期了。';
+    if (S.page === 'stats') render();
+  });
+}
+function kpi(v, label){
+  return '<div class="kpi"><b>' + esc(String(v == null ? 0 : v)) + '</b><span>' +
+    esc(label) + '</span></div>';
+}
+function legend(keys){
+  return '<div class="legend">' + keys.map(function(k){
+    return '<span><i style="background:' + k.c + '"></i>' + esc(k.n) + '</span>';
+  }).join('') + '</div>';
+}
+/* 环比：最近一半区间 vs 前一半。上一段没数据就不比（不编百分比）。 */
+function compareLine(cmp, half){
+  cmp = cmp || {};
+  function one(key, name){
+    var c = cmp[key];
+    if (!c) return '';
+    if (c.pct === null || c.pct === undefined)
+      return name + '近 ' + half + ' 天 ' + c.cur + ' 次（上一段没数据，不比）';
+    var up = c.pct >= 0;
+    return name + '近 ' + half + ' 天 <b>' + c.cur + '</b> 次，比上一段 ' +
+      (up ? '↑' : '↓') + Math.abs(c.pct) + '%';
+  }
+  var parts = [one('turns', '对话'), one('gen', '出图')].filter(Boolean);
+  if (!parts.length) return '';
+  return '<div class="tiny" style="margin-top:9px">' + parts.join('　·　') + '</div>';
+}
+function bars(rows, unit, compact){
+  if (!rows || !rows.length) return '<div class="empty small">还没有数据</div>';
+  var max = 1;
+  rows.forEach(function(r){ if (r[1] > max) max = r[1]; });
+  return '<div class="bars' + (compact ? ' compact' : '') + '">' + rows.map(function(r){
+    var pct = Math.max(3, Math.round(r[1] / max * 100));
+    return '<div class="brow"><span class="bl" title="' + esc(r[0]) + '">' + esc(r[0]) +
+      '</span><span class="bt"><i style="width:' + pct + '%"></i></span>' +
+      '<span class="bv">' + esc(String(r[1])) + esc(unit || '') + '</span></div>';
+  }).join('') + '</div>';
+}
+/* 毫秒 → 人话。运营不看 8200ms 这种数字。 */
+function fmtMs(ms){
+  var v = Number(ms || 0);
+  if (!v) return '—';
+  if (v < 1000) return v + ' 毫秒';
+  var s = v / 1000;
+  if (s < 60) return String(Math.round(s * 10) / 10) + ' 秒';
+  return Math.floor(s / 60) + ' 分 ' + Math.round(s % 60) + ' 秒';
+}
+/* 比例。null = 没数据，写成「—」而不是 0% —— 那两件事完全不一样。 */
+function pct(v){
+  if (v === null || v === undefined) return '—';
+  var n = Number(v);
+  if (isNaN(n)) return '—';
+  return (Math.round(n * 10) / 10) + '%';
+}
+function tbl(head, rows){
+  if (!rows || !rows.length) return '<div class="empty small">还没有数据</div>';
+  return '<table class="tbl"><thead><tr>' + head.map(function(c, i){
+    return '<th' + (i ? ' class="n"' : '') + '>' + esc(c) + '</th>';
+  }).join('') + '</tr></thead><tbody>' + rows.map(function(r){
+    return '<tr>' + r.map(function(c, i){
+      return '<td' + (i ? ' class="n"' : '') + '>' + c + '</td>';
+    }).join('') + '</tr>';
+  }).join('') + '</tbody></table>';
+}
+/* 埋点还没上线时，要如实说清"没数据"是因为没记录，而不是没人用 */
+function telNote(cov, what){
+  cov = cov || {};
+  if (!cov.events) return '<div class="note r" style="margin-top:11px">' +
+    '「' + esc(what) + '」目前一条记录都没有。埋点从这一版起才开始往上报，' +
+    '用起来之后这里就会长出数据 —— 之前发生过的没有落盘，也不去用别的东西硬凑一个近似值。</div>';
+  return '<div class="tiny" style="margin-top:10px">埋点自 <b>' + esc(cov.since || '—') +
+    '</b> 起有记录（本期共 ' + (cov.events || 0) + ' 条事件）。之前的行为没有落盘，不做回溯猜测。</div>';
+}
+/* 按天柱状。两条线以上就并排画；数值写在 <title> 里，鼠标停上去能看到。 */
+function trendSVG(series, keys){
+  if (!series || !series.length) return '<div class="empty small">还没有数据</div>';
+  var W = 680, H = 132, padL = 6, padR = 6, padT = 12, base = H - 22;
+  var n = series.length, max = 1;
+  series.forEach(function(d){
+    keys.forEach(function(k){ if ((d[k.k] || 0) > max) max = d[k.k]; });
+  });
+  var slot = (W - padL - padR) / n;
+  var bw = Math.max(2, Math.min(10, (slot - 2) / keys.length));
+  var g = '';
+  series.forEach(function(d, i){
+    var x0 = padL + i * slot + (slot - bw * keys.length) / 2;
+    keys.forEach(function(k, j){
+      var v = d[k.k] || 0;
+      var hh = v > 0 ? Math.max(2, Math.round(v / max * (base - padT))) : 0;
+      g += '<rect x="' + (x0 + j * bw).toFixed(1) + '" y="' + (base - hh) +
+        '" width="' + Math.max(1.5, bw - 1.6).toFixed(1) + '" height="' + hh +
+        '" rx="1.5" fill="' + k.c + '"><title>' + esc(d.d + ' · ' + k.n + ' ' + v) +
+        '</title></rect>';
+    });
+  });
+  g += '<line x1="' + padL + '" y1="' + base + '" x2="' + (W - padR) + '" y2="' + base +
+    '" stroke="#E4DED6" stroke-width="1"></line>';
+  [0, Math.floor((n - 1) / 2), n - 1].forEach(function(i){
+    if (i < 0 || i >= n || (i === 0 && n === 1)) return;
+    if (i === Math.floor((n - 1) / 2) && (n < 3)) return;
+    var x = padL + i * slot + slot / 2;
+    g += '<text x="' + x.toFixed(1) + '" y="' + (H - 6) + '" text-anchor="middle" ' +
+      'font-size="10" fill="#9A9188">' + esc(String(series[i].d || '').slice(5)) + '</text>';
+  });
+  return '<svg class="trend" viewBox="0 0 ' + W + ' ' + H + '">' + g + '</svg>';
+}
+function donutBlock(rows, centerLabel){
+  var total = (rows || []).reduce(function(a, r){ return a + r[1]; }, 0);
+  if (!total) return '<div class="empty small">还没有数据</div>';
+  var R = 52, C = 2 * Math.PI * R, off = 0, segs = '';
+  rows.forEach(function(r, i){
+    var dash = r[1] / total * C;
+    segs += '<circle cx="70" cy="70" r="' + R + '" fill="none" stroke="' +
+      DONUT_COLORS[i % DONUT_COLORS.length] + '" stroke-width="17" stroke-dasharray="' +
+      dash.toFixed(2) + ' ' + (C - dash).toFixed(2) + '" stroke-dashoffset="' +
+      (-off).toFixed(2) + '" transform="rotate(-90 70 70)"><title>' +
+      esc(r[0] + ' ' + r[1]) + '</title></circle>';
+    off += dash;
+  });
+  var lg = rows.map(function(r, i){
+    return '<span><i style="background:' + DONUT_COLORS[i % DONUT_COLORS.length] +
+      '"></i>' + esc(r[0]) + ' <b>' + r[1] + '</b>（' +
+      Math.round(r[1] / total * 100) + '%）</span>';
+  }).join('');
+  return '<div class="donutwrap"><svg viewBox="0 0 140 140" class="donut">' +
+    '<circle cx="70" cy="70" r="' + R + '" fill="none" stroke="#EFEAE3" stroke-width="17">' +
+    '</circle>' + segs +
+    '<text x="70" y="66" text-anchor="middle" font-size="21" fill="#211E1B">' + total +
+    '</text><text x="70" y="84" text-anchor="middle" font-size="10" fill="#9A9188">' +
+    esc(centerLabel || '总轮次') + '</text></svg><div class="legend col">' + lg + '</div></div>';
+}
+function viewStats(){
+  if (S.statsErr){
+    return '<div class="card card-pad"><h3>读不到统计数据</h3>' +
+      '<div class="small muted" style="margin-top:8px">' + esc(S.statsErr) + '</div>' +
+      '<div style="margin-top:12px"><button class="btn sm" data-act="reload-stats">' +
+      '重试</button></div></div>';
+  }
+  var d = S.stats;
+  if (!d) return '<div class="card card-pad">正在统计…</div>';
+  var k = d.kpi || {}, L = d.library || {}, A = d.accounts || {}, u = d.engine_usage || {};
+
+  var h = '<div class="card card-pad"><div class="kpis">' +
+    kpi(k.sessions, '会话') + kpi(k.turns, '对话轮次') +
+    kpi(k.avg_turns, '平均轮次/会话') +
+    kpi(k.library, '花型库图片') + kpi(k.generated, '出图文件') +
+    kpi(k.points, '预估点数') + kpi(k.skills, '已挂载技能') +
+    kpi(k.untagged, '未打标（待处理）') +
+    '</div><div class="tiny" style="margin-top:10px">统计区间 ' +
+    esc(k.span_from || '—') + ' ~ ' + esc(k.span_to || '—') +
+    '；“预估点数”按各技能的报价 × 调用次数算，**不是**真实扣费（后端没有钱包）。' +
+    '未打标的图在检索里等于不存在，建议尽快补。</div></div>';
+
+  /* 使用趋势 */
+  h += '<div class="sect-title"><h3>使用趋势</h3><span class="hint">' +
+    '每天多少轮对话、出多少图、入多少库</span></div>';
+  h += '<div class="card card-pad"><div class="rowline">' +
+    [7, 14, 30].map(function(n){
+      return '<button class="chip-btn" data-statsdays="' + n + '" aria-pressed="' +
+        String((S.statsDays || 14) === n) + '">近 ' + n + ' 天</button>';
+    }).join('') + '</div>' + legend(TREND_KEYS) + trendSVG(d.series || [], TREND_KEYS) +
+    compareLine(d.compare, Math.max(1, Math.floor((d.days || 14) / 2))) + '</div>';
+
+  /* 谁在说话 + 能力调用 */
+  h += '<div class="grid2">' +
+    '<div class="card card-pad"><h3>谁在说话</h3><div class="tiny">按对话轮次分（' +
+    '一个会话里三个机器人各记各的）</div>' +
+    '<div style="margin-top:10px">' +
+    donutBlock((d.agents || []).map(function(r){ return [agName(r[0]), r[1]]; })) +
+    '</div></div>' +
+    '<div class="card card-pad"><h3>能力调用排行</h3><div class="tiny">' +
+    '每次调用算 1 次（提案也算）；点数按报价估算</div>' +
+    '<div style="margin-top:10px">' +
+    bars((d.skills || []).map(function(s){ return [s.label, s.count]; })) +
+    '</div><div class="tiny" style="margin-top:9px">合计预估 <b>' + (k.points || 0) +
+    '</b> 点：' + (d.skills || []).filter(function(s){ return s.points > 0; })
+      .map(function(s){ return esc(s.label + ' ' + s.points); }).join(' · ') +
+    '</div></div></div>';
+
+  /* 用户想要的（需求卡） */
+  h += '<div class="sect-title"><h3>用户想要什么</h3>' +
+    '<span class="hint">需求卡里被选中的档位 top —— 用户在前台挑的类型' +
+    '（每列各自比高低，右边是次数）</span></div>';
+  h += '<div class="card card-pad"><div class="grid4">' +
+    ['style', 'element', 'color', 'scene'].map(function(dim){
+      return '<div><div class="dimh">' + esc((d.dim_label || {})[dim] || dim) + '</div>' +
+        bars(((d.demand || {})[dim] || []), '', true) + '</div>';
+    }).join('') + '</div></div>';
+
+  /* 用户找的（检索热词） */
+  h += '<div class="sect-title"><h3>用户找了什么</h3>' +
+    '<span class="hint">检索花型库时提到的标签词 top</span></div>';
+  h += '<div class="card card-pad">' + bars(d.queries || []) + '</div>';
+
+  /* 花型库画像 */
+  h += '<div class="sect-title"><h3>花型库画像</h3>' +
+    '<span class="hint">库里已经在卖什么（每列各自比高低）</span></div>';
+  var srcTags = Object.keys(L.by_source || {}).map(function(s){
+    return '<span class="tag">' + esc(LIBSRC[s] || s) + ' ' + L.by_source[s] + '</span>';
+  }).join('');
+  var stTags = Object.keys(L.by_status || {}).map(function(s){
+    return '<span class="tag ' + (s === 'untagged' ? 'r' : 'j') + '">' +
+      esc(s === 'untagged' ? '标签没打上' : '已入库') + ' ' + L.by_status[s] + '</span>';
+  }).join('');
+  h += '<div class="card card-pad"><div class="rowline">' + srcTags + stTags + '</div>' +
+    '<div class="grid4" style="margin-top:12px">' +
+    ['style', 'element', 'color', 'scene'].map(function(dim){
+      return '<div><div class="dimh">库内' + esc((d.dim_label || {})[dim] || dim) +
+        ' top</div>' + bars(((L.dims || {})[dim] || []), '', true) + '</div>';
+    }).join('') + '</div>' +
+    '<div class="dimh" style="margin-top:12px">出现最多的颜色</div>' +
+    bars(L.colors || [], '', true) + '</div>';
+
+  /* 织印师三个重能力 */
+  h += '<div class="sect-title"><h3>织印师三个能力</h3>' +
+    '<span class="hint">四方连续 / 分层 PSD / 描稿仿稿 各用了多少</span></div>';
+  h += '<div class="card card-pad"><div class="kpis">' +
+    kpi((u.seamless || {}).count, '四方连续 · 次') +
+    kpi((u.seamless || {}).points, '四方连续 · 点') +
+    kpi((u.psd || {}).count, '分层 PSD · 次') +
+    kpi((u.psd || {}).points, '分层 PSD · 点') +
+    kpi((u.trace || {}).count, '描稿仿稿 · 次') +
+    kpi((u.trace || {}).points, '描稿仿稿 · 点') +
+    '</div>' + legend(ENG_KEYS) + trendSVG(d.series || [], ENG_KEYS) + '</div>';
+
+  /* ================= 六块"以后"才有的数据（埋点） =================
+     这六块原来在页面上是一句"没落盘、补上埋点就能出图"。现在埋点已经补上了：
+     出图成败/耗时、提案转化、知识库命中由后端运行时上报；
+     来路/停留/点击/离开由前端上报。全部落在 数据/telemetry/。
+     埋点上线之前的行为没有落盘 —— 那段时间显示 0 并写清"从哪天起才有"。 */
+  var G = d.gen || {}, F = d.funnel || {}, KB = d.kb_stat || {};
+  var FE = d.frontend || {}, EN = d.ending || {}, COV = d.coverage || {};
+
+  /* ① 出图成功率 + ④ 耗时与真实点数 */
+  h += '<div class="sect-title"><h3>出图成功率与耗时</h3>' +
+    '<span class="hint">真的执行过的每一次（含失败的）</span></div>';
+  h += '<div class="card card-pad"><div class="kpis">' +
+    kpi(G.attempts, '实际出图次数') + kpi(G.ok, '成功') + kpi(G.fail, '失败') +
+    kpi(pct(G.rate), '成功率') + kpi(fmtMs(G.avg_ms), '平均耗时') +
+    kpi(fmtMs(G.p90_ms), '90% 不超过') + kpi(G.points, '实际花掉点数') +
+    (G.mock ? kpi(G.mock, '占位图（还没配生图 Key）') : '') +
+    '</div>' +
+    ((G.by_skill || []).length ? '<div class="dimh" style="margin-top:15px">按能力拆分</div>' +
+      tbl(['能力', '次数', '成功', '成功率', '平均耗时'], G.by_skill.map(function(s){
+        return [esc(s.label), s.attempts, s.ok,
+                '<span class="' + (s.rate >= 90 ? 'good' : (s.rate < 70 ? 'hi' : '')) +
+                '">' + pct(s.rate) + '</span>', fmtMs(s.avg_ms)];
+      })) : '') +
+    ((G.by_reason || []).length ? '<div class="dimh" style="margin-top:15px">' +
+      '失败都是为什么（点开就知道该动哪一块）</div>' +
+      bars(G.by_reason.map(function(r){ return [r[1], r[2]]; })) : '') +
+    legend(GEN_KEYS) + trendSVG(d.series || [], GEN_KEYS) +
+    '<div class="tiny" style="margin-top:6px">成功率口径：技能回 ok <b>且真的产出了东西</b>' +
+    '（图或 PSD 文件）才算成功 —— 分层 PSD 没有预览图，只看 images 会把它判成失败。' +
+    '<br>耗时 = 服务端从收下确认到出图返回（含模型排队），失败的那次也算进去。' +
+    '<br>「实际花掉点数」是这次执行的真实报价合计，不是拿调用次数估的；' +
+    '但后端还没有钱包，所以它是"该扣多少"，不是"账上少了多少"。' +
+    '</div>' + telNote(COV, '出图') + '</div>';
+
+  /* ② 提案 → 确认转化率 */
+  h += '<div class="sect-title"><h3>提案 → 确认转化率</h3>' +
+    '<span class="hint">挂出来的方案，有几张被点了确认</span></div>';
+  h += '<div class="card card-pad"><div class="kpis">' +
+    kpi(F.proposals, '挂出方案') + kpi(F.confirmed, '点了确认') +
+    kpi(F.unconfirmed, '没人点') + kpi(pct(F.conv), '转化率') +
+    kpi(F.stuck_points, '没人点的卡片上压着多少点') +
+    kpi(F.direct, '绕过卡片直接执行') +
+    '</div>' +
+    '<div class="dimh" style="margin-top:15px">这一段流程</div>' +
+    bars([['挂出方案', F.proposals || 0],
+          ['点了确认', F.confirmed || 0],
+          ['没人点', F.unconfirmed || 0]]) +
+    ((F.by_skill || []).length ? '<div class="dimh" style="margin-top:15px">按能力拆分</div>' +
+      tbl(['能力', '挂出', '确认', '转化率'], F.by_skill.map(function(s){
+        return [esc(s.label), s.proposals, s.confirmed,
+                '<span class="' + (s.conv >= 50 ? 'good' : (s.conv < 25 ? 'hi' : '')) +
+                '">' + pct(s.conv) + '</span>'];
+      })) : '') +
+    '<div class="tiny" style="margin-top:10px">同一张卡片上切张数 / 切还原度 / 换路线算' +
+    '<b>同一张</b>（按提案编号去重），所以不会被用户自己的按钮刷低；' +
+    '界面上绕开卡片直接执行的单列一栏，不混进转化率。' +
+    '<br><b>「没人点」的那些最值得查</b>：点开「会话」翻那几句，多半是报价说贵了、' +
+    '或者需求没讲清让人不敢点。</div>' + telNote(COV, '提案转化') + '</div>';
+
+  /* ③ 知识库命中率 */
+  h += '<div class="sect-title"><h3>知识库命中率</h3>' +
+    '<span class="hint">问了几次、几次真在资料里找到、几次只能回"没有"</span></div>';
+  h += '<div class="card card-pad"><div class="kpis">' +
+    kpi(KB.lookups, '检索次数') + kpi(KB.hits, '命中') + kpi(KB.miss, '没命中') +
+    kpi(pct(KB.rate), '命中率') + kpi(KB.docs, '资料篇数') + kpi(KB.qa, '标准问答') +
+    '</div>' +
+    '<div class="dimh" style="margin-top:15px">问了什么、又没答上（用户原话）</div>' +
+    bars(KB.top_miss || []) +
+    '<div class="tiny" style="margin-top:10px">命中率低，不一定是我们答得差 —— ' +
+    '用户问的东西资料里根本没有时，机器人只能老实说"没有"，这是设计如此（不许编）。' +
+    '<br>上面这张"没答上"的清单，就是下一步该往知识库里补的题目。</div>' +
+    telNote(COV, '知识库') + '</div>';
+
+  /* ⑤ 前端埋点：来路 / 停留 / 点击 */
+  h += '<div class="sect-title"><h3>用户怎么用这个页面</h3>' +
+    '<span class="hint">来路、停留时长、点了哪些按钮</span></div>';
+  h += '<div class="card card-pad"><div class="kpis">' +
+    kpi(FE.visits, '来访次数') + kpi(FE.visitors, '来访会话') +
+    kpi(FE.avg_dwell, '平均停留（秒）') + kpi(FE.clicks, '按钮点击') +
+    kpi(FE.silent, '只点按钮没说过话') +
+    '</div>' + legend(VISIT_KEYS) + trendSVG(d.series || [], VISIT_KEYS) +
+    '<div class="grid2" style="margin-top:4px">' +
+      '<div><div class="dimh">从哪来</div>' + bars(FE.refs || []) + '</div>' +
+      '<div><div class="dimh">停在哪个页面</div>' +
+        bars((FE.pages || []).map(function(r){ return [agName(r[0]), r[1]]; })) +
+      '</div>' +
+    '</div>' +
+    '<div class="dimh" style="margin-top:15px">点了哪些按钮 top</div>' +
+    bars((FE.acts || []).map(function(r){ return [ACT_LABEL[r[0]] || r[0], r[1]]; })) +
+    '<div class="tiny" style="margin-top:10px">只报"发生了什么"，<b>不报聊天内容</b> —— ' +
+    '统计用不上第二份，少传一句就少一分泄漏。' +
+    '<br>「只点按钮没说过话」的人最值得盯：点了几下就走了，通常是没看懂该从哪开口。</div>' +
+    telNote(COV, '前端埋点') + '</div>';
+
+  /* ⑥ 会话结束方式 */
+  h += '<div class="sect-title"><h3>会话结束方式</h3>' +
+    '<span class="hint">是聊完走的，还是卡住走的</span></div>';
+  h += '<div class="card card-pad"><div class="grid2">' +
+    '<div>' + donutBlock((EN.items || []).map(function(r){ return [r[1], r[2]]; }),
+                         '离开次数') + '</div>' +
+    '<div>' + tbl(['走法', '次数', '平均聊了几轮'], (EN.items || []).map(function(r){
+      var t = (EN.avg_turns || {})[r[0]];
+      return [esc(r[1]), r[2], (t === null || t === undefined) ? '—' : t];
+    })) + '</div></div>' +
+    '<div class="tiny" style="margin-top:10px">用户走的时候由服务端判：' +
+    '我方最后一句是问句 → 在等他回话；桌上还压着没点的卡片 → 可能卡在"要不要出图"；' +
+    '给了完整答复才走 → 聊完的；一句话没说就走 → 进来就走。' +
+    '<br><b>「压着卡片」和「进来就走」这两类要去看会话记录</b>：' +
+    '前者多半是报价或需求没说清，后者是首页没让人看懂这个东西能干什么。</div>' +
+    telNote(COV, '会话结束方式') + '</div>';
+
+  /* 注册与充值 */
+  h += '<div class="sect-title"><h3>注册与充值</h3>' +
+    '<span class="hint">暂时没有这两块数据</span></div>';  h += '<div class="card card-pad"><div class="note r">' +
+    esc(A.reason || '后端还没有账号与计费模块。') + '</div>' +
+    '<div class="small muted" style="margin-top:9px">这两块得先有<b>账号/登录</b>和' +
+    '<b>点数钱包</b>（下单、扣费、流水）才谈得上统计。眼下前台的注册、充值界面是演示用的，' +
+    '不产生真数据，所以这里不画假曲线。要做真的话，先定三件事：谁来登录、点数怎么充、' +
+    '扣费按什么口径算。</div></div>';
+
+  /* 每个块自己的口径写在块里（成功率怎么看、耗时怎么算、哪些卡片压着等），
+     这里不再单开一节"这些数字从哪来" —— 看板是拿来看数的，不是拿来看说明书的。 */
+  return h;
+}
+
+/* =========================================================================
+   2. 模型与密钥
+   ========================================================================= */
+function viewModel(){
+  var d = S.st;
+  if (!d) return '<div class="card card-pad">正在读取…</div>';
+  var m = d.model || {}, im = d.image || {}, kb = d.kb || {}, lb = d.library || {};
+  var se = d.seamless || {}, ps = d.psdlayer || {}, psc = ps.cfg || {};
+  // 描稿仿稿：cfg 是"我填了什么"，eff 是"实际会用哪套"，inherits 标明哪几项还在继承生图
+  var tr = d.trace || {}, trc = tr.cfg || {}, tri = tr.inherits || {};
+  tr.eff = tr.eff || {};
+  var h = '';
+
+  h += '<div class="note b">这页按<b>机器人</b>分组：每台机器人下面写清它有哪些能力、' +
+       '每个能力走哪套 API、用哪把 Key —— 全都能改。改完点最下面的「保存并重载」；' +
+       '密钥栏留空表示不改动 —— 不会把原来的 Key 清掉。</div>';
+
+  /* ---------- 通用：三个机器人共用 ---------- */
+  h += '<div class="card card-pad mt">' +
+    '<div class="rolehead"><b>通用</b><span class="k">所有机器人共用</span></div>' +
+    '<div class="small muted" style="margin:5px 0 0">' +
+      '客服、花型师、织印师三个机器人的<b>对话、判断意图、看图片</b>都走这一套。' +
+      '它是共用的大脑，下面两个分组是它调用的手。</div>' +
+    '<div class="grp">' +
+      '<div class="grp-h"><b>对话模型</b><span class="k">大语言模型</span></div>' +
+      '<div class="two" style="margin-top:9px">' +
+        fld('接口地址 Base URL', 'base_url', m.base_url, 'https://api.deepseek.com/v1') +
+        fld('模型名', 'model', m.model, 'deepseek-chat') +
+      '</div>' +
+      '<div class="two">' +
+        fld('API Key', 'api_key', '', m.api_key ? ('当前：' + m.api_key + '，留空不改') : '还没配',
+            'password') +
+        fld('识图模型', 'vision_model', m.vision_model, '留空 = 跟对话模型同一个') +
+      '</div>' +
+      '<div class="two">' +
+        fld('温度（越大越发散）', 'temperature', m.temperature) +
+        fld('单轮最大 Token', 'max_tokens', m.max_tokens) +
+      '</div>' +
+      '<div class="tiny">推理模型会把思考也算进 max_tokens，留太小正文会被截断' +
+      '（实测会整轮降级变笨）。现在给的是 ' + esc(String(m.max_tokens)) + '，不够就往上加。' +
+      '<br>识图模型是「看图」用的那个；分层 PSD 的视觉诊断默认就复用这里的 Key 和网关，' +
+      '要拆到别家去下面 ③ 里单独填。</div>' +
+      '<div class="mrow">' + chip(!!m.llm_enabled,
+        'Key 已配', '没配 Key（只能走本地规则兜底）') + '</div>' +
+    '</div>' +
+    '</div>';
+
+  /* ---------- 花型设计师：生图 ---------- */
+  h += '<div class="card card-pad">' +
+    '<div class="rolehead g"><b>花型设计师</b><span class="k">生图</span></div>' +
+    '<div class="small muted" style="margin:5px 0 0">' +
+      '它出图有两条路，走的是<b>同一套生图模型</b>：按需求卡<b>生成花型</b>、' +
+      '在已有图上<b>定向改图</b>。挑图和识图那一步走上面「通用」那套。</div>' +
+    '<div class="grp">' +
+      '<div class="grp-h"><b>生图模型</b><span class="k">' +
+        esc(im.provider || '未配') + '</span></div>' +
+      '<div class="three" style="margin-top:9px">' +
+        fld('服务商', 'im_provider', im.provider, 'volcengine / openai / mock') +
+        fld('模型', 'im_model', im.model) +
+        fld('单张点数', 'im_cost', im.cost) +
+      '</div>' +
+      fld('生图接口地址', 'im_base_url', im.base_url) +
+      '<div class="two">' +
+        fld('生图 API Key', 'image_api_key', '',
+            m.image_api_key ? ('当前：' + m.image_api_key + '，留空不改') : '还没配', 'password') +
+        fld('一次出几张', 'im_variants', im.variants, '4') +
+      '</div>' +
+      '<div class="tiny">一次出 ' + esc(String(im.variants || 1)) + ' 张，报价 = 单张点数 × 张数；' +
+      '张数改大等得更久（每张都是一次独立请求），最多 8 张。' +
+      '改点数会立刻影响用户在对话里看到的报价。<br>' +
+      '这张 Key 是<b>生图平台</b>（火山方舟）的，和上面的对话 Key 不通用。</div>' +
+      '<div class="mrow">' + chip(!!m.image_api_key,
+        '已配生图 Key', '没配生图 Key（出不了图）') + '</div>' +
+    '</div>' +
+    '</div>';
+
+  /* ---------- 织印师：三个能力，三套接口 ---------- */
+  h += '<div class="card card-pad">' +
+    '<div class="rolehead r"><b>织印师</b><span class="k">3 个能力 · 接口各不相同</span></div>' +
+    '<div class="small muted" style="margin:5px 0 0">' +
+      '它手上是三个独立的能力，各自对接的 API 都不一样，一个一个写清。</div>' +
+
+    /* ① 描稿仿稿 */
+    '<div class="grp">' +
+      '<div class="grp-h"><b>① 描稿仿稿</b><span class="k">' +
+        (tr.has_own_key ? '已单独配 Key' : '默认沿用生图那套') + '</span></div>' +
+      '<div class="tiny" style="margin-bottom:9px">' +
+      '照片进、平面花型稿出。默认<b>沿用上面「花型设计师 → 生图模型」那套</b>' +
+      '网关、模型和 Key，只是提示词换成"忠实提取照片里的图案"。' +
+      '这里<b>每一项都可以单独填</b>：只改哪项就填哪项，' +
+      '<b>留空的那项继续沿用生图</b>（想退回共用，把填过的内容清空即可）。</div>' +
+      '<div class="three">' +
+        fld('服务商', 'tr_provider', trc.provider, '留空 = 沿用生图') +
+        fld('模型', 'tr_model', trc.model, '留空 = 沿用生图') +
+        fld('单张点数', 'tr_cost', trc.cost,
+            tr.eff.cost == null ? '留空 = 沿用生图' : ('留空 = 沿用生图（' + tr.eff.cost + '）')) +
+      '</div>' +
+      fld('接口地址 Base URL', 'tr_base_url', trc.base_url, '留空 = 沿用生图') +
+      fld('描稿 API Key', 'trace_api_key', '',
+          m.trace_api_key ? ('当前：' + m.trace_api_key + '，留空不改')
+                          : '留空 = 沿用上面那把生图 Key', 'password') +
+      '<div class="tiny">描稿要"忠实提取"而不是自由发挥，对模型的要求跟生图不一样 —— ' +
+      '想给它单独换一个更擅长读照片的模型或走另一家网关，就填在这里。' +
+      '<br>点数是<b>单张</b>；描稿一次出一张，报价 = 这一项。</div>' +
+      '<div class="mrow">' +
+        chip(!!tr.has_own_key, '描稿独立一把 Key', '描稿沿用生图 Key') +
+        chip(!tri.model, '描稿模型：' + esc(String(tr.eff.model || '未配')) + '（单独配）',
+             '描稿模型：' + esc(String(tr.eff.model || '未配')) + '（沿用生图）') +
+      '</div>' +
+    '</div>' +
+
+    /* ② 四方连续 */
+    '<div class="grp">' +
+      '<div class="grp-h"><b>② 四方连续</b><span class="k">' +
+        (se.has_key ? '已配出图 Key' : '没配出图 Key（只能跑纯算法）') + '</span></div>' +
+      '<div class="tiny" style="margin-bottom:9px">' +
+      '把一张花型做成能无缝平铺的单元。分两条线：<b>出图</b>要画得像、保形；' +
+      '<b>诊断</b>只要能看图、便宜就行 —— 可以是两家网关、两把 Key。' +
+      '默认<b>一个网关两用</b>，诊断 Key 留空就整条落回出图那套（单网关）。</div>' +
+      '<div class="two">' +
+        fld('出图 Key', 'seamless_api_key', '',
+            m.seamless_api_key ? ('当前：' + m.seamless_api_key + '，留空不改') : '还没配', 'password') +
+        fld('诊断 Key', 'seamless_analyze_key', '',
+            m.seamless_analyze_key ? ('当前：' + m.seamless_analyze_key + '，留空不改')
+                                    : '留空 = 诊断沿用出图那套', 'password') +
+      '</div>' +
+      '<div class="two">' +
+        fld('出图网关', 'se_base_url', se.base_url) +
+        fld('诊断网关', 'se_analyze_base', se.analyze_base) +
+      '</div>' +
+      '<div class="two">' +
+        fld('出图模型', 'se_image_model', se.image_model) +
+        fld('诊断模型', 'se_analyze_model', se.analyze_model) +
+      '</div>' +
+      '<div class="two">' +
+        fld('单张点数', 'se_cost', se.cost) +
+        fld('候选张数', 'se_candidates', se.candidates, '2') +
+      '</div>' +
+      '<div class="tiny">候选张数是模型补缝时跑几版挑最好的一版（模型不可复现），' +
+      '越多等越久、也越费钱；纯算法那条线不受它影响。' +
+      '<br>出图和生图那套<b>不通用</b>，所以是单独一把 Key。' +
+      '引擎跑在算法自带的 venv 里（numpy + Pillow），主程序保持零依赖；' +
+      '没装好在终端跑一次「算法/四方连续/安装.command」。</div>' +
+      '<div class="mrow">' +
+        '<span class="chip-btn" aria-pressed="' + String(!!se.available) + '">' +
+          (se.available ? '引擎就绪' : '引擎未就绪') + '</span>' +
+        '<span class="chip-btn" aria-pressed="' + String(!!se.split_lines) + '">' +
+          (se.split_lines ? '诊断独立走一家' : '诊断沿用出图 Key') + '</span>' +
+      '</div>' +
+    '</div>' +
+
+    /* ③ 分层 PSD */
+    '<div class="grp">' +
+      '<div class="grp-h"><b>③ 分层 PSD</b><span class="k">' +
+        (ps.available ? '引擎就绪' : '引擎未就绪') + '</span></div>' +
+      '<div class="tiny" style="margin-bottom:9px">' +
+      '把花型按元素拆成带中文图层名的多层 PSD。要两家：' +
+      '<b>RunningHub</b> 跑 SAM3.1 抠图工作流（必填，没有就出不了图）；' +
+      '<b>视觉诊断</b>看图决定分几层（可选，留空就沿用「通用」那把 Key 和网关），' +
+      '没配也能跑，只是退回默认单层。</div>' +
+      '<div class="two">' +
+        fld('RunningHub API Key', 'runninghub_api_key', '',
+            m.runninghub_api_key ? ('当前：' + m.runninghub_api_key + '，留空不改') : '还没配',
+            'password') +
+        fld('视觉诊断 Key', 'psdlayer_vlm_key', '',
+            m.psdlayer_vlm_key ? ('当前：' + m.psdlayer_vlm_key + '，留空不改')
+                               : '留空 = 沿用「通用」那把对话 Key', 'password') +
+      '</div>' +
+      '<div class="two">' +
+        fld('视觉诊断网关', 'psd_vlm_base', psc.vlm_base, '留空 = 沿用通用 Base URL') +
+        fld('视觉诊断模型', 'psd_vlm_model', psc.vlm_model, '留空 = 用默认') +
+      '</div>' +
+      '<div class="two">' +
+        fld('单张点数', 'psd_cost', ps.cost) +
+        fld('最多分几层', 'psd_max_layers', ps.max_layers, '4') +
+      '</div>' +
+      '<div class="tiny">多一层就多跑一次云端工作流，钱和时间都跟着涨，真花型一般 4 层就够。' +
+      '算法同样跑在自己的 venv 里（numpy + Pillow + psd-tools）。</div>' +
+      '<div class="mrow">' +
+        '<span class="chip-btn" aria-pressed="' + String(!!ps.has_runninghub_key) + '">' +
+          (ps.has_runninghub_key ? '已配 RunningHub Key' : '没配 RunningHub Key') + '</span>' +
+        '<span class="chip-btn" aria-pressed="' + String(!!ps.has_own_vlm_key) + '">' +
+          (ps.has_own_vlm_key ? '视觉诊断独立一把' : '视觉诊断沿用通用 Key') + '</span>' +
+      '</div>' +
+    '</div>' +
+    '</div>';
+
+  /* ---------- 其它设置：与具体机器人无关 ---------- */
+  h += '<div class="sect-title"><h3>其它设置</h3>' +
+       '<span class="hint">和具体哪个机器人无关，全局生效</span></div>';
+
+  h += '<div class="card card-pad"><h3>知识库</h3>' +
+    '<div class="fld" style="margin-top:10px"><label>哪些机器人照知识库答</label>' +
+      '<div class="rowline" id="kbagents">' +
+      (d.agents || []).map(function(a){
+        var on = (kb.agents || []).indexOf(a) >= 0;
+        return '<button class="chip-btn" data-kbag="' + a + '" aria-pressed="' + String(on) + '">' +
+          esc(agName(a)) + '</button>';
+      }).join('') + '</div>' +
+      '<div class="tip">默认只有客服吃知识库：花型师的主业是出图，' +
+      '塞一大段面料参数进去会压住构图指令。</div></div>' +
+    '<div class="rowline" style="margin-top:10px">' +
+      '<button class="chip-btn" data-lbtog="kb_enabled" aria-pressed="' +
+        String(!!kb.enabled) + '">启用知识库严格模式</button>' +
+    '</div>' +
+    '<div class="two" style="margin-top:10px">' +
+      fld('命中阈值（0~1，越大越严）', 'kb_min', kb.score_min) +
+      fld('最多注入几段资料', 'kb_topk', kb.top_k) +
+    '</div>' +
+    '<div class="tiny">调完用「知识库 → 检索测试」看效果：' +
+    '该中的没中就调低，不该中的中了就调高。</div>' +
+    '</div>';
+
+  h += '<div class="card card-pad"><h3>花型库</h3>' +
+    '<div class="rowline" style="margin-top:10px">' +
+      '<button class="chip-btn" data-lbtog="auto_ingest" aria-pressed="' +
+        String(!!lb.auto_ingest) + '">AI 出的图自动入库</button>' +
+      '<button class="chip-btn" data-lbtog="enabled" aria-pressed="' +
+        String(!!lb.enabled) + '">启用花型库</button>' +
+    '</div>' +
+    '<div class="tiny" style="margin-top:7px">关掉自动入库后，AI 生成的图只给用户看，不进库。</div>' +
+    '</div>';
+
+  h += '<div class="card card-pad" style="display:flex;gap:9px;align-items:center;flex-wrap:wrap">' +
+    '<button class="btn" data-act="save-config">保存并重载</button>' +
+    '<button class="btn ghost" data-act="reload">只重新加载</button>' +
+    '<span class="small muted" id="cfgnote"></span></div>';
+  return h;
+}
+function fld(label, id, val, ph, type){
+  return '<div class="fld"><label>' + esc(label) + '</label>' +
+    '<input id="f_' + id + '" value="' + esc(val == null ? '' : val) + '"' +
+    (ph ? ' placeholder="' + esc(ph) + '"' : '') +
+    ' type="' + (type || 'text') + '" autocomplete="off"></div>';
+}
+/* 只读的状态小标：亮着一条、灭着一条，二选一显示（不给用户点，纯体检结论）。 */
+function chip(on, whenTrue, whenFalse){
+  return '<span class="chip-btn" aria-pressed="' + String(!!on) + '">' +
+    esc(on ? whenTrue : whenFalse) + '</span>';
+}
+function bindModel(){ /* 输入都是原生 input，不用额外绑定 */ }
+function collectModel(){
+  function v(id){ var e = $('f_' + id); return e ? (e.value || '').trim() : ''; }
+  var out = {
+    llm: {base_url:v('base_url'), model:v('model'), temperature:v('temperature'),
+          max_tokens:v('max_tokens')},
+    // 识图模型的空值是合法的（留空 = 跟对话模型同一个），所以不走 dropNull
+    vision: {model:v('vision_model')},
+    image: {provider:v('im_provider'), model:v('im_model'), cost:v('im_cost'),
+            base_url:v('im_base_url'), variants:v('im_variants')},
+    // 描稿仿稿：空值在这里是**合法语义**（留空 = 沿用生图那套），跟 image 的
+    // "留空=不改"不同 —— 后端会把空值写进去，这样才退得回共用状态。
+    // 所以控件不在这页时给 null（后端 `if isinstance(tr, dict) and tr` 会跳过），
+    // 免得在别的页保存时把描稿配置一起抹了。
+    trace: (document.getElementById('f_tr_model')
+            || document.getElementById('f_tr_base_url')
+            || document.getElementById('f_tr_provider'))
+             ? {provider:v('tr_provider'), base_url:v('tr_base_url'),
+                model:v('tr_model'), cost:v('tr_cost')}
+             : null,
+    psdlayer: dropNull({cost:v('psd_cost'), max_layers:v('psd_max_layers'),
+                        vlm_base:v('psd_vlm_base'), vlm_model:v('psd_vlm_model')}),
+    kb: dropNull({score_min:v('kb_min'), top_k:v('kb_topk'),
+                  agents:kbAgentsSel(), enabled:lbTog('kb_enabled')}),
+    library: dropNull({auto_ingest:lbTog('auto_ingest'), enabled:lbTog('enabled')}),
+    seamless: dropNull({cost:v('se_cost'), candidates:v('se_candidates'),
+                        base_url:v('se_base_url'),
+                        analyze_base:v('se_analyze_base'),
+                        image_model:v('se_image_model'),
+                        analyze_model:v('se_analyze_model')}),
+    api_key: v('api_key'), image_api_key: v('image_api_key'),
+    trace_api_key: v('trace_api_key'),
+    seamless_api_key: v('seamless_api_key'),
+    seamless_analyze_key: v('seamless_analyze_key'),
+    runninghub_api_key: v('runninghub_api_key'),
+    psdlayer_vlm_key: v('psdlayer_vlm_key')
+  };
+  return out;
+}
+/* 控件不在当前这一页时，收集结果为 null，随后被丢掉 —— 也就是"这一项不改"。
+   别小看这一步：知识库和花型库的开关不在「模型与密钥」页上，
+   早先这里查不到就直接返回 false / []，于是在模型页点一次保存，
+   就把知识库和花型库一起关掉了（运营完全看不出来）。 */
+function dropNull(o){
+  var out = {};
+  for (var k in o){ if (o[k] !== null && o[k] !== undefined) out[k] = o[k]; }
+  return out;
+}
+function kbAgentsSel(){
+  var ns = document.querySelectorAll('[data-kbag]');
+  if (!ns.length) return null;                 // 这排按钮只在知识库页
+  var out = [];
+  for (var i = 0; i < ns.length; i++){
+    if (ns[i].getAttribute('aria-pressed') === 'true') out.push(ns[i].getAttribute('data-kbag'));
+  }
+  return out;
+}
+function lbTog(k){
+  var b = document.querySelector('[data-lbtog="' + k + '"]');
+  return b ? b.getAttribute('aria-pressed') === 'true' : null;   // 不在本页 → 不提交
+}
+function saveConfig(){
+  var payload = collectModel();
+  var note = $('cfgnote');
+  if (note) note.textContent = '正在保存…';
+  apiPost('/api/admin/config', payload, function(ok, d){
+    if (ok && d && d.ok){
+      toast('已保存，服务已重新加载');
+      loadState(function(){ render(); });
+    } else {
+      toast((d && d.error) || '保存失败', true);
+      if (note) note.textContent = '';
+    }
+  });
+}
+
+/* =========================================================================
+   3. 机器人人设（说话风格 + 角色职责）
+   ========================================================================= */
+function ensurePersona(){
+  if (!S.personas) loadPersona();
+}
+function loadPersona(cb){
+  apiGet('/api/admin/persona', function(ok, d){
+    if (ok && d && d.ok){ S.personas = d; if (cb) cb(); else render(); }
+  });
+}
+function viewPersona(){
+  var d = S.personas;
+  if (!d) return '<div class="card card-pad">正在读取人设…</div>';
+  var items = d.items || [];
+  var cur = null;
+  for (var i = 0; i < items.length; i++) if (items[i].agent === S.personaCur) cur = items[i];
+  if (!cur) cur = items[0];
+  if (!cur) return '<div class="card card-pad">没读到人设</div>';
+
+  var h = '<div class="tabs">' + items.map(function(it){
+    return '<button class="chip-btn" data-pag="' + esc(it.agent) + '" aria-pressed="' +
+      String(it.agent === cur.agent) + '">' + esc(agName(it.agent)) +
+      '<span class="tiny" style="margin-left:5px">' + (it.chars || 0) + '字</span></button>';
+  }).join('') + '</div>';
+
+  h += '<div class="card card-pad"><h3>说话风格</h3>' +
+    '<div class="small muted" style="margin:6px 0 10px">' +
+    '点一个档位直接套用，也可以在下面文本框里改 —— 改完就是你自己那版。' +
+    '这一节优先级高于人设里的语气描述。</div>' +
+    '<div class="presets">' + (d.presets || []).map(function(p){
+      return '<button class="chip-btn" data-preset="' + esc(p.key) + '" aria-pressed="' +
+        String((cur.style && cur.style.preset) === p.key) + '">' + esc(p.label) + '</button>';
+    }).join('') + '</div>' +
+    '<textarea id="stylebox" rows="7">' + esc((cur.style && cur.style.body) || '') + '</textarea>' +
+    '<div class="tiny" style="margin-top:5px">当前档位：' +
+      esc((cur.style && cur.style.preset) || 'warm') + '</div>' +
+    '</div>';
+
+  h += '<div class="card card-pad"><h3>角色职责（人设全文）</h3>' +
+    '<div class="small muted" style="margin:6px 0 10px">' +
+    '写这个机器人是干什么的、有什么底线。文件：<span class="mono">' +
+      esc(cur.file || '') + '</span></div>' +
+    '<textarea id="personabox" rows="16">' + esc(cur.body || '') + '</textarea>' +
+    '<div class="small muted" style="margin-top:8px">已挂载技能：' +
+      (cur.skills || []).join('、') + '</div>' +
+    '</div>';
+
+  h += '<div class="card card-pad" style="display:flex;gap:9px;align-items:center;flex-wrap:wrap">' +
+    '<button class="btn" data-act="save-persona">保存' + esc(agName(cur.agent)) + '</button>' +
+    '<span class="small muted">保存后立即生效，不用重启服务</span></div>';
+  return h;
+}
+function bindPersona(){}
+function savePersona(){
+  var st = $('stylebox'), pb = $('personabox');
+  var preset = 'warm';
+  var ps = document.querySelector('[data-preset][aria-pressed="true"]');
+  if (ps) preset = ps.getAttribute('data-preset');
+  apiPost('/api/admin/persona/save', {
+    agent: S.personaCur,
+    body: pb ? pb.value : undefined,
+    style: {preset: preset, body: st ? st.value : undefined}
+  }, function(ok, d){
+    if (ok && d && d.ok){
+      toast('已保存：' + (d.saved || []).join(' + '));
+      S.personas = null;
+      loadPersona();
+      loadState(function(){ renderNav(); });
+    } else toast((d && d.error) || '没保存成功', true);
+  });
+}
+
+/* =========================================================================
+   4. 知识库
+   ========================================================================= */
+function ensureKb(){ if (!S.kb) loadKb(); }
+function loadKb(cb){
+  apiGet('/api/admin/kb', function(ok, d){
+    if (ok && d && d.ok){ S.kb = d; if (cb) cb(); else render(); }
+  });
+}
+function viewKb(){
+  var d = S.kb;
+  if (!d) return '<div class="card card-pad">正在读取知识库…</div>';
+  var st = d.stats || {};
+  // 用 <b> 别用 Markdown 的 ** —— 这里是 HTML 文本节点，星号会原样显示出来
+  var h = '<div class="note">喂进来的资料就是机器人回答的<b>唯一依据</b>。' +
+    '命中就照资料答，没命中它会直说「我这边没有这份资料」，不会自己编。</div>';
+
+  h += '<div class="card card-pad mt"><div class="kpis">' +
+    '<div class="kpi"><b>' + (st.docs || 0) + '</b><span>篇资料</span></div>' +
+    '<div class="kpi"><b>' + (st.chunks || 0) + '</b><span>个片段</span></div>' +
+    '<div class="kpi"><b>' + (st.qa || 0) + '</b><span>条标准问答</span></div>' +
+    '<div class="kpi"><b>' + (st.chars || 0) + '</b><span>总字数</span></div>' +
+    '<div style="margin-left:auto" class="small muted">生效范围：' +
+      esc((st.agents || []).map(agName).join('、') || '无') + '</div>' +
+    '</div></div>';
+
+  /* --- 检索测试 --- */
+  h += '<div class="card card-pad"><h3>检索测试</h3>' +
+    '<div class="small muted" style="margin:6px 0 9px">' +
+    '用客户的原话试一下，看看能不能捞到资料、以及模型待会儿会看到什么。</div>' +
+    '<div class="rowline"><input id="kbq" class="mono" style="flex:1;min-width:220px;padding:7px 10px;' +
+      'border:1px solid var(--line);border-radius:8px" placeholder="例：运费怎么算？/ 多少钱一米 / 起订量">' +
+      '<button class="btn sm" data-act="kb-test">测试</button></div>' +
+    '<div id="kbresult"></div></div>';
+
+  /* --- 资料 + 问答 --- */
+  h += '<div class="kb-cols mt">';
+
+  h += '<div class="card card-pad"><h3>资料文档</h3>' +
+    '<div class="small muted" style="margin:6px 0 10px">' +
+    '支持直接粘贴，也可以选 .txt / .md 文件。长文档会自动切成片段。</div>' +
+    '<div class="fld"><label>标题</label><input id="kbtitle" placeholder="例：弹力针织面料参数"></div>' +
+    '<div class="fld"><label>关键词 / 别名（逗号分隔）</label>' +
+      '<input id="kbkw" placeholder="例：价格,报价,多少钱,起订量">' +
+      '<div class="tip">同义说法填在这里。字面上不像但意思一样的问法，靠它才能捞到。</div></div>' +
+    '<div class="fld"><label>正文</label><textarea id="kbtext" rows="9" ' +
+      'placeholder="把资料原样粘进来。小标题单独占一行（比如「价格」），检索会更准。"></textarea></div>' +
+    '<div class="rowline">' +
+      '<button class="btn sm" data-act="kb-add">加入知识库</button>' +
+      '<button class="btn ghost sm" data-act="kb-file">选 .txt/.md 文件</button>' +
+      '<input type="file" id="kbfile" accept=".txt,.md,.markdown,text/plain" style="display:none">' +
+    '</div>' +
+    '<div class="sect-title" style="margin:14px 0 4px"><h3>已有资料</h3>' +
+      '<span class="hint">' + (d.docs || []).length + ' 篇</span></div>' +
+    '<div class="docs">' + ((d.docs || []).length ? (d.docs || []).map(function(it){
+      return '<div class="it"><span class="t"><b>' + esc(it.title || '未命名') + '</b>' +
+        '<div class="tiny">' + it.chunks + ' 段 · ' + it.chars + ' 字' +
+        (it.keywords && it.keywords.length ? ' · 别名：' + esc(it.keywords.join('、')) : '') +
+        '</div></span>' +
+        '<button class="chip-btn" data-kbview="' + esc(it.id) + '">看</button>' +
+        '<button class="chip-btn" data-kbdel="' + esc(it.id) + '">删</button></div>';
+    }).join('') : '<div class="tiny muted">还没有资料。</div>') + '</div></div>';
+
+  h += '<div class="card card-pad"><h3>标准问答</h3>' +
+    '<div class="small muted" style="margin:6px 0 10px">' +
+    '优先级比文档高：问法对上了就<b>原样照答</b>，一个字不改。' +
+    '适合放价格、运费、交期这类不能错的数字。</div>' +
+    '<div class="rowline" style="margin-bottom:9px">' +
+      '<input id="q_new" placeholder="客户会怎么问" style="flex:1;min-width:150px;padding:6px 9px;' +
+        'border:1px solid var(--line);border-radius:8px">' +
+      '<input id="a_new" placeholder="标准答案" style="flex:1.4;min-width:170px;padding:6px 9px;' +
+        'border:1px solid var(--line);border-radius:8px">' +
+      '<button class="btn sm" data-act="qa-add">加一条</button></div>' +
+    ((d.qa || []).length ? '<div>' + (d.qa || []).map(function(it){
+      return '<div class="qarow">' +
+        '<input data-qa-q="' + esc(it.id) + '" value="' + esc(it.q) + '">' +
+        '<input data-qa-a="' + esc(it.id) + '" value="' + esc(it.a) + '">' +
+        '<span style="display:flex;gap:5px">' +
+          '<button class="chip-btn" data-qa-save="' + esc(it.id) + '">存</button>' +
+          '<button class="chip-btn" data-qa-del="' + esc(it.id) + '">删</button>' +
+        '</span></div>';
+    }).join('') + '</div>' : '<div class="tiny muted">还没有标准问答。</div>') +
+    '</div>';
+
+  h += '</div>';
+  return h;
+}
+function bindKb(){
+  var q = $('kbq');
+  if (q) q.addEventListener('keydown', function(e){
+    if (e.key === 'Enter'){ e.preventDefault(); kbTest(); }
+  });
+}
+function kbTest(){
+  var q = $('kbq');
+  var text = q ? (q.value || '').trim() : '';
+  if (!text){ toast('先写一句客户会怎么问'); return; }
+  var box = $('kbresult');
+  if (box) box.innerHTML = '<div class="tiny muted" style="margin-top:8px">正在检索…</div>';
+  apiPost('/api/admin/kb/save', {op:'lookup', q:text, agent:'assistant'}, function(ok, d){
+    if (!(ok && d && d.ok)){ if (box) box.innerHTML = ''; toast('检索失败', true); return; }
+    S.kbTest = d;
+    var h = '<div class="resultbox">' +
+      '<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">' +
+        '<span class="tag ' + (d.hit ? 'j' : 'r') + '">' + (d.hit ? '命中' : '没命中') + '</span>' +
+        '<span class="small muted">' + esc(d.reason || '') + '</span></div>';
+    if (d.qa && d.qa.length){
+      h += '<div style="margin-top:8px"><div class="tiny">命中的标准问答（原样照答）：</div>';
+      d.qa.forEach(function(x){
+        h += '<div class="small" style="margin-top:3px">问：' + esc(x.q) + '<br>答：<b>' +
+          esc(x.a) + '</b></div>';
+      });
+      h += '</div>';
+    }
+    if (d.chunks && d.chunks.length){
+      h += '<div style="margin-top:8px"><div class="tiny">命中的资料片段：</div>';
+      d.chunks.forEach(function(c){
+        h += '<div class="small" style="margin-top:3px">[' + esc(c.head || c.title || '') +
+          '] ' + esc(c.text) + '</div>';
+      });
+      h += '</div>';
+    }
+    h += '<div class="tiny" style="margin-top:10px;color:var(--ink-3)">机器人会看到的指令：</div>' +
+      '<pre>' + esc(d.prompt || '') + '</pre>';
+    h += '</div>';
+    if (box) box.innerHTML = h;
+  });
+}
+function kbAddDoc(){
+  var t = $('kbtitle'), k = $('kbkw'), x = $('kbtext');
+  var text = x ? (x.value || '').trim() : '';
+  if (!text){ toast('正文是空的', true); return; }
+  apiPost('/api/admin/kb/save', {
+    op:'add_doc', text:text, title:t ? t.value : '', keywords:k ? k.value : ''
+  }, function(ok, d){
+    if (ok && d && d.ok){
+      if (d.dup){ toast(d.note || '这份资料已经在库里'); return; }
+      toast('已加入：' + (d.title || '') + '（切成 ' + d.chunks + ' 段）');
+      if (t) t.value = ''; if (k) k.value = ''; if (x) x.value = '';
+      loadKb(); loadState(function(){ renderNav(); });
+    } else toast((d && d.error) || '没加进去', true);
+  });
+}
+function kbDelDoc(id){
+  apiPost('/api/admin/kb/save', {op:'del_doc', id:id}, function(ok, d){
+    if (ok && d && d.ok){ toast('已删除'); loadKb(); loadState(function(){ renderNav(); }); }
+    else toast((d && d.error) || '没删掉', true);
+  });
+}
+function kbViewDoc(id){
+  apiGet('/api/admin/kb/doc?id=' + encodeURIComponent(id), function(ok, d){
+    if (!(ok && d && d.ok)){ toast((d && d.error) || '没读到', true); return; }
+    openLayer('<div class="modal wide"><div class="mh"><h3>' + esc(d.title || '') + '</h3>' +
+      '<p>' + esc(d.id) + (d.keywords && d.keywords.length
+        ? ' · 别名：' + esc(d.keywords.join('、')) : '') + '</p></div>' +
+      '<div class="mb"><pre class="mono" style="margin:0;white-space:pre-wrap">' +
+        esc(d.text || '') + '</pre></div>' +
+      '<div class="mf"><button class="btn ghost sm" data-act="close-layer">关掉</button></div></div>');
+  });
+}
+function kbFile(files){
+  var f = files && files[0];
+  if (!f){ return; }
+  var fr = new FileReader();
+  fr.onload = function(){
+    var txt = String(fr.result || '');
+    var x = $('kbtext'), t = $('kbtitle');
+    if (x) x.value = txt;
+    if (t && !t.value) t.value = f.name.replace(/\.(txt|md|markdown)$/i, '');
+    toast('读进来了 ' + txt.length + ' 字，检查一下再点「加入知识库」');
+  };
+  fr.onerror = function(){ toast('这个文件读不了，另存成 .txt 再传', true); };
+  fr.readAsText(f);
+}
+function qaAdd(){
+  var q = $('q_new'), a = $('a_new');
+  if (!q || !a || !(q.value || '').trim() || !(a.value || '').trim()){
+    toast('问题和答案都要填'); return;
+  }
+  apiPost('/api/admin/kb/save', {op:'add_qa', q:q.value.trim(), a:a.value.trim()},
+    function(ok, d){
+      if (ok && d && d.ok){
+        toast(d.updated ? '这条问法已有，答案已更新' : '已加一条');
+        q.value = ''; a.value = '';
+        loadKb(); loadState(function(){ renderNav(); });
+      } else toast((d && d.error) || '没加上', true);
+    });
+}
+function qaSave(id){
+  var qn = document.querySelector('[data-qa-q="' + id + '"]');
+  var an = document.querySelector('[data-qa-a="' + id + '"]');
+  apiPost('/api/admin/kb/save', {op:'update_qa', id:id,
+    fields:{q:qn ? qn.value : '', a:an ? an.value : ''}}, function(ok, d){
+    if (ok && d && d.ok) toast('已保存'); else toast((d && d.error) || '没保存', true);
+  });
+}
+function qaDel(id){
+  apiPost('/api/admin/kb/save', {op:'del_qa', id:id}, function(ok, d){
+    if (ok && d && d.ok){ toast('已删除'); loadKb(); loadState(function(){ renderNav(); }); }
+    else toast((d && d.error) || '没删掉', true);
+  });
+}
+
+/* =========================================================================
+   5. 花型库
+   ========================================================================= */
+var LIBPAT = {};
+function ensureLib(){ if (!S.lib.loaded && !S.lib.loading) loadLib(true); }
+function libQueryStr(){
+  var L = S.lib, out = ['limit=' + L.size, 'offset=' + ((L.page - 1) * L.size)];
+  if (L.q) out.push('q=' + encodeURIComponent(L.q));
+  if (L.source) out.push('source=' + encodeURIComponent(L.source));
+  DIMS4.forEach(function(d){ if (L.dim[d.key]) out.push(d.key + '=' + encodeURIComponent(L.dim[d.key])); });
+  return out.join('&');
+}
+function loadLib(reset){
+  var L = S.lib;
+  if (reset){ L.page = 1; L.items = []; }
+  L.loading = true; L.err = '';
+  paintLib();
+  apiGet('/api/library?' + libQueryStr(), function(ok, d){
+    L.loading = false;
+    if (!(ok && d && d.ok)){ L.err = (d && d.error) || '花型库读取失败。'; paintLib(); return; }
+    L.total = d.total || 0; L.stats = d.stats || {}; L.facets = d.facets || {};
+    (d.items || []).forEach(function(it){
+      if (!it || !it.id) return;
+      it.image = absURL(it.image); it.full = absURL(it.full);
+      LIBPAT[it.id] = it;
+    });
+    L.items = reset ? (d.items || []) : L.items.concat(d.items || []);
+    L.loaded = true;
+    paintLib(); renderNav();
+  });
+}
+/* 只重画 #libbody：搜索框在它外面，整体重绘会丢焦点和半截输入 */
+function paintLib(){
+  var box = $('libbody');
+  if (box) box.innerHTML = libBodyHTML();
+}
+function libEmptyHTML(msg){
+  return '<div class="card" style="margin-top:12px"><div class="empty">' +
+    '<div class="big">▦</div><span class="small">' + esc(msg) + '</span></div></div>';
+}
+function dimOpts(key){
+  if (key === 'style') return STYLE_OPTS;
+  if (key === 'element') return ELEM_OPTS;
+  if (key === 'color') return COLOR_OPTS;
+  if (key === 'scene') return SCENE_OPTS;
+  return PROD_OPTS[key] || [];
+}
+function libDimRow(dim, label){
+  var L = S.lib, list = (L.facets[dim] || []);
+  if (!list.length) return '';
+  var sel = L.dim[dim];
+  var h = '<div class="lib-dim"><span class="k">' + label + '</span><span class="chips">' +
+    '<button class="lib-chip" data-libdim="' + dim + '" data-libval="" aria-pressed="' +
+    String(!sel) + '">全部</button>';
+  list.forEach(function(p){
+    h += '<button class="lib-chip" data-libdim="' + dim + '" data-libval="' + esc(p[0]) +
+      '" aria-pressed="' + String(sel === p[0]) + '">' + esc(p[0]) + '<b>' + p[1] + '</b></button>';
+  });
+  return h + '</span></div>';
+}
+function libSourceChips(){
+  var L = S.lib, list = L.facets.source || [];
+  if (!list.length) return '';
+  var h = '<span class="chips" style="display:flex;gap:6px;flex-wrap:wrap">' +
+    '<button class="lib-chip" data-libsrc="" aria-pressed="' + String(!L.source) + '">全部来源</button>';
+  list.forEach(function(p){
+    h += '<button class="lib-chip" data-libsrc="' + esc(p[0]) + '" aria-pressed="' +
+      String(L.source === p[0]) + '">' + esc(LIBSRC[p[0]] || p[0]) + '<b>' + p[1] + '</b></button>';
+  });
+  return h + '</span>';
+}
+function libCardHTML(it){
+  var tags = '';
+  if (it.style) tags += '<i>' + esc(it.style) + '</i>';
+  if (it.element) tags += '<i class="j">' + esc(it.element) + '</i>';
+  if (it.color) tags += '<i class="g">' + esc(it.color) + '</i>';
+  if (it.scene) tags += '<i class="b">' + esc(it.scene) + '</i>';
+  var untagged = it.status && it.status !== 'ready';
+  return '<button class="lib-card" data-libopen="' + esc(it.id) + '">' +
+    '<span class="ph"><img src="' + esc(it.image) + '" alt="' + esc(it.name || '') + '" loading="lazy">' +
+      (untagged ? '<span class="warn">没打上标签</span>' : '') +
+      (it.source_label ? '<span class="tag" style="position:absolute;right:5px;top:5px;margin:0">' +
+        esc(it.source_label) + '</span>' : '') +
+    '</span>' +
+    '<span class="body"><span class="nm"><b>' + esc(it.name || '未命名') + '</b>' +
+      '<span>#' + esc(String(it.id).slice(-4)) + '</span></span>' +
+    '<span class="tg">' + tags + '</span></span></button>';
+}
+function libFilterCount(){
+  var n = 0;
+  DIMS4.forEach(function(d){ if (S.lib.dim[d.key]) n++; });
+  return n + (S.lib.source ? 1 : 0) + (S.lib.q ? 1 : 0);
+}
+function libBodyHTML(){
+  var L = S.lib;
+  if (L.loading && !L.items.length) return libEmptyHTML('正在读取花型库…');
+  if (L.err) return libEmptyHTML(L.err);
+  if (!L.total && !L.items.length && !L.q && !libFilterCount()){
+    return libEmptyHTML('库里还是空的。上面「导入图片」或者「扫目录」把图放进来。');
+  }
+  var bysrc = L.stats.by_source || {};
+  var h = '<div class="card card-pad" style="display:flex;gap:20px;align-items:center;' +
+    'flex-wrap:wrap;margin-top:12px">' +
+    '<div class="kpi"><b>' + (L.total || 0) + '</b><span>符合条件</span></div>' +
+    '<div class="kpi"><b>' + (L.stats.count || 0) + '</b><span>库内总数</span></div>' +
+    '<div class="kpi"><b>' + (bysrc['import'] || 0) + '</b><span>导入</span></div>' +
+    '<div class="kpi"><b>' + ((bysrc['ai-gen'] || 0) + (bysrc['ai-edit'] || 0)) + '</b><span>AI 产出</span></div>' +
+    '<div class="kpi"><b>' + (bysrc.trace || 0) + '</b><span>描稿成品</span></div>' +
+    '<div style="margin-left:auto">' + libSourceChips() + '</div></div>';
+  h += '<div class="card card-pad lib-filters">';
+  h += libDimRow('style', '风格') + libDimRow('element', '元素') +
+       libDimRow('color', '配色') + libDimRow('scene', '场景');
+  h += '<div style="margin-top:9px"><button class="chip-btn" data-act="lib-clear">清除全部筛选</button></div></div>';
+  if (!L.items.length){
+    return h + libEmptyHTML('这个条件下没有对得上的花型。');
+  }
+  h += '<div class="sect-title"><h3>库里的图</h3><span class="hint">点开改标签 / 重新打标签</span></div>';
+  h += '<div class="lib-grid">' + L.items.map(libCardHTML).join('') + '</div>';
+  if (L.items.length < L.total){
+    h += '<div style="margin:16px 0 4px;text-align:center">' +
+      '<button class="btn ghost sm" data-act="lib-more">加载更多（还有 ' +
+      (L.total - L.items.length) + ' 张）</button></div>';
+  }
+  return h;
+}
+function libActions(){
+  return '<button class="btn sm" data-act="lib-upload">导入图片</button>' +
+         '<button class="btn sm" data-act="lib-dir">导入文件夹</button>' +
+         '<button class="btn sm" data-act="lib-scan">扫目录</button>' +
+         '<button class="chip-btn" data-act="lib-reload">重新读取</button>';
+}
+function viewLib(){
+  var L = S.lib;
+  var h = '<div class="card card-pad"><div class="rowline">' +
+    '<span class="lib-search"><input id="libq" placeholder="按客户原话找：蓝白青花、通勤衬衫、小碎花…" ' +
+      'value="' + esc(L.q) + '"></span>' +
+    '</div>' +
+    '<div class="small muted" style="margin-top:8px">' +
+    '把客户来图、面料图、AI 出的图放进来，AI 会自动读图打标签（风格 / 元素 / 配色 / 场景 + 关键词），' +
+    '客户下次提要求，机器人直接从库里捞。' +
+    '<b>这个页面用户看不到</b> —— 用户那边只有对话。</div>' +
+    atagStatusHTML() +
+    '<input type="file" id="libfile" accept="image/*" multiple style="display:none">' +
+    '<input type="file" id="libdir" multiple style="display:none">' +
+    '</div>';
+  h += '<div id="libprog"></div>';   // 上传/文件夹导入的进度条挂这儿
+  h += '<div id="scanbox"></div>';     // 扫目录的进度条挂这儿，别混进 #libbody 被重绘掉
+  h += '<div id="libbody">' + libBodyHTML() + '</div>';
+  return h;
+}
+/* 入库自动打标的状态条。数据来自 /api/admin/state 的 atag 段 —— 只回
+   ready 和一句人话（那个接口不上端点地址，这个页面会被截图）。 */
+function atagStatusHTML(){
+  var a = (S.st && S.st.atag) || null;
+  return '<div class="tiny" id="libatag" style="margin-top:8px">' +
+    '自动打标：<span id="libatagtxt">' + atagStatusText(a) + '</span></div>';
+}
+function atagStatusText(a){
+  if (!a) return '<span class="muted">状态读取中…</span>';
+  if (a.ready){
+    return '<b style="color:var(--jade)">就绪</b> · 每张导入图都会先过算法打标签再入库'
+      + '（本机推理，不按张计费）';
+  }
+  return '<b style="color:var(--accent)">没启动</b> · ' + esc(a.note || '引擎没起') +
+    '；现在导入会被拦下';
+}
+/* 导入做完之后刷一下状态条（引擎起没起可能变了），只换文字不重绘页面 */
+function paintAtag(){
+  var t = $('libatagtxt');
+  if (t) t.innerHTML = atagStatusText((S.st && S.st.atag) || null);
+}
+function bindLib(){
+  var q = $('libq');
+  if (q && !q.__bound){
+    q.__bound = true;
+    var t = null;
+    q.addEventListener('input', function(){
+      var v = q.value;
+      clearTimeout(t);
+      t = later(function(){
+        S.lib.q = v; S.lib.page = 1;
+        loadLib(true);       // 只重画 #libbody，输入框不会被重置
+      }, 380);
+    });
+  }
+}
+function libClear(){
+  S.lib.q = ''; S.lib.dim = {}; S.lib.source = ''; S.lib.page = 1;
+  var q = $('libq'); if (q) q.value = '';
+  loadLib(true);
+}
+function libMore(){
+  S.lib.page += 1;
+  loadLib(false);
+}
+/* --- 单张详情 --- */
+function openLibItem(id){
+  var it = LIBPAT[id];
+  if (!it || !it.id){ toast('这张图的资料没取到，点「重新读取」'); return; }
+  S.libCur = id; S.libDel = '';
+  openLayer('<div class="modal wide"><div class="mh"><h3>' + esc(it.name || '未命名') + '</h3>' +
+    '<p>' + esc(it.id) + (it.source_label ? ' · ' + esc(it.source_label) : '') +
+    (it.w ? ' · ' + it.w + '×' + it.h + 'px' : '') +
+    (it.status && it.status !== 'ready' ? ' · 还没打上标签' : '') + '</p></div>' +
+    '<div class="mb"><div class="libx">' +
+      '<div><img src="' + esc(it.full || it.image) + '" style="width:100%;border-radius:10px;' +
+        'border:1px solid var(--line);display:block" alt=""></div>' +
+      '<div>' + libFormHTML(it) + '</div>' +
+    '</div></div></div>');
+}
+function libFormHTML(it){
+  function fld(label, k, val, key){
+    var opts = key ? dimOpts(key) : [];
+    return '<div class="fld"><label>' + label + '</label>' +
+      '<input data-libfld="' + k + '" value="' + esc(val || '') + '"' +
+      (key ? ' list="dlf_' + k + '"' : '') + '>' +
+      (opts.length ? '<datalist id="dlf_' + k + '">' +
+        opts.map(function(v){ return '<option value="' + esc(v) + '"></option>'; }).join('') +
+        '</datalist>' : '') + '</div>';
+  }
+  function two(a, b){ return '<div class="two">' + a + b + '</div>'; }
+  var h = fld('花型名称', 'name', it.name);
+  h += two(fld('风格', 'style', it.style, 'style'), fld('元素', 'element', it.element, 'element'));
+  h += two(fld('配色', 'color', it.color, 'color'), fld('场景', 'scene', it.scene, 'scene'));
+  h += two(fld('构图', 'composition', it.composition, 'composition'),
+           fld('密度', 'density', it.density, 'density'));
+  h += two(fld('尺度', 'scale', it.scale, 'scale'), fld('适合面料', 'fabric', it.fabric));
+  h += fld('主色（顿号分隔）', 'colors', (it.colors || []).join('、'));
+  h += fld('关键词（客户会怎么说它）', 'keywords', (it.keywords || []).join('、'));
+  h += '<div class="fld"><label>设计说明</label>' +
+    '<textarea data-libfld="desc" rows="3">' + esc(it.desc || '') + '</textarea></div>';
+  h += '<div class="note">' + esc(it.tag_reason ? ('AI 判断依据：' + it.tag_reason)
+    : '这张图还没打上标签，点「重新打标签」让 AI 读一遍。') + '</div>';
+  h += '<div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">' +
+    '<button class="btn sm" data-act="lib-save">保存修改</button>' +
+    '<button class="btn ghost sm" data-act="lib-retag">重新打标签</button>' +
+    '<button class="btn danger sm" data-act="lib-del">从库里删除</button></div>';
+  return h;
+}
+function libCollect(){
+  var out = {}, ns = document.querySelectorAll('[data-libfld]');
+  for (var i = 0; i < ns.length; i++){
+    var k = ns[i].getAttribute('data-libfld');
+    var v = (ns[i].value || '').trim();
+    out[k] = (k === 'colors' || k === 'keywords')
+      ? (v ? v.split(/[、,，;；|\s]+/).filter(Boolean) : []) : v;
+  }
+  return out;
+}
+function syncLibItem(item){
+  if (!item || !item.id) return;
+  item.image = absURL(item.image); item.full = absURL(item.full);
+  LIBPAT[item.id] = item;
+  for (var i = 0; i < S.lib.items.length; i++){
+    if (S.lib.items[i].id === item.id){ S.lib.items[i] = item; break; }
+  }
+}
+function libSave(){
+  if (!S.libCur) return;
+  apiPost('/api/library/update', {id:S.libCur, fields:libCollect()}, function(ok, d){
+    if (ok && d && d.ok){
+      syncLibItem(d.item); toast('已保存：' + (d.item.name || ''));
+      closeLayer(); paintLib();
+    } else toast((d && d.error) || '没保存成功', true);
+  });
+}
+function libRetag(){
+  if (!S.libCur) return;
+  var b = document.querySelector('[data-act="lib-retag"]');
+  if (b){ b.textContent = 'AI 正在读图…'; b.disabled = true; }
+  apiPost('/api/library/retag', {id:S.libCur}, function(ok, d){
+    if (ok && d && d.ok){
+      syncLibItem(d.item); openLibItem(S.libCur); paintLib(); toast('标签已重新打好');
+    } else {
+      if (b){ b.textContent = '重新打标签'; b.disabled = false; }
+      toast((d && d.error) || '这次没读出来，稍后再试', true);
+    }
+  });
+}
+function libDelete(){
+  if (!S.libCur) return;
+  if (S.libDel !== S.libCur){
+    S.libDel = S.libCur;
+    var b = document.querySelector('[data-act="lib-del"]');
+    if (b) b.textContent = '再点一次确认删除';
+    return;
+  }
+  apiPost('/api/library/delete', {id:S.libCur}, function(ok, d){
+    if (ok && d && d.ok){
+      var gone = S.libCur;
+      S.lib.items = S.lib.items.filter(function(x){ return x.id !== gone; });
+      delete LIBPAT[gone];
+      S.lib.total = Math.max(0, S.lib.total - 1);
+      closeLayer(); paintLib(); loadState(function(){ renderNav(); });
+      toast('已从花型库删除');
+    } else toast((d && d.error) || '没删掉', true);
+  });
+}
+/* --- 上传 --- */
+function libUploadClick(){
+  var f = $('libfile');
+  if (f) f.click(); else toast('浏览器不支持文件选择');
+}
+/* 选文件夹导入。 Chrome / Edge 的 webkitdirectory：<input> 加上这个属性，
+   弹出来的就是文件夹选择器，选完 t.files 里是**整个文件夹（含子目录）**的
+   所有文件。Safari 不支持，会退化成普通文件选择 —— 所以按钮上写清楚，
+   别让运营以为点坏了。 */
+function libDirClick(){
+  var f = $('libdir');
+  if (!f){ toast('浏览器不支持选文件夹，用 Chrome / Edge'); return; }
+  if (!('webkitdirectory' in f)){ toast('这个浏览器不支持选文件夹，换 Chrome / Edge'); return; }
+  f.setAttribute('webkitdirectory', '');
+  f.click();
+}
+/* 是不是能入库的图片。文件夹里会混进 .DS_Store、__MACOSX、.txt 这些，
+   f.type 对没扩展名的文件常常是空的，所以扩展名也要认。 */
+function isImageFile(f){
+  if (!f) return false;
+  var n = String(f.name || '');
+  if (!n || n.charAt(0) === '.' || n.indexOf('._') === 0) return false;
+  var p = f.webkitRelativePath || '';
+  if (p.indexOf('/__MACOSX/') >= 0) return false;
+  if (f.type && f.type.indexOf('image/') === 0) return true;
+  return /\.(png|jpe?g|webp|gif|bmp|tiff?)$/i.test(n);
+}
+function libUploadFiles(files, opts){
+  opts = opts || {};
+  var list = Array.prototype.slice.call(files || []).filter(isImageFile);
+  if (!list.length){ toast('没选到图片文件（png / jpg / webp）', true); return; }
+  var i = 0, okN = 0, dupN = 0, badN = 0, failN = 0;
+  S.libprog = {total:list.length, done:0, ok:0, dup:0, bad:0, fail:0,
+               cur:'', dir:!!opts.dir, running:true};
+  paintLibProg();
+  (function next(){
+    if (i >= list.length){
+      S.libprog.running = false; S.libprog.cur = '';
+      paintLibProg();
+      toast('导入完成：入库 ' + okN + ' 张' + (dupN ? ' · 库里已有 ' + dupN : '') +
+            (badN ? ' · 不是花型 ' + badN : '') + (failN ? ' · 失败 ' + failN : ''));
+      loadLib(true);
+      loadState(function(){ renderNav(); paintAtag(); });
+      return;
+    }
+    var f = list[i++];
+    S.libprog.cur = f.webkitRelativePath || f.name;
+    paintLibProg();
+    compressImage(f, function(err, img){
+      if (err || !img || !img.dataUrl){ failN++; S.libprog.fail = failN; S.libprog.done++; paintLibProg(); return next(); }
+      var m = String(img.dataUrl).match(/^data:([^;]+);base64,(.*)$/);
+      if (!m){ failN++; S.libprog.fail = failN; S.libprog.done++; paintLibProg(); return next(); }
+      apiPost('/api/library/ingest',
+        {image:m[2], image_mime:m[1], filename:f.name, source:'import'},
+        function(ok, d){
+          S.libprog.done++;
+          if (ok && d && d.ok){
+            if (d.dup){ dupN++; S.libprog.dup = dupN; }
+            else { okN++; S.libprog.ok = okN; }
+          } else if (d && d.not_pattern){ badN++; S.libprog.bad = badN; }
+          else { failN++; S.libprog.fail = failN; }
+          paintLibProg();
+          next();
+        });
+    });
+  })();
+}
+/* 上传/文件夹导入的进度卡。跟扫目录的 paintScan 一个套路，但挂在
+   #libprog 上 —— 两个进度可能同时存在（扫目录跑着，运营又传了几张）。 */
+function paintLibProg(){
+  var box = $('libprog');
+  if (!box) return;
+  var s = S.libprog;
+  if (!s || !s.running){ box.innerHTML = ''; S.libprog = null; return; }
+  var pct = s.total ? Math.round(s.done / s.total * 100) : 0;
+  box.innerHTML = '<div class="card card-pad" style="margin-top:12px">' +
+    '<div class="rowline"><b class="small">' + (s.dir ? '正在导入文件夹' : '正在导入') +
+      '：' + s.done + ' / ' + s.total + '</b>' +
+    '<span class="tiny muted">入库 ' + s.ok + ' · 已有 ' + s.dup +
+      ' · 不是花型 ' + s.bad + ' · 失败 ' + s.fail + '</span></div>' +
+    '<div class="bar"><i style="width:' + pct + '%"></i></div>' +
+    (s.cur ? '<div class="tiny muted" style="margin-top:7px">' + esc(s.cur) + '</div>' : '') +
+    '<div class="tiny muted" style="margin-top:5px">每张都要先过算法读图打标，一张几秒，' +
+      '这个页面可以先放着，导完会提示。</div>' +
+    '</div>';
+}
+function compressImage(file, cb){
+  var fr = new FileReader();
+  fr.onerror = function(){ cb('文件读取失败'); };
+  fr.onload = function(){
+    var src = String(fr.result || '');
+    var done = function(dataUrl){ cb(null, {dataUrl:dataUrl}); };
+    var img = new Image();
+    img.onerror = function(){ done(src); };
+    img.onload = function(){
+      var ow = img.width || 0, oh = img.height || 0;
+      if (Math.max(ow, oh) <= 2048) return done(src);   // 没超限一个像素都不动
+      try {
+        var s = 2048 / Math.max(ow, oh);
+        var w = Math.max(1, Math.round(ow * s)), h = Math.max(1, Math.round(oh * s));
+        var c = document.createElement('canvas');
+        c.width = w; c.height = h;
+        var g = c.getContext('2d');
+        g.fillStyle = '#fff'; g.fillRect(0, 0, w, h);
+        g.drawImage(img, 0, 0, w, h);
+        done(c.toDataURL('image/jpeg', 0.85));
+      } catch (e) { done(src); }
+    };
+    img.src = src;
+  };
+  fr.readAsDataURL(file);
+}
+/* --- 扫目录 --- */
+function libScanDialog(){
+  openLayer('<div class="modal"><div class="mh"><h3>扫目录入库</h3>' +
+    '<p>填本机上一个文件夹路径，会把里面的图片批量扫进花型库</p></div>' +
+    '<div class="mb">' +
+      '<div class="fld"><label>目录路径</label>' +
+        '<input id="scandir" class="mono" placeholder="/Users/你的目录/客户来图"></div>' +
+      '<div class="rowline">' +
+        fld('并发路数', 'scanw', 3) +
+        fld('最多扫几张（0=不限）', 'scanlim', 0) +
+      '</div>' +
+      '<div class="note" style="margin-top:8px">' +
+        '每张图都会先过自动打标算法，不是花型的（截图 / 人物 / 实景）会被挡下，' +
+        '这个口子没有开关 —— 库是花型库，不是相册。' +
+      '</div>' +
+      '<div class="tiny" style="margin-top:8px">' +
+        '一张几秒，100 张大约 3~5 分钟。导的过程可以继续用别的页面。</div>' +
+      '<div id="scanprobe"></div>' +
+    '</div>' +
+    '<div class="mf"><button class="btn ghost sm" data-act="close-layer">取消</button>' +
+      '<button class="btn sm" data-act="scan-probe">先看看有多少张</button>' +
+      '<button class="btn sm" data-act="scan-go">开始导入</button></div></div>');
+}
+function scanPayload(probe){
+  var dir = $('scandir'), w = $('f_scanw'), lim = $('f_scanlim');
+  if (!dir || !(dir.value || '').trim()){ toast('先填目录路径', true); return null; }
+  return {
+    path:(dir.value || '').trim(),
+    // fld() 给所有输入框都加了 f_ 前缀，取的时候别写成裸 id
+    workers:(w && parseInt(w.value, 10)) || 3,
+    limit:(lim && parseInt(lim.value, 10)) || 0,
+    source:'import',
+    probe:!!probe
+  };
+}
+function scanProbe(){
+  var p = scanPayload(true);
+  if (!p) return;
+  var box = $('scanprobe');
+  if (box) box.innerHTML = '<div class="tiny muted">正在扫…</div>';
+  apiPost('/api/admin/library/scan', p, function(ok, d){
+    if (!(ok && d && d.ok) || !d.probe){
+      if (box) box.innerHTML = '<div class="note r" style="margin-top:9px">' +
+        esc((d && d.error) || '没扫到') + '</div>';
+      return;
+    }
+    if (box) box.innerHTML = '<div class="note" style="margin-top:9px">扫到 <b>' + d.count +
+      '</b> 张图片。' + (d.sample && d.sample.length
+        ? '<br>' + esc(d.sample.join('、')) : '') + '</div>';
+  });
+}
+function scanGo(){
+  var p = scanPayload(false);
+  if (!p) return;
+  apiPost('/api/admin/library/scan', p, function(ok, d){
+    if (!(ok && d && d.ok)){ toast((d && d.error) || '没能开始', true); return; }
+    closeLayer();
+    toast('已开始导入 ' + d.total + ' 张');
+    S.scan = {total:d.total, done:0, stats:{}};
+    startScanPoll();
+  });
+}
+function startScanPoll(){
+  if (S.scanTimer) clearInterval(S.scanTimer);
+  S.scanTimer = setInterval(function(){
+    apiGet('/api/admin/library/scan/progress', function(ok, d){
+      if (!(ok && d && d.ok)) return;
+      S.scan = d;
+      paintScan();
+      if (!d.running){
+        clearInterval(S.scanTimer); S.scanTimer = null;
+        toast('导入完成：入库 ' + (d.stats.ok || 0) + ' · 已有 ' + (d.stats.dup || 0) +
+              ' · 不是花型 ' + (d.stats.skip || 0) + ' · 失败 ' + (d.stats.fail || 0));
+        loadLib(true);
+        loadState(function(){ renderNav(); });
+      }
+    });
+  }, 1200);
+  paintScan();
+}
+function paintScan(){
+  var box = $('scanbox');
+  var s = S.scan;
+  if (!box){ return; }
+  if (!s){ box.innerHTML = ''; return; }
+  var pct = s.total ? Math.round(s.done / s.total * 100) : 0;
+  box.innerHTML = '<div class="card card-pad" style="margin-top:12px">' +
+    '<div class="rowline"><b class="small">正在导入：' + s.done + ' / ' + s.total + '</b>' +
+    '<span class="tiny muted">入库 ' + (s.stats.ok || 0) + ' · 已有 ' + (s.stats.dup || 0) +
+    ' · 不是花型 ' + (s.stats.skip || 0) + ' · 失败 ' + (s.stats.fail || 0) + '</span></div>' +
+    '<div class="bar"><i style="width:' + pct + '%"></i></div>' +
+    ((s.log && s.log.length) ? '<div class="tiny muted" style="margin-top:7px">' +
+      esc(s.log.slice(-5).join('；')) + '</div>' : '') +
+    '</div>';
+}
+
+/* =========================================================================
+   6. 会话
+   ========================================================================= */
+function ensureSessions(){ if (!S.sessions) loadSessions(); }
+/* 筛选交给服务端做 —— 列表默认只取最近 20 条，在前端筛的话
+   「搜上周某一天」会一条都搜不到（那天的不在当前这页里）。 */
+function sessQs(){
+  var p = [];
+  if (S.sessQ) p.push('q=' + encodeURIComponent(S.sessQ));
+  if (S.sessD) p.push('day=' + encodeURIComponent(S.sessD));
+  return p.length ? ('?' + p.join('&')) : '';
+}
+function loadSessions(){
+  S.sessTok = (S.sessTok || 0) + 1;
+  var tok = S.sessTok;
+  apiGet('/api/admin/sessions' + sessQs(), function(ok, d){
+    if (tok !== S.sessTok) return;      // 打字快时旧响应可能后到，按令牌丢掉
+    if (!(ok && d && d.ok)) return;
+    S.sessions = d;
+    // 只换表格与那行统计，不整页重绘 —— 否则输入框会被重建，打字打到一半丢焦点
+    var tb = $('sessrows');
+    if (tb){
+      tb.innerHTML = sessRows(d);
+      var m = $('sessmeta');
+      if (m) m.innerHTML = sessMeta(d);
+    } else render();
+  });
+}
+function sessRows(d){
+  var its = d.items || [];
+  if (!its.length){
+    return '<tr><td colspan="4" class="empty">' +
+      ((S.sessQ || S.sessD) ? '没有符合条件的会话 —— 换个 ID 片段或日期再试。'
+                            : '还没有会话记录。') + '</td></tr>';
+  }
+  return its.map(function(it){
+    return '<tr><td class="mono">' + esc(it.id) + '</td><td>' + it.turns + '</td>' +
+      '<td class="small muted">' + esc(it.last || '—') + '</td>' +
+      '<td class="ta-r small muted">' + Math.round((it.bytes || 0) / 1024) + ' KB</td></tr>';
+  }).join('');
+}
+function sessMeta(d){
+  var w = [];
+  if (S.sessQ) w.push('ID 含「' + esc(S.sessQ) + '」');
+  if (S.sessD) w.push('最后活动在 ' + esc(S.sessD));
+  if (w.length){
+    return '筛出 <b>' + ((d.matched == null) ? (d.items || []).length : d.matched) +
+      '</b> 个（' + w.join('、') + '），全部共 ' + (d.total || 0) + ' 个';
+  }
+  return '全部 <b>' + (d.total || 0) + '</b> 个会话，按最后活动倒序';
+}
+function viewSessions(){
+  var d = S.sessions;
+  if (!d) return '<div class="card card-pad">正在读取…</div>';
+  var h = '<div class="card card-pad"><div class="rowline">' +
+    '<div class="kpi"><b>' + (d.total || 0) + '</b><span>个会话</span></div>' +
+    '<div class="small muted" id="sessmeta">' + sessMeta(d) + '</div>' +
+    '</div>' +
+    '<div class="sfilter">' +
+      '<span class="lbl">搜会话 ID</span>' +
+      '<input id="sessq" autocomplete="off" value="' + esc(S.sessQ || '') + '"' +
+        ' placeholder="ID 片段就行，例：mv4dyjs" style="flex:1;min-width:190px;max-width:320px">' +
+      '<span class="lbl">最后活动</span>' +
+      '<input id="sessd" type="date" value="' + esc(S.sessD || '') + '">' +
+      '<button class="btn ghost sm" data-act="sess-clear">清除</button>' +
+    '</div></div>';
+  h += '<div class="card mt"><table class="tbl sess"><thead><tr><th>会话 ID</th><th>轮数</th>' +
+    '<th>最后活动</th><th class="ta-r">大小</th></tr></thead>' +
+    '<tbody id="sessrows">' + sessRows(d) + '</tbody></table></div>';
+  return h;
+}
+
+/* =========================================================================
+   弹层
+   ========================================================================= */
+function openLayer(inner){
+  var l = $('layer');
+  if (!l) return;
+  l.innerHTML = '<div class="scrim" data-act="close-layer"></div>' +
+                '<div class="modal-wrap">' + inner + '</div>';
+  l.className = 'on';
+}
+function closeLayer(){
+  var l = $('layer');
+  if (!l) return;
+  l.className = '';
+  l.innerHTML = '';
+}
+
+/* =========================================================================
+   事件委托
+   ========================================================================= */
+document.addEventListener('click', function(e){
+  var t = e.target;
+  while (t && t !== document.body){
+    var act = t.getAttribute && t.getAttribute('data-act');
+    if (act){ handleAct(act, t, e); return; }
+    var nav = t.getAttribute && t.getAttribute('data-nav');
+    if (nav){ go(nav); return; }
+    var pag = t.getAttribute && t.getAttribute('data-pag');
+    if (pag){ S.personaCur = pag; S.dirty = {}; render(); return; }
+    var pre = t.getAttribute && t.getAttribute('data-preset');
+    if (pre){ applyPreset(pre, t); return; }
+    var kag = t.getAttribute && t.getAttribute('data-kbag');
+    if (kag){ toggleAria(t); return; }
+    var lt = t.getAttribute && t.getAttribute('data-lbtog');
+    if (lt){ toggleAria(t); return; }
+    var st = t.getAttribute && t.getAttribute('data-scantog');
+    if (st){ toggleAria(t); return; }
+    var sd = t.getAttribute && t.getAttribute('data-statsdays');
+    if (sd){
+      // 只换统计区间：清掉旧的、重新拉一次；按钮状态在重绘里重算
+      S.statsDays = parseInt(sd, 10) || 14;
+      S.stats = null;
+      loadStats();
+      return;
+    }
+    var dim = t.getAttribute && t.getAttribute('data-libdim');
+    if (dim){ libSetDim(dim, t.getAttribute('data-libval')); return; }
+    var src = t.getAttribute && t.getAttribute('data-libsrc');
+    if (src){ S.lib.source = src || ''; S.lib.page = 1; loadLib(true); return; }
+    var op = t.getAttribute && t.getAttribute('data-libopen');
+    if (op){ openLibItem(op); return; }
+    var dv = t.getAttribute && t.getAttribute('data-kbview');
+    if (dv){ kbViewDoc(dv); return; }
+    var dd = t.getAttribute && t.getAttribute('data-kbdel');
+    if (dd){ kbDelDoc(dd); return; }
+    var qs = t.getAttribute && t.getAttribute('data-qa-save');
+    if (qs){ qaSave(qs); return; }
+    var qd = t.getAttribute && t.getAttribute('data-qa-del');
+    if (qd){ qaDel(qd); return; }
+    t = t.parentNode;
+  }
+});
+function toggleAria(el){
+  el.setAttribute('aria-pressed', el.getAttribute('aria-pressed') === 'true' ? 'false' : 'true');
+}
+function libSetDim(dim, val){
+  if (val) S.lib.dim[dim] = val; else delete S.lib.dim[dim];
+  S.lib.page = 1;
+  loadLib(true);
+}
+function applyPreset(key, btn){
+  var d = S.personas;
+  if (!d) return;
+  var ps = d.presets || [];
+  for (var i = 0; i < ps.length; i++){
+    if (ps[i].key === key){
+      var box = $('stylebox');
+      if (box) box.value = ps[i].body;
+      var all = document.querySelectorAll('[data-preset]');
+      for (var j = 0; j < all.length; j++){
+        all[j].setAttribute('aria-pressed', String(all[j].getAttribute('data-preset') === key));
+      }
+      return;
+    }
+  }
+}
+function handleAct(act, el, e){
+  if (act === 'logout') return logout();
+  if (act === 'close-layer') return closeLayer();
+  if (act === 'save-config') return saveConfig();
+  if (act === 'reload') return apiPost('/api/reload', {}, function(ok, d){
+    if (ok && d && d.ok){ toast('已重新加载'); loadState(function(){ render(); }); }
+    else toast('重新加载失败', true);
+  });
+  if (act === 'save-persona') return savePersona();
+  if (act === 'kb-test') return kbTest();
+  if (act === 'kb-add') return kbAddDoc();
+  if (act === 'kb-file'){ var f = $('kbfile'); if (f) f.click(); return; }
+  if (act === 'qa-add') return qaAdd();
+  if (act === 'lib-upload') return libUploadClick();
+  if (act === 'lib-dir') return libDirClick();
+  if (act === 'lib-scan') return libScanDialog();
+  if (act === 'lib-reload'){ S.lib.loaded = false; return loadLib(true); }
+  if (act === 'lib-clear') return libClear();
+  if (act === 'lib-more') return libMore();
+  if (act === 'lib-save') return libSave();
+  if (act === 'lib-retag') return libRetag();
+  if (act === 'lib-del') return libDelete();
+  if (act === 'scan-probe') return scanProbe();
+  if (act === 'scan-go') return scanGo();
+  if (act === 'reload-stats'){ S.statsErr = ''; S.stats = null; return loadStats(); }
+  if (act === 'sess-clear'){
+    S.sessQ = ''; S.sessD = '';
+    var qi = $('sessq'), di = $('sessd');       // 就地清空，不整页重绘
+    if (qi) qi.value = '';
+    if (di) di.value = '';
+    return loadSessions();
+  }
+}
+document.addEventListener('change', function(e){
+  var t = e.target;
+  if (t && t.id === 'libfile') libUploadFiles(t.files);
+  if (t && t.id === 'libdir') libUploadFiles(t.files, {dir:true});
+  if (t && t.id === 'kbfile') kbFile(t.files);
+  if (t && t.id === 'sessd'){ S.sessD = t.value || ''; loadSessions(); }
+});
+/* 会话 ID 是边打边筛，所以停手约 0.25 秒才发请求（不然一个字母一次） */
+document.addEventListener('input', function(e){
+  var t = e.target;
+  if (!t || t.id !== 'sessq') return;
+  S.sessQ = t.value || '';
+  if (S.sessTimer) clearTimeout(S.sessTimer);
+  S.sessTimer = later(function(){ loadSessions(); }, 250);
+});
+
+/* ---------- 导出给测试 ---------- */
+window.__ADM = {
+  S:S, NAV:NAV, go:go, render:render, boot:boot, esc:esc, toast:toast,
+  viewOverview:viewOverview, viewModel:viewModel, viewPersona:viewPersona,
+  viewKb:viewKb, viewLib:viewLib, viewSessions:viewSessions, viewStats:viewStats,
+  apiRows:apiRows, loadStats:loadStats, trendSVG:trendSVG, bars:bars,
+  saveConfig:saveConfig, savePersona:savePersona, applyPreset:applyPreset,
+  kbTest:kbTest, kbAddDoc:kbAddDoc, qaAdd:qaAdd,
+  libClear:libClear, libMore:libMore, openLibItem:openLibItem,
+  libSave:libSave, libRetag:libRetag, libDelete:libDelete,
+  libUploadFiles:libUploadFiles, libDirClick:libDirClick,
+  isImageFile:isImageFile, paintAtag:paintAtag, paintLibProg:paintLibProg,
+  libScanDialog:libScanDialog,
+  scanProbe:scanProbe, scanGo:scanGo, paintScan:paintScan,
+  openLayer:openLayer, closeLayer:closeLayer,
+  collectModel:collectModel, dropNull:dropNull, lbTog:lbTog,
+  libBodyHTML:libBodyHTML, libCardHTML:libCardHTML,
+  checkAuth:checkAuth, paintAuth:paintAuth, doAuth:doAuth, logout:logout,
+  get AUTH(){ return AUTH; },
+  get API(){ return API; }, set API(v){ API = v; },
+  get ONLINE(){ return ONLINE; }
+};
+
+boot();
+</script>
+</body>
+</html>

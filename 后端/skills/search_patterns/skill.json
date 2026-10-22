@@ -1,0 +1,20 @@
+{
+  "name": "search_patterns",
+  "version": "0.1.0",
+  "description": "按风格/元素/配色/场景与关键词检索花型库，返回匹配的花型及匹配度。会同时查内置款与本地真图库（返回里 lib=true 的是真图，带 image 地址，界面会自动展示）。出候选前必须调用，不能凭记忆报花型。",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "style": {"type": "string", "description": "风格标签"},
+      "element": {"type": "string", "description": "元素标签"},
+      "color": {"type": "string", "description": "配色标签"},
+      "scene": {"type": "string", "description": "场景标签"},
+      "query": {"type": "string", "description": "关键词，命中名称或设计说明"},
+      "limit": {"type": "integer", "description": "返回条数，默认 6"}
+    },
+    "required": []
+  },
+  "confirm": false,
+  "cost": 0,
+  "handler": "handler.py"
+}

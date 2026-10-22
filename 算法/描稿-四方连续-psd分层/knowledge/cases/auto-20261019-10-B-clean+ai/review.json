@@ -1,0 +1,32 @@
+{
+  "image": "/tmp/i11run/02-seamless.png",
+  "size": [
+    832,
+    1024
+  ],
+  "ok": false,
+  "suspicious_lines": [
+    {
+      "axis": "vertical",
+      "pos": 0.499,
+      "px": 415,
+      "mean": 52.32,
+      "frac": 0.5,
+      "z": 8.4
+    }
+  ],
+  "wrap": {
+    "wrapX": 18.83,
+    "wrapY": 22.46,
+    "ratioX": 1,
+    "ratioY": 1.65,
+    "fail": true
+  },
+  "baseline": {
+    "col_median": 18.52,
+    "col_sigma": 4.01,
+    "row_median": 13.13,
+    "row_sigma": 3.75
+  },
+  "rule": "整图扫描：跨线梯度离群（z≥8.0 且 ≥1.8×中位）且跨度≥18% 的直线 → 接缝"
+}

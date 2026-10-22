@@ -1,0 +1,19 @@
+{
+  "id": "case-20261019-02",
+  "date": "2026-10-19",
+  "title": "海岸插画：只检查外缘导致中间接缝漏检（用户指出『中间完全接不上』）",
+  "source": "user-reported",
+  "status": "fixed",
+  "symptom": "快速路径（跳过AI清洗+确定性补缝）输出被当作成功，但图片中部元素被切断/错位",
+  "root_cause": "审查只看了外缘 wrap；平移补缝把原图边缘移到内部，外缘天然连续",
+  "fix": "新增整图离群直线审查 03-verify-seam.py；pipeline 改为『快速路径→审查→失败删除并回退 AI 清洗+补缝→再审查→原生重生成』",
+  "regression": "input7 A-fast 命中 vertical x≈0.499 z=14.4 / horizontal y≈0.427 z=16.8 并自动回退；B 通过",
+  "artifacts": [
+    "../../../.rea-web/samples/input7-run-report.json"
+  ],
+  "tags": [
+    "review-miss",
+    "edge-only-check",
+    "fallback"
+  ]
+}

@@ -1,0 +1,8 @@
+Pillow>=10.0
+
+# 可选：只有「爬专业花型站」这条路线需要（目前是 Patternbank）。
+# 不装完全不影响 —— 默认那四家免 key 来源照跑，Patternbank 自动跳过。
+# 装上就自动启用：
+#   pip install "scrapling[fetchers]"
+# 说明见 README「二、图片搜索用的哪几家 → 爬取专业花型站」。
+# scrapling[fetchers]==0.4.15 实测可用（它要 Python 3.10+）。

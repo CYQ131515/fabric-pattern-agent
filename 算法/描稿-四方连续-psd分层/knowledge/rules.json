@@ -1,0 +1,134 @@
+{
+  "version": 1,
+  "review": {
+    "seam": "steps/03-verify-seam.py：整图离群直线（z>=8 且 >=1.8x中位，跨度>=18%）",
+    "rect_overlay": "TODO（case-20261019-04）：检测画布/矩形区域色差",
+    "fidelity": "PSD 合成必须与原图/无缝图 max_abs_diff==0（色层保留原始像素）"
+  },
+  "strategy": [
+    {
+      "id": "mono-gradient",
+      "when": {
+        "hueConc_gte": 0.9,
+        "satMean_lt": 0.3
+      },
+      "prefer": [
+        "seam-ai-band120-160"
+      ],
+      "avoid": [
+        "seam-deterministic"
+      ],
+      "reason": "L02/L03：单色相渐变图，确定性补缝留矩形色块"
+    },
+    {
+      "id": "flat-gradient",
+      "when": {
+        "lowGradFrac_gte": 0.55,
+        "hueConc_gte": 0.75
+      },
+      "prefer": [
+        "seam-ai-band120-160",
+        "seam-regenerate"
+      ],
+      "avoid": [
+        "seam-deterministic"
+      ],
+      "reason": "L02"
+    },
+    {
+      "id": "busy-texture",
+      "when": {
+        "lowGradFrac_lt": 0.35
+      },
+      "prefer": [
+        "seam-deterministic",
+        "seam-ai-band140"
+      ],
+      "avoid": [],
+      "reason": "纹理繁复时确定性补缝足够"
+    },
+    {
+      "id": "sparse-lineart",
+      "when": {
+        "lowGradFrac_gte": 0.45,
+        "edgeMean_lt": 25,
+        "lineart": true
+      },
+      "prefer": [
+        "seam-regenerate-after-rect-check"
+      ],
+      "avoid": [
+        "seam-ai-band"
+      ],
+      "reason": "L05/L06"
+    },
+    {
+      "id": "never-mirror",
+      "when": {},
+      "prefer": [
+        "wrap/no-mirror"
+      ],
+      "avoid": [
+        "mirror-tiling"
+      ],
+      "reason": "镜像会产生成对花型，用户明确不接受"
+    },
+    {
+      "id": "pixel-preserving-layers",
+      "when": {},
+      "prefer": [
+        "04-layers-color preserve-pixels"
+      ],
+      "avoid": [
+        "solid-color-layers"
+      ],
+      "reason": "L08"
+    }
+  ],
+  "open_issues": [
+    "case-20261019-04：原生重生成的矩形 overlay 检测与后处理",
+    "C 版重生成后仍需人工/模型复核设计还原度"
+  ],
+  "notes": {
+    "semantic_conditions": "lineart/watercolor 等语义条件暂未实现，需要 VLM 分类器；目前规则只用像素统计特征",
+    "learning": "TODO：按案例库统计『特征簇→路径通过率』自动更新规则权重（需回归护栏）"
+  },
+  "constraints": {
+    "noMirrorTilingByDefault": {
+      "value": true,
+      "reason": "用户明确不要对称；默认禁用镜像 tile，仅紧急备选并须说明代价",
+      "added": "2026-10-20"
+    },
+    "warpedFabricFirstUnwarp": {
+      "value": true,
+      "reason": "真实面料照片若呈褶皱/旋转/扭曲状：第一步必须先做“想象平铺还原”（undo warp/folds/perspective，先把纹样几何拉直成平版），再做清洗/无缝/分层。用户 2026-10-20 明确要求。",
+      "added": "2026-10-20"
+    },
+    "noOverprocessingByDefault": {
+      "value": true,
+      "reason": "密集图案：v2/v3 的破线与色调修饰均劣于 v1（用户实测打回）；默认交付 AI 缝带直出，除非用户要求修饰",
+      "added": "2026-10-20"
+    },
+    "outputsInProjectDir": {
+      "value": true,
+      "reason": "用户要求：所有产出的图片与 PSD 必须存放在算法目录（本项目）下的 deliverables/，不再放到外部 workspace 目录。",
+      "paths": {
+        "psd": "deliverables/psd",
+        "seamless": "deliverables/seamless",
+        "previews": "deliverables/previews",
+        "inputs": "deliverables/inputs"
+      },
+      "added": "2026-10-20"
+    },
+    "skillsInProjectDir": {
+      "value": true,
+      "reason": "用户要求：skill 文件也要存在算法目录内，便于版本管理；user 级 ~/.agents/skills 用于生效加载，两边用 scripts/sync-skills.mjs 双向同步。",
+      "paths": {
+        "project": "skills/",
+        "user": "~/.agents/skills/",
+        "sync": "node scripts/sync-skills.mjs --pull|--push|--diff"
+      },
+      "added": "2026-10-20"
+    }
+  }
+}

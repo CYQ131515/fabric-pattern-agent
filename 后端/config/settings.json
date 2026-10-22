@@ -1,0 +1,206 @@
+{
+ "server": {
+  "host": "127.0.0.1",
+  "port": 8787
+ },
+ "admin": {
+  "host": "127.0.0.1",
+  "port": 8788
+ },
+ "llm": {
+  "base_url": "https://api.deepseek.com/v1",
+  "model": "deepseek-flash",
+  "temperature": 0.6,
+  "max_tokens": 16000,
+  "timeout": 90,
+  "tools_enabled": true,
+  "max_tool_rounds": 4,
+  "max_tokens_retry": 32000,
+  "effort": "low"
+ },
+ "vision": {
+  "enabled": true,
+  "max_tokens": 32000,
+  "timeout": 180,
+  "temperature": 0,
+  "retries": 1
+ },
+ "image": {
+  "enabled": true,
+  "provider": "volcengine",
+  "base_url": "https://ark.cn-beijing.volces.com/api/v3",
+  "model": "doubao-seedream-5-0-260128",
+  "fallback_models": [
+   "doubao-seedream-5-0-flash-260915",
+   "doubao-seedream-5-0-pro-260628",
+   "doubao-seedream-4-0-250828",
+   "doubao-seedream-4-5-251128"
+  ],
+  "size": "2048x2048",
+  "watermark": true,
+  "timeout": 180,
+  "retry_429": 2,
+  "retry_wait": 6,
+  "cost": 60,
+  "outdir": "../数据/generated",
+  "extra": {},
+  "variants": 4
+ },
+ "trace": {
+  "provider": "",
+  "base_url": "",
+  "model": "",
+  "unwarp": true,
+  "size_restore": "1:1",
+  "size_final": "2048x2048",
+  "route": "route1"
+ },
+ "agents": {
+  "assistant": {
+   "persona": "assistant.md",
+   "skills": [
+    "get_pattern_detail",
+    "search_patterns"
+   ]
+  },
+  "designer": {
+   "persona": "designer.md",
+   "skills": [
+    "update_brief",
+    "search_patterns",
+    "list_trends",
+    "get_pattern_detail",
+    "generate_pattern",
+    "edit_pattern"
+   ]
+  },
+  "engineer": {
+   "persona": "engineer.md",
+   "skills": [
+    "get_pattern_detail",
+    "search_patterns",
+    "trace_pattern",
+    "seamless_pattern",
+    "layer_psd"
+   ]
+  },
+  "auto": {
+   "persona": "router.md",
+   "skills": [
+    "update_brief",
+    "search_patterns",
+    "list_trends",
+    "generate_pattern",
+    "edit_pattern"
+   ]
+  }
+ },
+ "library": {
+  "enabled": true,
+  "dir": "../数据/library",
+  "auto_ingest": true,
+  "thumb_px": 480,
+  "thumb_quality": 72
+ },
+ "seamless": {
+  "enabled": true,
+  "dir": "../算法/四方连续",
+  "python": "",
+  "cost": 30,
+  "candidates": 2,
+  "base_url": "https://api.apimart.ai/v1",
+  "analyze_base": "https://api.apimart.ai/v1",
+  "image_model": "gpt-image-2.5-flare",
+  "analyze_model": "deepseek-v4.1-flash",
+  "timeout_probe": 180,
+  "timeout_run": 900,
+  "max_attempts": 3,
+  "tile_multi": false,
+  "allow_grade_b": true,
+  "ai_postfix": true,
+  "base_max_side": 1024,
+  "postfix": {
+   "k": 1.0,
+   "border": 16,
+   "band": 0,
+   "rounds": 5,
+   "ring": 40,
+   "gain": 1.0,
+   "ramp": 20
+  },
+  "review": false
+ },
+ "psdlayer": {
+  "enabled": true,
+  "dir": "../算法/psd分层",
+  "python": "",
+  "cost": 45,
+  "max_layers": 7,
+  "max_side": 2048,
+  "timeout_plan": 120,
+  "task_timeout": 180,
+  "max_retry": 3,
+  "timeout_run": 900,
+  "mode": "color",
+  "matte": "flood"
+ },
+ "kb": {
+  "enabled": true,
+  "agents": [
+   "assistant"
+  ],
+  "top_k": 4,
+  "score_min": 0.18
+ },
+ "fallback": {
+  "enabled": true
+ },
+ "paths": {
+  "personas": "personas",
+  "skills": "skills",
+  "data": "data",
+  "sessions": "../数据/sessions",
+  "kb": "../数据/kb",
+  "telemetry": "../数据/telemetry"
+ },
+ "algo": {
+  "dir": "../算法/描稿-四方连续-psd分层",
+  "node": "",
+  "sharp": "",
+  "uv": "",
+  "height": 9382,
+  "k": 8,
+  "planner": true,
+  "model_clean": "gpt-image-2.5-sunburst",
+  "model_seam": "gpt-image-2.5-ext",
+  "band": 140,
+  "feather": 20,
+  "timeout_step": 600,
+  "timeout_total": 1800,
+  "base_url": "",
+  "api_key_env": "PATTERNFLOW_ALGO_KEY"
+ },
+ "patgen": {
+  "enabled": true,
+  "dir": "../算法/花型生成",
+  "uv": "",
+  "cost": 60,
+  "variants": 4,
+  "profile": "fast",
+  "presets": "halfdrop,phyllotaxis,scatter,grid",
+  "tile": 1024,
+  "review": "off",
+  "bg_mode": "auto",
+  "element_scale": 1.0,
+  "seed": 0,
+  "llm": true,
+  "timeout": 600
+ },
+ "runninghub": {
+  "workflow_id": "2109041802081820673",
+  "api_key_env": "RUNNINGHUB_API_KEY",
+  "prompts": "花朵:64,叶子:32,枝条:32,金色叶片:64",
+  "threshold": 0.5,
+  "timeout": 900
+ }
+}

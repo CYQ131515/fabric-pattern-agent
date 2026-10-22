@@ -1,0 +1,20 @@
+{
+  "id": "case-20261019-04",
+  "date": "2026-10-19",
+  "title": "原生重生成出现矩形 overlay（当前未解决，最高优先级）",
+  "source": "user-reported",
+  "status": "open",
+  "symptom": "星空涂鸦 C 版（2.5-sunburst 1:1 重生成）出现一块矩形区域色差/纹理差（画布边界痕迹），比补缝问题更严重",
+  "root_cause": "待定：疑似模型在 tile 内绘制了矩形画布/蒙版边界，或重生成分辨率与裁切导致；现有审查器只查直线断裂，查不出矩形 overlay",
+  "fix": "next：① 新增矩形 overlay 检测（区域内/外低频频谱差、边界线检测）；② C 版后处理（裁掉边缘/清理边界/二次重生成）；③ 检测不过则回退 B 或直接不交付",
+  "regression": "待补：用本案例图跑检测器，必须命中",
+  "artifacts": [
+    "rejected-preview.png"
+  ],
+  "tags": [
+    "rect-overlay",
+    "regenerate",
+    "unresolved",
+    "review-gap"
+  ]
+}

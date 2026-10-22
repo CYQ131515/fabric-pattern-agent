@@ -1,0 +1,102 @@
+{
+ "title": "Q版动物卡通",
+ "raw_keywords": "可爱风 Q版 动物 卡通",
+ "style": [
+  "童装手绘",
+  "可爱卡通"
+ ],
+ "style_en": [
+  "hand-drawn illustration"
+ ],
+ "style_detail_en": [
+  "kawaii chibi animals with oversized round heads and tiny bodies",
+  "soft rounded outlines of even weight, flat pastel fills, blush cheeks",
+  "simple friendly cartoon faces, dot eyes, no shading"
+ ],
+ "subjects": [
+  "猫",
+  "兔",
+  "熊",
+  "鸭"
+ ],
+ "subjects_en": [
+  "kitten",
+  "bunny",
+  "bear cub",
+  "duckling"
+ ],
+ "palette": {
+  "name": "奶油糖果",
+  "colors": [
+   "#ffd9a0",
+   "#ffc3cb",
+   "#fff8ee",
+   "#b8e6cf",
+   "#a8d8f0",
+   "#a8765a"
+  ],
+  "note": "colors[2] 是底色/paper（fade 目标色）"
+ },
+ "density": 0.45,
+ "pattern": {
+  "type": "scatter",
+  "color": "#fff8ee"
+ },
+ "elements": [
+  {
+   "name": "Q版小猫",
+   "type": "animal",
+   "rel_size": 1.6,
+   "weight": 3,
+   "cells": 2,
+   "layer": 0,
+   "describe": "one chibi kitten with an oversized round head, tiny body and paws, dot eyes, blush cheeks, sitting politely"
+  },
+  {
+   "name": "Q版小兔",
+   "type": "animal",
+   "rel_size": 1.5,
+   "weight": 3,
+   "cells": 2,
+   "layer": 0,
+   "describe": "one chibi bunny with long floppy ears and a round body, holding a tiny carrot"
+  },
+  {
+   "name": "Q版小熊",
+   "type": "animal",
+   "rel_size": 1.5,
+   "weight": 2,
+   "cells": 1,
+   "layer": 0,
+   "describe": "one chibi bear cub sitting with both paws raised, small round ears, gentle smile"
+  },
+  {
+   "name": "Q版小鸭",
+   "type": "animal",
+   "rel_size": 1.2,
+   "weight": 2,
+   "cells": 1,
+   "layer": 1,
+   "describe": "one chibi duckling with a round body, tiny wings and a small orange beak"
+  },
+  {
+   "name": "爱心星星",
+   "type": "accent",
+   "rel_size": 0.38,
+   "weight": 2,
+   "cells": 2,
+   "layer": 2,
+   "describe": "a small flat cartoon cluster: one tiny heart, one tiny four-point star and one tiny cloud"
+  },
+  {
+   "name": "小爪印",
+   "type": "accent",
+   "rel_size": 0.32,
+   "weight": 1,
+   "cells": 1,
+   "layer": 2,
+   "describe": "two tiny cartoon paw prints, flat single color"
+  }
+ ],
+ "notes": "Q版动物：大脑袋小身体、圆润无尖角、平涂糖果色、粗浅线稿"
+}

@@ -1,0 +1,76 @@
+# 仓库卫生 / 密钥 / 个人数据
+后端/config/secrets.json
+**/secrets.json
+.env
+.env.*
+!.env.example
+**/.env
+**/.env.*
+!**/.env.example
+*.pem
+*.key
+*.p12
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+env/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Node / 算法运行时
+node_modules/
+.runtime/
+dist/
+build/
+out/
+outputs/
+**/out/
+**/outputs/
+**/deliverables/
+**/_archive_*/
+**/_归档_*/
+算法/归档/
+
+# 数据、缓存、上传、会话（用户的图绝不出本机）
+数据/
+**/数据/
+**/psd-cache/
+**/cache/
+**/tmp/
+*.psd
+*.psb
+*.zip
+
+# 模型权重
+*.pt
+*.pth
+*.safetensors
+*.onnx
+*.mlx
+算法/**/本地模型/
+
+# 桌面端构建产物（源码保留）
+桌面端/PatternFlow.app/
+桌面端/Resources/AppIcon.icns
+桌面端/Resources/icon_1024.png
+桌面端/截图/
+
+# 个人会话 / 逆向分析 / 备份，不发布
+会话迁移_REA/
+_rea/
+.rea/
+.backup/
+.workbuddy/
+uniseven_*.md
+
+# macOS / 编辑器
+.DS_Store
+.idea/
+.vscode/
+*.swp

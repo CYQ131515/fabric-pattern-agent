@@ -1,0 +1,20 @@
+{
+  "id": "case-20261020-04",
+  "date": "2026-10-20",
+  "title": "密集大花接缝：AI 补缝加后处理从拒单到 A 级",
+  "source": "user-reported",
+  "status": "fixed",
+  "symptom": "02-seam-ai 输出的 tile 在 2×2 平铺时 tile 边界对不上（wrapY 1.51）、带内亮度差 4.7 → 03/03b 都过不了",
+  "root_cause": "竖带全高，模型重画的竖带在图像上下边缘不自我衔接；带内重画内容低频与环带不一致",
+  "fix": "steps/09-seam-postfix.py：四边16px wrap强制还原 + 03b口径带均值匹配5轮（AI 贡献系数保持 k=1，k<1 会把原图接缝漏回来）；产品候选 ai2 与 pipeline ai 均接上",
+  "regression": "",
+  "artifacts": [
+    "rejected-preview.png",
+    "input-preview.png"
+  ],
+  "tags": [
+    "band-boundary",
+    "wrap",
+    "ai-seam"
+  ]
+}

@@ -1,0 +1,1850 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>PatternFlow · 花型智造 — 交互原型 v0.1</title>
+<style>
+:root{
+  --ink:#211E1B;
+  --ink-2:#3A342E;
+  --ink-3:#6B635A;
+  --ink-4:#9A9188;
+  --line:#E4DED6;
+  --line-2:#EFEAE3;
+  --paper:#F6F3EE;
+  --card:#FFFFFF;
+  --accent:#C1553A;
+  --accent-soft:#F6E7E2;
+  --jade:#3F6B5C;
+  --jade-soft:#E4EDE9;
+  --gold:#B58A2B;
+  --gold-soft:#F6EFDD;
+  --blue:#3B5D8F;
+  --blue-soft:#E6EDF7;
+  --r-s:6px; --r-m:10px; --r-l:16px; --r-xl:22px;
+  --sh-1:0 1px 2px rgba(33,30,27,.06), 0 1px 1px rgba(33,30,27,.04);
+  --sh-2:0 6px 18px rgba(33,30,27,.08), 0 2px 6px rgba(33,30,27,.04);
+  --sh-3:0 22px 48px rgba(33,30,27,.18), 0 6px 16px rgba(33,30,27,.08);
+  --fs:14px;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0; background:var(--paper); color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  font-size:var(--fs); line-height:1.62; -webkit-font-smoothing:antialiased;
+}
+button{font-family:inherit;font-size:inherit;cursor:pointer;border:none;background:none;color:inherit}
+input,textarea,select{font-family:inherit;font-size:inherit;color:inherit}
+::-webkit-scrollbar{width:9px;height:9px}
+::-webkit-scrollbar-thumb{background:#D7D0C7;border-radius:9px}
+::-webkit-scrollbar-track{background:transparent}
+
+/* ============ 布局 ============ */
+#app{display:flex;height:100vh;overflow:hidden}
+.side{
+  width:212px;flex:0 0 212px;background:var(--ink);color:#EDE8E2;
+  display:flex;flex-direction:column;padding:18px 12px;gap:6px;
+}
+.brand{display:flex;align-items:center;gap:9px;padding:4px 8px 16px}
+.brand .mark{width:30px;height:30px;border-radius:9px;flex:0 0 30px;
+  background:conic-gradient(from 210deg,#C1553A,#B58A2B,#3F6B5C,#C1553A);
+  position:relative;overflow:hidden}
+.brand .mark::after{content:"";position:absolute;inset:7px;border-radius:4px;background:var(--ink)}
+.brand .tx b{display:block;font-size:13.5px;letter-spacing:.4px}
+.brand .tx span{display:block;font-size:10.5px;color:#8E857B;letter-spacing:.6px}
+.nav-label{font-size:10.5px;color:#7C736A;padding:12px 10px 5px;letter-spacing:1px}
+.nav-btn{
+  display:flex;align-items:center;gap:10px;width:100%;text-align:left;
+  padding:9px 11px;border-radius:9px;color:#CFC7BE;font-size:13.5px;
+  transition:background .16s,color .16s;
+}
+.nav-btn:hover{background:rgba(255,255,255,.06);color:#fff}
+.nav-btn[aria-current="true"]{background:rgba(193,85,58,.9);color:#fff;box-shadow:var(--sh-1)}
+.nav-btn .ico{width:17px;text-align:center;font-size:14px;opacity:.92}
+.nav-btn .badge{margin-left:auto;font-size:10.5px;background:rgba(255,255,255,.14);
+  padding:1px 6px;border-radius:20px;min-width:18px;text-align:center}
+.side-foot{margin-top:auto;padding:10px;border-radius:12px;background:rgba(255,255,255,.055)}
+.side-foot .k{font-size:10.5px;color:#8E857B}
+.side-foot .v{font-size:19px;font-weight:650;letter-spacing:.3px}
+.side-foot .v small{font-size:11px;font-weight:400;color:#A79E94;margin-left:3px}
+.side-foot button{margin-top:8px;width:100%;padding:7px;border-radius:8px;
+  background:#EDE8E2;color:var(--ink);font-size:12.5px;font-weight:600}
+.side-foot button:hover{background:#fff}
+
+.main{flex:1;display:flex;flex-direction:column;min-width:0}
+.topbar{
+  height:58px;flex:0 0 58px;display:flex;align-items:center;gap:14px;
+  padding:0 22px;background:rgba(246,243,238,.92);backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--line);
+}
+.crumb{font-size:16px;font-weight:650;letter-spacing:.2px}
+.crumb small{font-weight:400;color:var(--ink-4);font-size:12px;margin-left:9px;letter-spacing:0}
+.top-right{margin-left:auto;display:flex;align-items:center;gap:9px}
+.chip-btn{padding:6px 12px;border-radius:20px;border:1px solid var(--line);background:#fff;
+  font-size:12.5px;color:var(--ink-2);transition:.16s}
+.chip-btn:hover{border-color:var(--ink-4);box-shadow:var(--sh-1)}
+.chip-btn.primary{background:var(--ink);color:#fff;border-color:var(--ink)}
+.chip-btn.primary:hover{background:#000}
+.balance{display:flex;align-items:center;gap:7px;padding:5px 12px;border-radius:20px;
+  background:var(--gold-soft);color:#7A5C12;font-size:12.5px;font-weight:600}
+.balance .dot{width:6px;height:6px;border-radius:50%;background:var(--gold)}
+.avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(140deg,#C1553A,#B58A2B);
+  color:#fff;display:grid;place-items:center;font-size:12px;font-weight:650}
+.view{flex:1;overflow:auto;padding:22px}
+.wrap{max-width:1180px;margin:0 auto}
+
+/* ============ 通用组件 ============ */
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r-l);box-shadow:var(--sh-1)}
+.card-pad{padding:18px}
+.sect-title{display:flex;align-items:baseline;gap:10px;margin:26px 0 12px}
+.sect-title h3{margin:0;font-size:15px;font-weight:650;letter-spacing:.2px}
+.sect-title .hint{font-size:12px;color:var(--ink-4)}
+.row{display:flex;gap:14px}
+.grid{display:grid;gap:14px}
+.tag{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;padding:2px 9px;border-radius:20px;
+  background:var(--line-2);color:var(--ink-3);white-space:nowrap}
+.tag.jade{background:var(--jade-soft);color:#2E5346}
+.tag.gold{background:var(--gold-soft);color:#7A5C12}
+.tag.accent{background:var(--accent-soft);color:#9C3F27}
+.tag.blue{background:var(--blue-soft);color:#2C4870}
+.muted{color:var(--ink-4)}
+.small{font-size:12px}
+.hr{height:1px;background:var(--line);margin:16px 0}
+.kpi{display:flex;flex-direction:column;gap:2px}
+.kpi b{font-size:24px;font-weight:660;letter-spacing:.4px;line-height:1.2}
+.kpi span{font-size:11.5px;color:var(--ink-4)}
+.bar{height:6px;border-radius:20px;background:var(--line-2);overflow:hidden}
+.bar > i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),#D98A5F);transition:width .35s ease}
+.btn{padding:8px 15px;border-radius:9px;background:var(--ink);color:#fff;font-size:13px;font-weight:560;
+  transition:.16s;display:inline-flex;align-items:center;gap:7px;justify-content:center}
+.btn:hover{background:#000;transform:translateY(-1px)}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+.btn.ghost{background:#fff;color:var(--ink-2);border:1px solid var(--line)}
+.btn.ghost:hover{border-color:var(--ink-4);background:#fff}
+.btn.accent{background:var(--accent)}
+.btn.accent:hover{background:#A8462E}
+.btn.sm{padding:5px 11px;font-size:12.5px;border-radius:8px}
+.btn.wide{width:100%}
+.empty{text-align:center;padding:52px 20px;color:var(--ink-4)}
+.empty .big{font-size:26px;margin-bottom:8px;opacity:.5}
+
+/* ============ 工作台 ============ */
+.hero{
+  border-radius:var(--r-xl);padding:26px 28px;color:#fff;position:relative;overflow:hidden;
+  background:linear-gradient(120deg,#26221F 0%,#372F28 52%,#4A3A2C 100%);box-shadow:var(--sh-2)
+}
+.hero::after{content:"";position:absolute;right:-70px;top:-70px;width:280px;height:280px;border-radius:50%;
+  background:radial-gradient(circle at 30% 30%,rgba(193,85,58,.55),rgba(181,138,43,.18) 60%,transparent 72%)}
+.hero h2{margin:0 0 6px;font-size:21px;font-weight:660;letter-spacing:.3px}
+.hero p{margin:0;color:#CFC6BC;font-size:13px;max-width:620px}
+.hero .hero-actions{margin-top:18px;display:flex;gap:10px;flex-wrap:wrap;position:relative;z-index:1}
+.hero .btn.ghost{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.22);color:#fff}
+.hero .btn.ghost:hover{background:rgba(255,255,255,.18)}
+.quick{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:16px}
+.quick .q{background:var(--card);border:1px solid var(--line);border-radius:var(--r-l);padding:15px;
+  text-align:left;transition:.18s;box-shadow:var(--sh-1)}
+.quick .q:hover{transform:translateY(-2px);box-shadow:var(--sh-2);border-color:#D9D1C6}
+.quick .q .qi{font-size:18px;margin-bottom:8px;display:block}
+.quick .q b{display:block;font-size:13.5px;font-weight:620;margin-bottom:2px}
+.quick .q span{font-size:11.5px;color:var(--ink-4);line-height:1.5;display:block}
+.stat4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.stat{padding:15px 17px}
+.mini-list{display:flex;flex-direction:column}
+.mini-row{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--line-2)}
+.mini-row:last-child{border-bottom:none}
+.mini-row .thumb{width:38px;height:38px;border-radius:8px;flex:0 0 38px;overflow:hidden;border:1px solid var(--line)}
+.mini-row .meta{flex:1;min-width:0}
+.mini-row .meta b{display:block;font-size:13px;font-weight:600}
+.mini-row .meta span{font-size:11.5px;color:var(--ink-4)}
+.two-col{display:grid;grid-template-columns:1.35fr 1fr;gap:14px;align-items:start}
+
+/* ============ 工作室 ============ */
+.studio{display:grid;grid-template-columns:1fr 296px;gap:14px;height:calc(100vh - 102px)}
+.chatpanel{display:flex;flex-direction:column;min-height:0;overflow:hidden}
+.agent-tabs{display:flex;gap:6px;padding:12px 14px;border-bottom:1px solid var(--line);background:#FCFAF7}
+.agent-tab{display:flex;align-items:center;gap:9px;padding:7px 12px 7px 8px;border-radius:11px;
+  border:1px solid transparent;transition:.16s;text-align:left}
+.agent-tab:hover{background:var(--line-2)}
+.agent-tab[aria-current="true"]{background:#fff;border-color:var(--line);box-shadow:var(--sh-1)}
+.agent-tab .face{width:28px;height:28px;border-radius:9px;display:grid;place-items:center;font-size:14px;color:#fff;flex:0 0 28px}
+.agent-tab b{display:block;font-size:12.5px;font-weight:620;line-height:1.35}
+.agent-tab span{display:block;font-size:10.5px;color:var(--ink-4)}
+.msgs{flex:1;overflow:auto;padding:20px 18px;display:flex;flex-direction:column;gap:16px;min-height:0}
+.msg{display:flex;gap:10px;max-width:88%}
+.msg.me{align-self:flex-end;flex-direction:row-reverse}
+.msg .face{width:32px;height:32px;border-radius:10px;flex:0 0 32px;display:grid;place-items:center;font-size:15px;color:#fff}
+.msg.me .face{background:var(--ink-3)}
+.bubble{background:#fff;border:1px solid var(--line);border-radius:14px;padding:11px 14px;box-shadow:var(--sh-1);min-width:0}
+.msg.me .bubble{background:var(--ink);color:#F2EDE7;border-color:var(--ink)}
+.bubble .who{font-size:10.5px;color:var(--ink-4);margin-bottom:3px;letter-spacing:.3px}
+.msg.me .bubble .who{color:#9A9188}
+.bubble p{margin:0 0 8px}
+.bubble p:last-child{margin-bottom:0}
+.bubble ul{margin:6px 0 0;padding-left:17px}
+.bubble li{margin:3px 0}
+.opt-row{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
+.opt{padding:6px 12px;border-radius:20px;border:1px solid var(--line);background:#fff;font-size:12.5px;
+  transition:.15s;color:var(--ink-2)}
+.opt:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+.opt.done{opacity:.45;pointer-events:none}
+.result-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:10px}
+.res{text-align:left;border:1px solid var(--line);border-radius:11px;overflow:hidden;background:#fff;transition:.18s}
+.res:hover{transform:translateY(-2px);box-shadow:var(--sh-2);border-color:#D6CEC3}
+.res .pv{aspect-ratio:1/1;display:block}
+.res .pv svg{display:block;width:100%;height:100%}
+.res .cap{padding:7px 9px}
+.res .cap b{display:block;font-size:11.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.res .cap span{font-size:10.5px;color:var(--ink-4)}
+.composer{border-top:1px solid var(--line);padding:12px 14px;background:#FCFAF7}
+.composer .box{display:flex;gap:9px;align-items:flex-end}
+.composer textarea{flex:1;resize:none;border:1px solid var(--line);border-radius:12px;padding:10px 12px;
+  min-height:44px;max-height:120px;background:#fff;outline:none;line-height:1.55}
+.composer textarea:focus{border-color:var(--ink-4);box-shadow:0 0 0 3px rgba(33,30,27,.05)}
+.icon-btn{width:40px;height:40px;border-radius:11px;border:1px solid var(--line);background:#fff;
+  display:grid;place-items:center;font-size:16px;color:var(--ink-3);transition:.16s}
+.icon-btn:hover{border-color:var(--ink-4);color:var(--ink)}
+.composer .hintline{font-size:11px;color:var(--ink-4);margin-top:7px;display:flex;gap:10px;flex-wrap:wrap}
+.briefcard{position:sticky;top:0}
+.brief-slot{display:flex;align-items:center;gap:9px;padding:9px 0;border-bottom:1px dashed var(--line)}
+.brief-slot:last-of-type{border-bottom:none}
+.brief-slot .lb{width:44px;flex:0 0 44px;font-size:11.5px;color:var(--ink-4)}
+.brief-slot .vl{font-size:12.5px;font-weight:560}
+.brief-slot .vl.none{color:#C4BCB2;font-weight:400}
+
+/* ============ 花型库 ============ */
+.filters{display:flex;flex-direction:column;gap:2px}
+.fgroup{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--line-2)}
+.fgroup:last-child{border-bottom:none}
+.fgroup .fl{width:52px;flex:0 0 52px;font-size:12px;color:var(--ink-4);padding-top:5px;letter-spacing:.5px}
+.fchips{display:flex;flex-wrap:wrap;gap:7px}
+.fchip{padding:4px 11px;border-radius:20px;border:1px solid var(--line);background:#fff;font-size:12.5px;
+  color:var(--ink-2);transition:.15s}
+.fchip:hover{border-color:var(--ink-4)}
+.fchip[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.lib-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(196px,1fr));gap:14px}
+.pcard{background:#fff;border:1px solid var(--line);border-radius:var(--r-l);overflow:hidden;
+  box-shadow:var(--sh-1);transition:.2s;text-align:left;position:relative}
+.pcard:hover{transform:translateY(-3px);box-shadow:var(--sh-2);border-color:#D6CEC3}
+.pcard .pv{aspect-ratio:1/1;position:relative;overflow:hidden}
+.pcard .pv svg{display:block;width:100%;height:100%}
+.pcard .fav{position:absolute;right:8px;top:8px;width:26px;height:26px;border-radius:50%;
+  background:rgba(255,255,255,.86);display:grid;place-items:center;font-size:12px;color:var(--ink-3);
+  backdrop-filter:blur(4px);opacity:0;transition:.16s}
+.pcard:hover .fav{opacity:1}
+.pcard .fav.on{opacity:1;color:var(--accent)}
+.pcard .info{padding:11px 12px 13px}
+.pcard .info b{display:block;font-size:13px;font-weight:620;margin-bottom:3px}
+.pcard .info .code{font-size:10.5px;color:var(--ink-4);font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+.pcard .info .tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}
+.pcard .matchbar{margin-top:9px;display:flex;align-items:center;gap:7px}
+.pcard .matchbar .bar{flex:1}
+.pcard .matchbar em{font-style:normal;font-size:11px;color:var(--jade);font-weight:620}
+
+/* ============ 抽屉 / 弹窗 ============ */
+.scrim{position:fixed;inset:0;background:rgba(33,30,27,.38);backdrop-filter:blur(2px);z-index:40;
+  animation:fade .18s ease}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:520px;max-width:92vw;background:var(--paper);
+  box-shadow:var(--sh-3);z-index:41;display:flex;flex-direction:column;animation:slideIn .24s cubic-bezier(.2,.8,.2,1)}
+.drawer .dh{padding:16px 20px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px;background:#fff}
+.drawer .db{flex:1;overflow:auto;padding:20px}
+.drawer .df{padding:14px 20px;border-top:1px solid var(--line);background:#fff;display:flex;gap:9px;flex-wrap:wrap}
+.close-x{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;font-size:15px;color:var(--ink-3)}
+.close-x:hover{background:var(--line-2);color:var(--ink)}
+.detail-hero{border-radius:var(--r-l);overflow:hidden;border:1px solid var(--line);background:#fff}
+.detail-hero svg{display:block;width:100%;height:auto}
+.pal{display:flex;gap:8px;margin-top:4px}
+.pal .sw{flex:1;height:44px;border-radius:9px;border:1px solid rgba(0,0,0,.06);position:relative}
+.pal .sw span{position:absolute;left:0;right:0;bottom:-17px;text-align:center;font-size:10px;color:var(--ink-4)}
+.kv{display:grid;grid-template-columns:86px 1fr;gap:8px 12px;font-size:12.5px}
+.kv .k{color:var(--ink-4)}
+.modal-wrap{position:fixed;inset:0;z-index:50;display:grid;place-items:center;padding:24px}
+.modal{background:var(--paper);border-radius:var(--r-xl);box-shadow:var(--sh-3);width:min(560px,94vw);
+  max-height:88vh;overflow:auto;animation:pop .2s cubic-bezier(.2,.8,.2,1)}
+.modal .mh{padding:18px 22px 0}
+.modal .mh h3{margin:0;font-size:16px;font-weight:650}
+.modal .mh p{margin:5px 0 0;font-size:12.5px;color:var(--ink-4)}
+.modal .mb{padding:16px 22px}
+.modal .mf{padding:0 22px 20px;display:flex;gap:9px;justify-content:flex-end}
+.pack{border:1px solid var(--line);border-radius:14px;padding:14px;background:#fff;text-align:left;transition:.16s;position:relative}
+.pack:hover{border-color:#D6CEC3;transform:translateY(-2px);box-shadow:var(--sh-2)}
+.pack[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.pack .pr{font-size:19px;font-weight:660}
+.pack .cr{font-size:12.5px;color:var(--jade);font-weight:620;margin-top:2px}
+.pack .note{font-size:11px;color:var(--ink-4);margin-top:4px}
+.pack .flag{position:absolute;right:10px;top:10px;font-size:10px;background:var(--gold-soft);color:#7A5C12;
+  padding:1px 7px;border-radius:20px}
+.qrbox{display:flex;gap:16px;align-items:center;background:#fff;border:1px solid var(--line);
+  border-radius:14px;padding:16px;margin-top:14px}
+.qrbox .qr{width:118px;height:118px;flex:0 0 118px;border-radius:9px;border:1px solid var(--line);background:#fff}
+.field{margin-bottom:12px}
+.field label{display:block;font-size:12px;color:var(--ink-3);margin-bottom:5px}
+.field input,.field select{width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:9px;background:#fff;outline:none}
+.field input:focus{border-color:var(--ink-4)}
+.switch{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line-2)}
+.switch:last-child{border-bottom:none}
+.switch .st{flex:1}
+.switch .st b{display:block;font-size:13px;font-weight:600}
+.switch .st span{font-size:11.5px;color:var(--ink-4)}
+.tog{width:40px;height:23px;border-radius:20px;background:#D7D0C7;position:relative;transition:.18s;flex:0 0 40px}
+.tog::after{content:"";position:absolute;top:2.5px;left:2.5px;width:18px;height:18px;border-radius:50%;
+  background:#fff;box-shadow:var(--sh-1);transition:.18s}
+.tog[aria-pressed="true"]{background:var(--jade)}
+.tog[aria-pressed="true"]::after{transform:translateX(17px)}
+.toast{position:fixed;left:50%;bottom:30px;transform:translateX(-50%);z-index:70;
+  background:var(--ink);color:#fff;padding:11px 18px;border-radius:12px;font-size:13px;box-shadow:var(--sh-3);
+  animation:pop .18s ease;display:flex;align-items:center;gap:9px}
+.toast.warn{background:#8E3A25}
+.tbl{width:100%;border-collapse:collapse;font-size:12.5px}
+.tbl th{text-align:left;font-weight:600;color:var(--ink-4);font-size:11.5px;padding:8px 10px;
+  border-bottom:1px solid var(--line);white-space:nowrap}
+.tbl td{padding:9px 10px;border-bottom:1px solid var(--line-2);vertical-align:middle}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tbody tr:hover{background:#FCFAF7}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11.5px}
+.seamwrap{position:relative;border-radius:var(--r-m);overflow:hidden;border:1px solid var(--line)}
+.seamwrap svg{display:block;width:100%;height:auto}
+.seamwrap .seamline{position:absolute;background:rgba(193,85,58,.85)}
+.seamwrap .seamline.v{top:0;bottom:0;width:1px}
+.seamwrap .seamline.h{left:0;right:0;height:1px}
+.stepline{display:flex;flex-direction:column;gap:2px}
+.stepline .st{display:flex;align-items:center;gap:9px;font-size:12.5px;color:var(--ink-4);padding:5px 0}
+.stepline .st .dotm{width:8px;height:8px;border-radius:50%;background:var(--line);flex:0 0 8px}
+.stepline .st.done{color:var(--ink-2)}
+.stepline .st.done .dotm{background:var(--jade)}
+.stepline .st.now{color:var(--accent);font-weight:600}
+.stepline .st.now .dotm{background:var(--accent);box-shadow:0 0 0 4px rgba(193,85,58,.16)}
+.typing{display:inline-flex;gap:3px;align-items:center;height:14px}
+.typing i{width:5px;height:5px;border-radius:50%;background:var(--ink-4);animation:blink 1s infinite}
+.typing i:nth-child(2){animation-delay:.16s}
+.typing i:nth-child(3){animation-delay:.32s}
+@keyframes blink{0%,60%,100%{opacity:.25}30%{opacity:1}}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+@keyframes pop{from{opacity:0;transform:translateY(8px) scale(.98)}to{opacity:1;transform:none}}
+@keyframes slideIn{from{transform:translateX(24px);opacity:.4}to{transform:none;opacity:1}}
+@media (max-width:1180px){
+  .studio{grid-template-columns:1fr}
+  .briefcard{position:static}
+  .studio{height:auto}
+  .quick{grid-template-columns:repeat(2,1fr)}
+  .stat4{grid-template-columns:repeat(2,1fr)}
+  .two-col{grid-template-columns:1fr}
+}
+@media (max-width:760px){
+  .side{display:none}
+  .result-grid{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+</head>
+<body>
+<div id="app">
+  <aside class="side">
+    <div class="brand">
+      <div class="mark"></div>
+      <div class="tx"><b>PatternFlow</b><span>花型智造</span></div>
+    </div>
+    <div class="nav-label">工作区</div>
+    <nav id="nav"></nav>
+    <div class="side-foot">
+      <div class="k">可用点数</div>
+      <div class="v" id="sideCredits">—<small>点</small></div>
+      <button data-act="recharge">立即充值</button>
+    </div>
+  </aside>
+  <main class="main">
+    <header class="topbar">
+      <div class="crumb" id="crumb">工作台</div>
+      <div class="top-right">
+        <button class="chip-btn" data-act="help">新手指引</button>
+        <div class="balance"><i class="dot"></i><span id="topCredits">—</span> 点</div>
+        <button class="chip-btn primary" data-act="recharge">充值</button>
+        <div class="avatar">CY</div>
+      </div>
+    </header>
+    <section class="view" id="view"></section>
+  </main>
+</div>
+<div id="layer"></div>
+<div id="toastbox"></div>
+
+<script>
+"use strict";
+/* =========================================================================
+   __DATA__  数据层：配色、图案引擎、花型资产、状态
+   ========================================================================= */
+
+var PALETTES = {
+  morandi:['#E7E1D8','#BCB4A8','#8E857A','#6E675E','#C1553A'],
+  macaron :['#FDF3F0','#F7C9C3','#BFD8CE','#F2E1A8','#C39BC4'],
+  mono    :['#F5F5F4','#D8D4CE','#8C8681','#3E3A36','#171514'],
+  neon    :['#F4E9FF','#7C4DFF','#00C2B2','#FF4E6A','#FFC63D'],
+  earth   :['#F1E7D8','#CBAE86','#9C7A50','#6B4E33','#3D2E22'],
+  indigo  :['#F4F7FA','#C9D9E6','#6E93B5','#2E5378','#16304A'],
+  pink    :['#FDF0F6','#F6C7DE','#D48FBF','#8E5A96','#4A3357'],
+  amber   :['#FBF1E2','#F0C88A','#DE9A4E','#B4652B','#7A3A16'],
+  aqua    :['#EFF8F8','#BEE3E2','#7FBFC4','#3F8290','#1F4E5C'],
+  sage    :['#F1F4EE','#CFDCC8','#94AE8B','#5B7A58','#33502F']
+};
+var PALETTE_NAME = {morandi:'莫兰迪灰调',macaron:'马卡龙甜彩',mono:'黑白灰',neon:'高饱和撞色',
+  earth:'大地色系',indigo:'蓝白青花',pink:'粉紫梦幻',amber:'暖橙焦糖',aqua:'蓝白青花',sage:'莫兰迪灰调'};
+
+/* --- 确定性伪随机 --- */
+function rng(seed){
+  var s = seed % 2147483647; if (s <= 0) s += 2147483646;
+  return function(){ s = s * 16807 % 2147483647; return (s - 1) / 2147483646; };
+}
+var SVID = 0;
+
+/* --- 花型基元绘制：返回 SVG 片段 --- */
+function motifDots(R,P){
+  var o = '';
+  for (var x = 0; x < 4; x++) for (var y = 0; y < 4; y++){
+    var cx = 12 + x*24 + (y%2?6:0), cy = 12 + y*24, rr = R();
+    if (rr < .18) continue;
+    o += '<circle cx="'+cx+'" cy="'+cy+'" r="'+(3.2+rr*3.6).toFixed(1)+'" fill="'+P[1+Math.floor(R()*3)]+'"/>';
+    o += '<circle cx="'+(cx+2).toFixed(1)+'" cy="'+(cy-2).toFixed(1)+'" r="1.1" fill="'+P[0]+'" opacity=".7"/>';
+  }
+  return o;
+}
+function petal(cx,cy,rad,n,fill,rot){
+  var o = '';
+  for (var i = 0; i < n; i++){
+    var a = (Math.PI*2/n)*i + (rot||0);
+    o += '<ellipse cx="'+(cx+Math.cos(a)*rad*.62).toFixed(2)+'" cy="'+(cy+Math.sin(a)*rad*.62).toFixed(2)+
+      '" rx="'+(rad*.46).toFixed(2)+'" ry="'+(rad*.3).toFixed(2)+
+      '" transform="rotate('+(a*180/Math.PI).toFixed(1)+' '+(cx+Math.cos(a)*rad*.62).toFixed(2)+' '+(cy+Math.sin(a)*rad*.62).toFixed(2)+')" fill="'+fill+'"/>';
+  }
+  return o;
+}
+function motifBloom(R,P){
+  var o = '', cols = [P[1],P[2],P[3],P[4]];
+  for (var x = 0; x < 3; x++) for (var y = 0; y < 3; y++){
+    var cx = 16 + x*36 + (y%2?14:0), cy = 16 + y*36, rad = 7 + R()*4.5;
+    var c = cols[Math.floor(R()*cols.length)];
+    o += petal(cx,cy,rad,5+Math.floor(R()*2),c, R()*1.2) ;
+    o += '<circle cx="'+cx+'" cy="'+cy+'" r="'+(rad*.24).toFixed(2)+'" fill="'+P[4]+'" opacity=".85"/>';
+    o += '<ellipse cx="'+(cx+9).toFixed(1)+'" cy="'+(cy+9).toFixed(1)+'" rx="4.6" ry="1.9" transform="rotate(-38 '+(cx+9).toFixed(1)+' '+(cy+9).toFixed(1)+')" fill="'+P[1]+'" opacity=".8"/>';
+    o += '<ellipse cx="'+(cx-9).toFixed(1)+'" cy="'+(cy+10).toFixed(1)+'" rx="4.6" ry="1.9" transform="rotate(38 '+(cx-9).toFixed(1)+' '+(cy+10).toFixed(1)+')" fill="'+P[1]+'" opacity=".8"/>';
+  }
+  return o;
+}
+function motifLeaf(R,P){
+  var o = '';
+  for (var i = 0; i < 7; i++){
+    var x = 8 + R()*84, y = 8 + R()*84, s = .7 + R()*.7, a = -70 + R()*140;
+    o += '<path d="M0 0 C7 -6 15 -3 16 0 C15 3 7 6 0 0 Z" transform="translate('+x.toFixed(1)+' '+y.toFixed(1)+
+      ') rotate('+a.toFixed(1)+') scale('+s.toFixed(2)+')" fill="'+P[2+Math.floor(R()*2)]+'"/>';
+    o += '<line x1="0" y1="0" x2="15" y2="0" transform="translate('+x.toFixed(1)+' '+y.toFixed(1)+') rotate('+a.toFixed(1)+
+      ') scale('+s.toFixed(2)+')" stroke="'+P[0]+'" stroke-width=".8" opacity=".65"/>';
+  }
+  return o;
+}
+function motifVine(R,P){
+  var o = '';
+  for (var i = 0; i < 3; i++){
+    var x0 = 8 + i*32, c = P[2+Math.floor(R()*2)];
+    o += '<path d="M'+x0+' -6 C'+(x0+16)+' 16 '+(x0-16)+' 34 '+x0+' 56 C'+(x0+16)+' 78 '+(x0-16)+' 90 '+x0+' 106" '+
+      'fill="none" stroke="'+c+'" stroke-width="1.5" opacity=".85"/>';
+    for (var k = 0; k < 6; k++){
+      var t = k/6*106, sgn = k%2?1:-1;
+      var lx = x0 + sgn*8 + Math.sin(t/18)*5, ly = t + 6;
+      o += '<ellipse cx="'+lx.toFixed(1)+'" cy="'+ly.toFixed(1)+'" rx="5.4" ry="2.2" transform="rotate('+(sgn*32)+' '+lx.toFixed(1)+' '+ly.toFixed(1)+')" fill="'+c+'" opacity=".8"/>';
+    }
+    o += '<circle cx="'+x0+'" cy="'+(6+i*30)+'" r="3.6" fill="'+P[4]+'" opacity=".9"/>';
+  }
+  return o;
+}
+function motifGeo(R,P){
+  var o = '';
+  for (var x = 0; x < 4; x++) for (var y = 0; y < 4; y++){
+    var cx = 12 + x*26 + (y%2?13:0), cy = 12 + y*26, t = R();
+    if (t < .34) o += '<circle cx="'+cx+'" cy="'+cy+'" r="'+(5+R()*4).toFixed(1)+'" fill="none" stroke="'+P[3]+'" stroke-width="1.6"/>';
+    else if (t < .68) o += '<rect x="'+(cx-5).toFixed(1)+'" y="'+(cy-5).toFixed(1)+'" width="10" height="10" rx="1.6" transform="rotate(45 '+cx+' '+cy+')" fill="'+P[2]+'"/>';
+    else o += '<path d="M'+cx+' '+(cy-6)+' L'+(cx+6)+' '+(cy+5)+' L'+(cx-6)+' '+(cy+5)+' Z" fill="'+P[4]+'"/>';
+  }
+  return o;
+}
+function motifAnimal(R,P){
+  var o = '';
+  for (var i = 0; i < 16; i++){
+    var cx = R()*104, cy = R()*104, rx = 3.6 + R()*4.4, ry = 2.4 + R()*2.6, a = R()*180;
+    o += '<ellipse cx="'+cx.toFixed(1)+'" cy="'+cy.toFixed(1)+'" rx="'+rx.toFixed(1)+'" ry="'+ry.toFixed(1)+
+      '" transform="rotate('+a.toFixed(0)+' '+cx.toFixed(1)+' '+cy.toFixed(1)+')" fill="'+P[3]+'"/>';
+    if (R() > .45) o += '<ellipse cx="'+(cx+rx*1.5).toFixed(1)+'" cy="'+(cy-ry*.4).toFixed(1)+'" rx="'+(rx*.55).toFixed(1)+
+      '" ry="'+(ry*.5).toFixed(1)+'" transform="rotate('+a.toFixed(0)+' '+(cx+rx*1.5).toFixed(1)+' '+(cy-ry*.4).toFixed(1)+')" fill="'+P[4]+'" opacity=".75"/>';
+  }
+  return o;
+}
+function motifStripe(R,P){
+  var o = '';
+  for (var i = -2; i < 8; i++){
+    var x = i*16, c = P[1 + ((i%3)+3)%3];
+    o += '<rect x="'+x+'" y="-12" width="'+(5+R()*7).toFixed(1)+'" height="124" fill="'+c+'" opacity=".9"/>';
+    o += '<rect x="'+(x+11)+'" y="-12" width="1.4" height="124" fill="'+P[4]+'" opacity=".55"/>';
+  }
+  return o;
+}
+function motifCheck(R,P){
+  var o = '';
+  for (var x = 0; x < 5; x++) for (var y = 0; y < 5; y++){
+    var cx = x*22, cy = y*22;
+    o += '<rect x="'+cx+'" y="'+cy+'" width="22" height="22" fill="'+P[1]+'" opacity=".55"/>';
+    o += '<rect x="'+cx+'" y="'+cy+'" width="11" height="11" fill="'+P[3]+'" opacity=".75"/>';
+    o += '<rect x="'+(cx+11)+'" y="'+(cy+11)+'" width="11" height="11" fill="'+P[4]+'" opacity=".6"/>';
+  }
+  return o;
+}
+function motifShell(R,P){
+  var o = '';
+  for (var i = 0; i < 5; i++){
+    var cx = 12 + (i%3)*34, cy = 16 + Math.floor(i/3)*40, s = .8 + R()*.4;
+    o += '<g transform="translate('+cx+' '+cy+') scale('+s.toFixed(2)+') rotate('+(-20+R()*40).toFixed(0)+')">';
+    for (var k = 0; k < 4; k++)
+      o += '<path d="M0 12 A14 14 0 0 1 0 -12" transform="rotate('+(-30+k*20)+')" fill="none" stroke="'+P[2+ (k%2)]+'" stroke-width="2.6" stroke-linecap="round"/>';
+    o += '<circle cx="0" cy="11" r="2.6" fill="'+P[4]+'"/></g>';
+  }
+  for (var w = 0; w < 4; w++)
+    o += '<path d="M-4 '+(10+w*26)+' q14 -7 28 0 t28 0 t28 0 t28 0" fill="none" stroke="'+P[1]+'" stroke-width="1.6" opacity=".85"/>';
+  return o;
+}
+function motifInk(R,P){
+  var o = '';
+  for (var i = 0; i < 9; i++){
+    var x = R()*100, y = R()*100, s = .5 + R()*1.1, a = R()*360;
+    var c = i % 3 === 0 ? P[4] : P[3];
+    o += '<path d="M0 0 C6 -5 14 -3 17 2 C20 8 12 13 4 11 C-3 9 -4 3 0 0 Z" transform="translate('+x.toFixed(1)+' '+y.toFixed(1)+
+      ') rotate('+a.toFixed(0)+') scale('+s.toFixed(2)+')" fill="'+c+'" opacity="'+(0.42+ (i%3)*0.2).toFixed(2)+'"/>';
+  }
+  o += '<path d="M4 30 C30 12 56 46 86 24" fill="none" stroke="'+P[3]+'" stroke-width="2.4" opacity=".5" stroke-linecap="round"/>';
+  o += '<path d="M2 72 C28 88 54 58 88 78" fill="none" stroke="'+P[4]+'" stroke-width="1.6" opacity=".42" stroke-linecap="round"/>';
+  return o;
+}
+var MOTIF_FN = {dots:motifDots, bloom:motifBloom, leaf:motifLeaf, vine:motifVine, geo:motifGeo,
+  animal:motifAnimal, stripe:motifStripe, check:motifCheck, shell:motifShell, ink:motifInk};
+
+/* --- 生成一张花型 SVG（带织物纹理与光影） --- */
+function patternSVG(p, opt){
+  opt = opt || {};
+  var uid = 'pf' + (++SVID);
+  var P = PALETTES[p.pal] || PALETTES.morandi;
+  var R = rng(p.seed);
+  var body = MOTIF_FN[p.motif](R, P);
+  var bg = P[0];
+  var base = 104;
+  var fit = opt.fit || 'xMidYMid slice';
+  return '<svg viewBox="0 0 104 104" preserveAspectRatio="'+fit+'" role="img" aria-label="'+esc(p.name)+' 花型图案">'+
+    '<defs>'+
+      '<pattern id="'+uid+'p" patternUnits="userSpaceOnUse" width="'+base+'" height="'+base+'">'+
+        '<rect width="'+base+'" height="'+base+'" fill="'+bg+'"/>'+ body +
+      '</pattern>'+
+      '<linearGradient id="'+uid+'w" x1="0" y1="0" x2="1" y2="1">'+
+        '<stop offset="0%" stop-color="#fff" stop-opacity=".16"/>'+
+        '<stop offset="55%" stop-color="#fff" stop-opacity="0"/>'+
+        '<stop offset="100%" stop-color="#000" stop-opacity=".08"/></linearGradient>'+
+      '<pattern id="'+uid+'t" patternUnits="userSpaceOnUse" width="4" height="4">'+
+        '<rect width="4" height="4" fill="none"/>'+
+        '<path d="M0 0V4M2 0V4" stroke="#000" stroke-opacity=".028" stroke-width="1"/>'+
+        '<path d="M0 0H4M0 2H4" stroke="#fff" stroke-opacity=".18" stroke-width="1"/></pattern>'+
+    '</defs>'+
+    '<rect width="104" height="104" fill="url(#'+uid+'p)"/>'+
+    '<rect width="104" height="104" fill="url(#'+uid+'t)"/>'+
+    '<rect width="104" height="104" fill="url(#'+uid+'w)"/>'+
+    '</svg>';
+}
+function tilePreviewSVG(p){
+  return patternSVG(p, {fit:'none'});
+}
+function esc(s){ return String(s).replace(/[&<>"']/g, function(c){
+  return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]; }); }
+
+/* --- 花型资产：四个创意维度 + 二级标签 --- */
+var PATTERNS = [
+ {id:'PF-OWN-2026-000128', v:'V03', name:'山茶小径', motif:'bloom', pal:'morandi', seed:11,
+  style:'法式浪漫', element:'花卉', color:'莫兰迪灰调', scene:'女装连衣裙',
+  l2:['散点','中密','中花','数码直喷','已打样'], seam:97, quality:94, heat:86,
+  desc:'中小尺度山茶散点，枝叶留白充足，远看是柔和肌理、近看有细节，适合春季连衣裙与罩衫。',
+  sell:['留白比例高，显瘦不压身','灰调低饱和，易与肤色协调','花回 32cm，落布损耗小'],
+  fabric:'雪纺、醋酸、天丝' },
+ {id:'PF-OWN-2026-000131', v:'V02', name:'青花缠枝', motif:'vine', pal:'indigo', seed:23,
+  style:'新中式国风', element:'叶片藤蔓', color:'蓝白青花', scene:'丝巾',
+  l2:['满地','中密','大花','数码直喷','连续稿'], seam:95, quality:96, heat:92,
+  desc:'缠枝线条连续不断，蓝白两色为主、层次靠粗细变化拉开，适合丝巾、旗袍与礼盒布艺。',
+  sell:['民族感强，礼赠场景识别度高','双主色便于小批量数码印花','垂直接缝可对花，拼接不露痕'],
+  fabric:'真丝、贡缎、棉麻' },
+ {id:'PF-OWN-2026-000140', v:'V01', name:'摩登圆舞', motif:'geo', pal:'mono', seed:37,
+  style:'现代极简', element:'几何', color:'黑白灰', scene:'衬衫',
+  l2:['对称','疏','小碎花','热转印','原图'], seam:99, quality:92, heat:78,
+  desc:'黑白灰几何单元等距排布，节奏感强但不喧闹，适合通勤衬衫、西装里布与商务配饰。',
+  sell:['无彩色系，男女装通用','单色印刷成本可控','单元规整，分色只需 3 个图层'],
+  fabric:'棉府绸、牛津纺' },
+ {id:'PF-OWN-2026-000145', v:'V01', name:'丛林轻语', motif:'leaf', pal:'earth', seed:41,
+  style:'田园草木', element:'叶片藤蔓', color:'大地色系', scene:'家居布艺',
+  l2:['满地','密','中花','圆网','连续稿'], seam:93, quality:90, heat:74,
+  desc:'手绘感阔叶错落叠加，色调偏暖，适合窗帘、抱枕、沙发套等家居面料。',
+  sell:['大尺度叶片适合大幅幅宽','暖调大地色耐脏、耐看','可做同色系深浅两版'],
+  fabric:'棉麻混纺、绒布' },
+ {id:'PF-AI-2026-000152', v:'V01', name:'甜蜜浆果', motif:'dots', pal:'macaron', seed:53,
+  style:'童趣插画', element:'波点', color:'马卡龙甜彩', scene:'童装',
+  l2:['散点','中密','小碎花','数码直喷','AI 生成'], seam:96, quality:88, heat:81,
+  desc:'圆形基元叠加高光，像糖果散落，色彩明快，适合童装与婴童床品。',
+  sell:['高对比配色，童装货架辨识度高','基元简单，印花瑕疵容忍度高','可一键换成同系列三色'],
+  fabric:'针织棉、双层纱' },
+ {id:'PF-OWN-2026-000160', v:'V04', name:'猎豹纹章', motif:'animal', pal:'amber', seed:67,
+  style:'复古波普', element:'动物纹', color:'暖橙焦糖', scene:'箱包配饰',
+  l2:['满地','密','中花','热转印','已打样'], seam:92, quality:91, heat:88,
+  desc:'抽象化豹纹斑点，斑块边缘做了柔化处理，比写实豹纹更耐看，适合箱包与鞋材。',
+  sell:['暖橙调提气色，秋冬畅销','斑块不规整，拼接处不显接缝','可做缩小版用于鞋材'],
+  fabric:'PU 复合、帆布、麂皮绒' },
+ {id:'PF-CUS-2026-000163', v:'V02', name:'海盐贝壳', motif:'shell', pal:'aqua', seed:71,
+  style:'波西米亚', element:'海洋贝壳', color:'蓝白青花', scene:'泳装',
+  l2:['满地','中密','中花','数码直喷','客户私有'], seam:94, quality:89, heat:70,
+  desc:'扇贝与海浪线组合，清爽通透，适合泳装、沙滩裙与度假系列。',
+  sell:['度假主题明确，适合系列开发','浅色底印花，抬手不露白边','四向弹力面料上花型不畸变'],
+  fabric:'莱卡、锦氨纶' },
+ {id:'PF-OWN-2026-000171', v:'V01', name:'沙丘条纹', motif:'stripe', pal:'earth', seed:83,
+  style:'现代极简', element:'条纹格纹', color:'大地色系', scene:'运动服',
+  l2:['条纹','疏','——','数码直喷','连续稿'], seam:98, quality:93, heat:76,
+  desc:'宽窄不一的斜向条纹，通过疏密制造速度感，适合运动外套与瑜伽系列。',
+  sell:['斜纹有纵向延伸感，显瘦','宽窄变化避免呆板','适合纵向裁片对条'],
+  fabric:'涤氨纶、网眼布' },
+ {id:'PF-AI-2026-000178', v:'V01', name:'霓虹脉冲', motif:'geo', pal:'neon', seed:97,
+  style:'Y2K未来', element:'几何', color:'高饱和撞色', scene:'运动服',
+  l2:['对称','中密','——','热转印','AI 生成'], seam:95, quality:86, heat:83,
+  desc:'紫青撞色几何穿插，带发光错觉，适合电竞队服、潮牌联名与泳装。',
+  sell:['高饱和撞色，镜头表现力强','几何单元易做局部换色','适合小面积定位印花'],
+  fabric:'涤纶、氨纶' },
+ {id:'PF-OWN-2026-000184', v:'V03', name:'花园下午茶', motif:'bloom', pal:'macaron', seed:101,
+  style:'法式浪漫', element:'花卉', color:'马卡龙甜彩', scene:'女装连衣裙',
+  l2:['散点','中密','小碎花','数码直喷','连续稿'], seam:96, quality:92, heat:90,
+  desc:'小碎花自由散布，粉绿撞色柔和，甜而不腻，是连衣裙与半裙的常规爆款结构。',
+  sell:['小碎花显嫩，客群覆盖广','底色浅，可做同版深色款','花回 24cm，短裙裁片也对得上'],
+  fabric:'雪纺、人造丝' },
+ {id:'PF-LIC-2026-000190', v:'V01', name:'墨色山水', motif:'ink', pal:'mono', seed:113,
+  style:'新中式国风', element:'抽象笔触', color:'黑白灰', scene:'家居布艺',
+  l2:['定位','疏','大花','圆网','授权素材'], seam:91, quality:95, heat:69,
+  desc:'水墨泼洒与笔触走向构成留白意境，适合新中式家居、茶席与高端礼盒。',
+  sell:['文化属性强，适合礼品线','灰阶分色，工艺容错高','可放大做单幅定位画面'],
+  fabric:'棉麻、真丝' },
+ {id:'PF-OWN-2026-000196', v:'V02', name:'玫瑰塔夫绸', motif:'bloom', pal:'pink', seed:127,
+  style:'复古波普', element:'花卉', color:'粉紫梦幻', scene:'女装连衣裙',
+  l2:['满地','密','大花','数码直喷','已打样'], seam:94, quality:90, heat:87,
+  desc:'大朵玫瑰层叠铺满，粉紫渐变过渡，适合礼服、吊带与晚装系列。',
+  sell:['满底大花，成衣视觉冲击强','同色系渐变，层次不脏','礼服场景溢价空间大'],
+  fabric:'缎面、欧根纱' },
+ {id:'PF-AI-2026-000203', v:'V01', name:'童梦星球', motif:'geo', pal:'neon', seed:131,
+  style:'童趣插画', element:'几何', color:'高饱和撞色', scene:'童装',
+  l2:['散点','中密','中花','热转印','AI 生成'], seam:93, quality:85, heat:79,
+  desc:'星球与轨道环的变形组合，撞色活泼，适合男童 T 恤与卫衣。',
+  sell:['主题感强，适合做系列','大色块方便低成本丝印','可按品类替换主色'],
+  fabric:'棉毛圈、卫衣布' },
+ {id:'PF-OWN-2026-000210', v:'V01', name:'藤编格纹', motif:'check', pal:'morandi', seed:139,
+  style:'田园草木', element:'条纹格纹', color:'莫兰迪灰调', scene:'家居布艺',
+  l2:['条纹','密','——','圆网','连续稿'], seam:99, quality:93, heat:72,
+  desc:'仿藤编交叉格纹，灰调层次细腻，适合窗帘、桌布与软装单品。',
+  sell:['经纬交叉结构，织造与印花均适用','低对比配色，久看不累','小单元易做纱线色织转化'],
+  fabric:'棉麻、涤棉' },
+ {id:'PF-OWN-2026-000217', v:'V02', name:'蝶舞波点', motif:'dots', pal:'pink', seed:149,
+  style:'波西米亚', element:'波点', color:'粉紫梦幻', scene:'丝巾',
+  l2:['散点','中密','小碎花','数码直喷','连续稿'], seam:97, quality:91, heat:75,
+  desc:'波点与细碎蝶形结合，紫粉调轻盈，适合丝巾、内搭与配饰。',
+  sell:['波点经典，翻单稳定','小单元适合窄幅丝巾','可配套做出同花同色系系列'],
+  fabric:'真丝、雪纺' },
+ {id:'PF-AI-2026-000224', v:'V01', name:'曜石叶脉', motif:'vine', pal:'neon', seed:151,
+  style:'Y2K未来', element:'叶片藤蔓', color:'高饱和撞色', scene:'箱包配饰',
+  l2:['满地','密','中花','热转印','AI 生成'], seam:92, quality:87, heat:80,
+  desc:'荧光描边的叶脉线条，暗底发光，适合潮牌箱包、滑板与运动配件。',
+  sell:['暗底荧光，夜店与潮牌场景贴合','线条结构，缩放到小件仍清晰','可只保留描边做单色版'],
+  fabric:'涂层布、涤纶' }
+];
+var PAT = {}; PATTERNS.forEach(function(p){ PAT[p.id] = p; });
+
+var STYLE_OPTS = ['法式浪漫','新中式国风','复古波普','现代极简','童趣插画','波西米亚','Y2K未来','田园草木'];
+var ELEM_OPTS  = ['花卉','叶片藤蔓','几何','动物纹','条纹格纹','波点','抽象笔触','海洋贝壳'];
+var COLOR_OPTS = ['莫兰迪灰调','马卡龙甜彩','黑白灰','高饱和撞色','大地色系','蓝白青花','粉紫梦幻','暖橙焦糖'];
+var SCENE_OPTS = ['女装连衣裙','衬衫','童装','家居布艺','箱包配饰','泳装','丝巾','运动服'];
+var DIMS = [
+  {key:'style',   label:'风格', opts:STYLE_OPTS},
+  {key:'element', label:'元素', opts:ELEM_OPTS},
+  {key:'color',   label:'配色', opts:COLOR_OPTS},
+  {key:'scene',   label:'场景', opts:SCENE_OPTS}
+];
+
+var AGENTS = {
+  assistant:{name:'项目助理', face:'助', color:'#3F6B5C', tagline:'平台答疑 · 订单 · 发票 · 清单'},
+  designer :{name:'花型设计师', face:'设', color:'#C1553A', tagline:'需求澄清 · 选稿 · 方案说明'},
+  engineer :{name:'织印师', face:'织', color:'#3B5D8F', tagline:'描稿 · 四方连续 · 分层 PSD'}
+};
+
+var TASK_TYPES = {
+  repeat : {name:'四方连续', cost:30, steps:['输入质量检查','周期偏移与补缝','水平/垂直接缝检测','平铺预览生成'], out:'PNG 600dpi + TIFF + 接缝报告'},
+  psd    : {name:'分层 PSD', cost:45, steps:['色彩聚类','蒙版边缘细化','图层命名与分组','兼容性检查'], out:'PSD（按主色分层）+ 色板表'},
+  trace  : {name:'描稿仿稿', cost:60, steps:['清晰度与透视评估','去噪与超分','主体分割','矢量描摹与色彩还原'], out:'SVG + PNG + 相似度说明'},
+  pack   : {name:'全套交付包', cost:120, steps:['输入质量检查','四方连续与补缝','接缝检测','颜色分层','PSD 合成','交付包打包'], out:'PNG/TIFF/SVG/PSD + 规格说明'}
+};
+
+/* --- 全局状态 --- */
+var S = {
+  page:'home',
+  agent:'designer',
+  credits:1280,
+  chat:{assistant:null, designer:null, engineer:null},
+  brief:{style:null, element:null, color:null, scene:null},
+  rounds:{designer:0},
+  filters:{style:[], element:[], color:[], scene:[], q:''},
+  fav:[],
+  tasks:[],
+  assets:[
+    {name:'山茶小径_PF-OWN-2026-000128_V03_600dpi.png', pid:'PF-OWN-2026-000128', fmt:'PNG · 600dpi', at:'09-25 14:22', pts:30},
+    {name:'青花缠枝_PF-OWN-2026-000131_V02.tiff',       pid:'PF-OWN-2026-000131', fmt:'TIFF · 300dpi', at:'09-24 18:06', pts:30},
+    {name:'摩登圆舞_分层稿_V01.psd',                    pid:'PF-OWN-2026-000140', fmt:'PSD · 分层 4', at:'09-23 11:41', pts:45}
+  ],
+  ledger:[
+    {t:'套餐充值 · 入门包', amt:1000,  at:'09-20 10:05', kind:'in'},
+    {t:'四方连续 · 山茶小径', amt:-30, at:'09-25 14:22', kind:'out'},
+    {t:'四方连续 · 青花缠枝', amt:-30, at:'09-24 18:06', kind:'out'},
+    {t:'分层 PSD · 摩登圆舞', amt:-45, at:'09-23 11:41', kind:'out'},
+    {t:'注册赠送',           amt:500,  at:'09-19 09:12', kind:'in'},
+    {t:'描稿仿稿 · 参考图 A', amt:-60, at:'09-22 16:30', kind:'out'}
+  ],
+  invoices:[]
+};
+
+/* =========================================================================
+   __RENDER__  渲染层
+   ========================================================================= */
+var NAV = [
+  {group:'工作区'},
+  {key:'home',    ico:'◆', label:'工作台'},
+  {key:'studio',  ico:'✦', label:'AI 设计工作室', badge:'3'},
+  {key:'library', ico:'▦', label:'花型库'},
+  {key:'tasks',   ico:'⚙', label:'任务中心'},
+  {group:'资产与账户'},
+  {key:'assets',  ico:'⤓', label:'交付与下载'},
+  {key:'billing', ico:'¥', label:'点数与充值'},
+  {key:'trend',   ico:'↗', label:'趋势中心', soon:true},
+  {key:'admin',   ico:'⌘', label:'运营后台', soon:true}
+];
+var PAGE_TITLE = {home:['工作台','今日概览、快捷入口与最近动态'],
+  studio:['AI 设计工作室','三位专业 Agent，一位总管在后台调度'],
+  library:['花型资产库','风格 · 元素 · 配色 · 场景 四维检索'],
+  tasks:['任务中心','排队、处理中、待确认、已完成'],
+  assets:['交付与下载','交付包、下载记录与花型清单导出'],
+  billing:['点数与充值','点数钱包、套餐、流水与发票'],
+  trend:['趋势中心',''], admin:['运营后台','']};
+
+function renderNav(){
+  var h = '';
+  NAV.forEach(function(n){
+    if (n.group){ h += '<div class="nav-label">'+n.group+'</div>'; return; }
+    h += '<button class="nav-btn" data-page="'+n.key+'" aria-current="'+(S.page===n.key)+'">'+
+      '<span class="ico">'+n.ico+'</span><span>'+n.label+'</span>'+
+      (n.badge?'<span class="badge">'+n.badge+'</span>':'')+
+      (n.soon?'<span class="badge">P1</span>':'')+'</button>';
+  });
+  document.getElementById('nav').innerHTML = h;
+}
+function renderChrome(){
+  document.getElementById('sideCredits').innerHTML = S.credits.toLocaleString('zh-CN')+'<small>点</small>';
+  document.getElementById('topCredits').textContent = S.credits.toLocaleString('zh-CN');
+  var t = PAGE_TITLE[S.page] || ['', ''];
+  document.getElementById('crumb').innerHTML = esc(t[0]) + (t[1] ? '<small>'+esc(t[1])+'</small>' : '');
+  renderNav();
+}
+function render(){
+  renderChrome();
+  var v = document.getElementById('view');
+  var fn = {home:viewHome, studio:viewStudio, library:viewLibrary, tasks:viewTasks,
+    assets:viewAssets, billing:viewBilling, trend:viewSoon, admin:viewSoon}[S.page] || viewHome;
+  v.innerHTML = fn();
+  v.scrollTop = 0;
+}
+function viewSoon(){
+  return '<div class="empty"><div class="big">◇</div><h3 style="margin:0 0 6px">该模块排在 P1 / P2 阶段</h3>'+
+    '<p class="small">原型首版聚焦「对话选稿 → 落地文件 → 扣费交付」主闭环，趋势中心与运营后台在后续版本开放。</p>'+
+    '<div style="margin-top:16px"><button class="btn ghost" data-page="home">返回工作台</button></div></div>';
+}
+
+/* ---------- 工作台 ---------- */
+function viewHome(){
+  var recent = S.tasks.slice(0,3);
+  var hot = PATTERNS.slice().sort(function(a,b){ return b.heat-a.heat; }).slice(0,4);
+  var h = '<div class="wrap">';
+  h += '<div class="hero"><h2>下午好，欢迎回到花型智造</h2>'+
+    '<p>一句话描述你要的花型，设计师会帮你补齐风格、元素、配色、场景四个维度，从自有花型库挑选候选，再交给织印师产出可用于生产的连续稿与分层文件。</p>'+
+    '<div class="hero-actions">'+
+      '<button class="btn accent" data-act="start-chat">✦ 开始一句需求</button>'+
+      '<button class="btn ghost" data-page="library">浏览花型库</button>'+
+      '<button class="btn ghost" data-act="start-upload">上传参考图描稿</button>'+
+    '</div></div>';
+
+  h += '<div class="quick">'+
+    quick('✦','对话选稿','说需求 → 补维度 → 出候选','studio')+
+    quick('▦','花型库检索','四维标签 + 相似图 + 匹配理由','library')+
+    quick('⚙','落地文件','四方连续 / 分层 PSD / 描稿仿稿','tasks')+
+    quick('⤓','导出花型清单','含设计说明、趋势与卖点，可导表','assets')+
+  '</div>';
+
+  h += '<div class="stat4" style="margin-top:14px">'+
+    stat(S.credits.toLocaleString('zh-CN'),'可用点数')+
+    stat(String(S.tasks.filter(function(t){return t.status!=="done";}).length),'进行中任务')+
+    stat(String(PATTERNS.length),'在库花型（原型样例）')+
+    stat(String(S.assets.length),'可下载交付文件')+
+  '</div>';
+
+  h += '<div class="two-col" style="margin-top:14px">';
+  h += '<div class="card card-pad"><div class="sect-title" style="margin-top:0"><h3>最近的开发线索</h3>'+
+    '<span class="hint">继续未完成的对话与任务</span></div>';
+  if (!recent.length){
+    h += '<div class="empty" style="padding:26px"><div class="big">✦</div>还没有任务，去「AI 设计工作室」说一句需求试试。</div>';
+  } else {
+    h += '<div class="mini-list">'+ recent.map(function(t){
+      var p = PAT[t.pid] || PATTERNS[0];
+      return '<div class="mini-row"><div class="thumb">'+patternSVG(p)+'</div>'+
+        '<div class="meta"><b>'+esc(TASK_TYPES[t.type].name)+' · '+esc(p.name)+'</b>'+
+        '<span>'+esc(p.id)+' · '+t.statusText()+'</span></div>'+
+        '<button class="chip-btn" data-page="tasks">查看</button></div>';
+    }).join('') +'</div>';
+  }
+  h += '</div>';
+  h += '<div class="card card-pad"><div class="sect-title" style="margin-top:0"><h3>花型库热度榜</h3></div>'+
+    '<div class="mini-list">'+ hot.map(function(p){
+      return '<div class="mini-row"><div class="thumb">'+patternSVG(p)+'</div>'+
+        '<div class="meta"><b>'+esc(p.name)+'</b><span>'+esc(p.style)+' · '+esc(p.element)+' · '+esc(p.color)+'</span></div>'+
+        '<button class="chip-btn" data-open="'+p.id+'">详情</button></div>';
+    }).join('') +'</div></div>';
+  h += '</div></div>';
+  return h;
+}
+function quick(ico,b,s,page){
+  return '<button class="q" data-page="'+page+'"><span class="qi">'+ico+'</span><b>'+esc(b)+'</b><span>'+esc(s)+'</span></button>';
+}
+function stat(v,l){ return '<div class="card stat"><div class="kpi"><b>'+v+'</b><span>'+esc(l)+'</span></div></div>'; }
+
+/* ---------- AI 设计工作室 ---------- */
+function viewStudio(){
+  var a = AGENTS[S.agent];
+  var tabs = Object.keys(AGENTS).map(function(k){
+    var g = AGENTS[k];
+    return '<button class="agent-tab" data-agent="'+k+'" aria-current="'+(k===S.agent)+'">'+
+      '<span class="face" style="background:'+g.color+'">'+g.face+'</span>'+
+      '<span><b>'+esc(g.name)+'</b><span>'+esc(g.tagline)+'</span></span></button>';
+  }).join('');
+  var msgs = (S.chat[S.agent] || []).map(msgHTML).join('');
+  var filler = (S.chat[S.agent] && S.chat[S.agent].length) ? '' :
+    '<div class="empty"><div class="big">'+a.face+'</div><b>我是'+esc(a.name)+'</b>'+
+    '<p class="small" style="max-width:420px;margin:6px auto 0">'+esc(introOf(S.agent))+'</p>'+
+    '<div class="opt-row" style="justify-content:center;margin-top:14px">'+
+      (SUGGEST[S.agent]||[]).map(function(s){ return '<button class="opt" data-say="'+esc(s)+'">'+esc(s)+'</button>'; }).join('')+
+    '</div></div>';
+
+  var brief = ['style','element','color','scene'].map(function(k){
+    var lb = {style:'风格',element:'元素',color:'配色',scene:'场景'}[k];
+    var v = S.brief[k];
+    return '<div class="brief-slot"><span class="lb">'+lb+'</span><span class="vl'+(v?'':' none')+'">'+esc(v||'待补充')+'</span></div>';
+  }).join('');
+  var filled = ['style','element','color','scene'].filter(function(k){ return S.brief[k]; }).length;
+
+  return '<div class="studio">'+
+    '<div class="card chatpanel">'+
+      '<div class="agent-tabs">'+tabs+'</div>'+
+      '<div class="msgs" id="msgs">'+msgs+filler+'</div>'+
+      '<div class="composer">'+
+        '<div class="box">'+
+          '<button class="icon-btn" data-act="upload" title="上传参考图">⤒</button>'+
+          '<textarea id="input" rows="1" placeholder="'+esc(placeholderOf(S.agent))+'"></textarea>'+
+          '<button class="btn" data-act="send">发送</button>'+
+        '</div>'+
+        '<div class="hintline"><span>Enter 发送 · Shift+Enter 换行</span><span class="muted">原型演示：不会真实调用模型与算力</span></div>'+
+      '</div>'+
+    '</div>'+
+    '<div class="card card-pad briefcard">'+
+      '<div class="sect-title" style="margin-top:0"><h3>需求卡</h3><span class="hint">'+filled+'/4 已明确</span></div>'+
+      brief+
+      '<div class="hr"></div>'+
+      '<div class="small muted">四个创意维度中至少明确一项即可开始检索；用户回答“不知道”时不再追问，直接按已知标签出候选。</div>'+
+      '<div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">'+
+        '<button class="btn sm" data-act="to-library">去花型库看结果</button>'+
+        '<button class="btn sm ghost" data-act="reset-brief">重置</button>'+
+      '</div>'+
+      '<div class="hr"></div>'+
+      '<div class="small muted" style="line-height:1.7">'+
+        '<b style="color:var(--ink-2)">Production 维度</b><br>'+
+        '工艺：数码直喷 · 尺寸：花回 32cm · 分辨率：600dpi<br>色数：≤8 色 · 权利：自有原创'+
+      '</div>'+
+    '</div>'+
+  '</div>';
+}
+function introOf(k){
+  return {
+    assistant:'网站功能、点数计费、发票申请、下载清单整理都可以问我，也可以把整套交付文件整理成一张表。',
+    designer:'告诉我你要什么花型。说法模糊也没关系，我会把风格、元素、配色、场景逐项问清楚，再从库里挑候选给你。',
+    engineer:'选好花型交给我：四方连续、分层 PSD、描稿仿稿。产出前我会先做质量与工艺检查。'
+  }[k];
+}
+function placeholderOf(k){
+  return {
+    assistant:'例如：怎么充值、我要开发票、帮我导出花型清单…',
+    designer:'例如：要一款法式的小碎花，做春夏连衣裙…',
+    engineer:'例如：把山茶小径做成四方连续，花回 32cm…'
+  }[k];
+}
+var SUGGEST = {
+  assistant:['怎么充值和计费？','我要开发票','帮我把下载的图整理成表格','点数不够了怎么办'],
+  designer:['要法式的小碎花，做春夏连衣裙','想找国风元素、蓝白配色，做丝巾','不确定要什么，先给我看看热门花型'],
+  engineer:['把山茶小径做成四方连续','生成分层 PSD 文件','我上传的照片能描稿吗','交付包含哪些文件']
+};
+
+function msgHTML(m){
+  var face = m.me ? {face:'我',color:'#6B635A'} : {face:AGENTS[m.agent].face, color:AGENTS[m.agent].color};
+  var body = '';
+  if (m.text) body += '<p>'+ m.text.split('\n').map(esc).join('<br>') +'</p>';
+  if (m.list) body += '<ul>'+ m.list.map(function(x){ return '<li>'+esc(x)+'</li>'; }).join('') +'</ul>';
+  if (m.opts){
+    body += '<div class="opt-row">'+ m.opts.map(function(o,i){
+      return '<button class="opt" data-opt="'+m.id+'" data-oi="'+i+'">'+esc(o.label)+'</button>';
+    }).join('') +'</div>';
+  }
+  if (m.picks){
+    body += '<div class="result-grid">'+ m.picks.map(function(pid){
+      var p = PAT[pid];
+      return '<button class="res" data-open="'+pid+'"><span class="pv">'+patternSVG(p)+'</span>'+
+        '<span class="cap"><b>'+esc(p.name)+'</b><span>匹配 '+matchScore(p)+'% · '+esc(p.scene)+'</span></span></button>';
+    }).join('') +'</div>';
+    body += '<div class="opt-row"><button class="opt" data-act="to-library">打开花型库继续筛选 →</button>'+
+      '<button class="opt" data-act="explain-picks">让设计师说明这几款</button></div>';
+  }
+  if (m.card) body += m.card;
+  if (m.typing) body += '<span class="typing"><i></i><i></i><i></i></span>';
+  return '<div class="msg'+(m.me?' me':'')+'"><div class="face" style="background:'+face.color+'">'+face.face+'</div>'+
+    '<div class="bubble">'+(m.me?'':'<div class="who">'+esc(AGENTS[m.agent].name)+'</div>')+body+'</div></div>';
+}
+
+/* ---------- 花型库 ---------- */
+function viewLibrary(){
+  var res = filtered();
+  var h = '<div class="wrap">';
+  h += '<div class="card card-pad">'+
+    '<div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">'+
+      '<input id="libq" placeholder="搜索花型名称、编号或关键词，例如：玫瑰 / 国风 / PF-OWN" style="flex:1;min-width:240px;padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;outline:none" value="'+esc(S.filters.q)+'">'+
+      '<button class="btn sm ghost" data-act="clear-filters">清空筛选</button>'+
+    '</div>'+
+    '<div class="hr"></div>'+
+    '<div class="filters">'+ DIMS.map(function(d){
+      return '<div class="fgroup"><span class="fl">'+d.label+'</span><div class="fchips">'+
+        d.opts.map(function(o){
+          var on = S.filters[d.key].indexOf(o) >= 0;
+          return '<button class="fchip" data-fdim="'+d.key+'" data-fval="'+esc(o)+'" aria-pressed="'+on+'">'+esc(o)+'</button>';
+        }).join('') +'</div></div>';
+    }).join('') +'</div>'+
+  '</div>';
+
+  h += '<div class="sect-title"><h3>检索结果</h3><span class="hint">共 <b id="rescount">'+res.length+'</b> 款 · 排序：语义相关 40% + 标签 25% + 配色 15% + 场景 10% + 质量运营 10%</span></div>';
+  h += '<div id="libresult">';
+  if (!res.length){
+    h += '<div class="card"><div class="empty"><div class="big">▦</div><b>没有同时满足这些条件的花型</b>'+
+      '<p class="small">试着去掉一个筛选条件，或者让设计师按你的需求生成新方案。</p>'+
+      '<div style="margin-top:14px;display:flex;gap:9px;justify-content:center">'+
+      '<button class="btn ghost sm" data-act="clear-filters">清空筛选</button>'+
+      '<button class="btn sm" data-page="studio">去找设计师</button></div></div></div>';
+  } else {
+    h += '<div class="lib-grid" id="libgrid">'+ res.map(pcardHTML).join('') +'</div>';
+  }
+  h += '</div>';
+  h += '</div>';
+  return h;
+}
+function pcardHTML(p){
+  var s = matchScore(p);
+  return '<div class="pcard">'+
+    '<button class="fav'+(S.fav.indexOf(p.id)>=0?' on':'')+'" data-fav="'+p.id+'" title="收藏">♥</button>'+
+    '<button class="pv" data-open="'+p.id+'" aria-label="查看 '+esc(p.name)+'">'+patternSVG(p)+'</button>'+
+    '<div class="info"><b>'+esc(p.name)+'</b><span class="code">'+esc(p.id)+' '+esc(p.v)+'</span>'+
+      '<div class="tags"><span class="tag">'+esc(p.style)+'</span><span class="tag jade">'+esc(p.element)+'</span>'+
+      '<span class="tag gold">'+esc(p.color)+'</span><span class="tag blue">'+esc(p.scene)+'</span></div>'+
+      '<div class="matchbar"><div class="bar"><i style="width:'+s+'%"></i></div><em>'+s+'%</em></div>'+
+    '</div></div>';
+}
+function filtered(){
+  var f = S.filters, q = (f.q||'').trim().toLowerCase();
+  return PATTERNS.filter(function(p){
+    if (f.style.length && f.style.indexOf(p.style) < 0) return false;
+    if (f.element.length && f.element.indexOf(p.element) < 0) return false;
+    if (f.color.length && f.color.indexOf(p.color) < 0) return false;
+    if (f.scene.length && f.scene.indexOf(p.scene) < 0) return false;
+    if (q){
+      var hay = (p.name+' '+p.id+' '+p.style+' '+p.element+' '+p.color+' '+p.scene+' '+p.desc+' '+p.l2.join(' ')).toLowerCase();
+      if (hay.indexOf(q) < 0) return false;
+    }
+    return true;
+  }).sort(function(a,b){ return matchScore(b)-matchScore(a) || b.heat-a.heat; });
+}
+function matchScore(p){
+  var dims = 0, hit = 0;
+  ['style','element','color','scene'].forEach(function(k){
+    if (S.brief[k]){ dims++; if (S.brief[k] === p[k]) hit++; }
+  });
+  var bonus = 0;
+  ['style','element','color','scene'].forEach(function(k){
+    if (S.filters[k] && S.filters[k].indexOf(p[k]) >= 0) bonus += 6;
+  });
+  if (!dims) return Math.min(96, 62 + Math.round(p.heat*0.2) + bonus);
+  return Math.max(46, Math.min(99, Math.round(52 + (hit/dims)*42 + bonus)));
+}
+
+/* ---------- 任务中心 ---------- */
+function viewTasks(){
+  var h = '<div class="wrap">';
+  h += '<div class="card card-pad" style="display:flex;gap:18px;align-items:center;flex-wrap:wrap">'+
+    '<div class="kpi"><b>'+S.tasks.filter(function(t){return t.status==="running";}).length+'</b><span>处理中</span></div>'+
+    '<div class="kpi"><b>'+S.tasks.filter(function(t){return t.status==="wait";}).length+'</b><span>待确认</span></div>'+
+    '<div class="kpi"><b>'+S.tasks.filter(function(t){return t.status==="done";}).length+'</b><span>已完成</span></div>'+
+    '<div style="margin-left:auto;display:flex;gap:9px">'+
+      '<button class="btn ghost sm" data-act="new-task">新建落地任务</button>'+
+    '</div></div>';
+
+  h += '<div class="sect-title"><h3>任务列表</h3><span class="hint">状态机：待确认 → 排队 → 处理中 → 已完成 / 失败（失败自动退点数）</span></div>';
+  if (!S.tasks.length){
+    h += '<div class="card"><div class="empty"><div class="big">⚙</div><b>还没有落地任务</b>'+
+      '<p class="small">在花型详情里点「交给我做落地文件」，或直接在这里新建。</p>'+
+      '<div style="margin-top:14px"><button class="btn sm" data-act="new-task">新建落地任务</button></div></div></div>';
+  } else {
+    h += S.tasks.map(taskCardHTML).join('');
+  }
+  h += '</div>';
+  return h;
+}
+function taskCardHTML(t){
+  var T = TASK_TYPES[t.type], p = PAT[t.pid] || PATTERNS[0];
+  var st = {wait:['待确认','gold'], run:['处理中','blue'], done:['已完成','jade'], fail:['失败','accent']}[t.status];
+  var h = '<div class="card card-pad" style="margin-bottom:12px">';
+  h += '<div style="display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap">';
+  h += '<div style="width:78px;height:78px;border-radius:12px;overflow:hidden;border:1px solid var(--line);flex:0 0 78px">'+patternSVG(p)+'</div>';
+  h += '<div style="flex:1;min-width:230px">';
+  h += '<div style="display:flex;gap:9px;align-items:center;flex-wrap:wrap"><b style="font-size:14px">'+esc(T.name)+' · '+esc(p.name)+'</b>'+
+       '<span class="tag '+st[1]+'">'+st[0]+'</span>'+
+       '<span class="mono muted">'+esc(p.id)+'</span></div>';
+  h += '<div class="small muted" style="margin-top:4px">输出：'+esc(T.out)+' · 预计消耗 '+T.cost+' 点 · 任务号 '+esc(t.tid)+'</div>';
+  h += '<div style="margin-top:11px" class="bar"><i style="width:'+t.progress+'%"></i></div>';
+  h += '<div class="stepline" style="margin-top:11px">'+ T.steps.map(function(s,i){
+      var cls = t.step > i ? 'done' : (t.step === i && t.status==='run' ? 'now' : '');
+      return '<div class="st '+cls+'"><span class="dotm"></span>'+esc(s)+'</div>';
+    }).join('') +'</div>';
+  h += '</div>';
+  h += '<div style="display:flex;flex-direction:column;gap:8px;min-width:132px">';
+  if (t.status === 'wait'){
+    h += '<button class="btn sm accent" data-confirm="'+t.tid+'">确认执行（'+T.cost+' 点）</button>'+
+         '<button class="btn sm ghost" data-cancel="'+t.tid+'">取消</button>';
+  } else if (t.status === 'run'){
+    h += '<button class="btn sm ghost" disabled>处理中…</button>';
+  } else if (t.status === 'done'){
+    h += '<button class="btn sm" data-download="'+t.tid+'">下载交付包</button>'+
+         '<button class="btn sm ghost" data-open="'+p.id+'">查看花型</button>';
+  } else {
+    h += '<button class="btn sm ghost" data-retry="'+t.tid+'">重试</button>';
+  }
+  h += '</div></div>';
+  if (t.status === 'run' || t.status === 'done'){
+    h += '<div class="hr"></div><div class="sect-title" style="margin:0 0 8px"><h3 style="font-size:13px">接缝检测预览</h3>'+
+      '<span class="hint">3×3 平铺 · 虚线为接缝位置</span></div>'+
+      '<div class="seamwrap" style="max-width:340px">'+tilePreviewSVG(p)+
+      '<i class="seamline v" style="left:33.33%"></i><i class="seamline v" style="left:66.66%"></i>'+
+      '<i class="seamline h" style="top:33.33%"></i><i class="seamline h" style="top:66.66%"></i></div>'+
+      '<div class="small muted" style="margin-top:7px">接缝评分 '+p.seam+' / 100 · '+(t.status==='done'?'未检出明显错位与断线':'检测中…')+'</div>';
+  }
+  h += '</div>';
+  return h;
+}
+
+/* ---------- 交付与下载 ---------- */
+function viewAssets(){
+  var h = '<div class="wrap">';
+  h += '<div class="card card-pad" style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">'+
+    '<div class="kpi"><b>'+S.assets.length+'</b><span>可下载文件</span></div>'+
+    '<div style="margin-left:auto;display:flex;gap:9px">'+
+      '<button class="btn ghost sm" data-act="invoice">申请发票</button>'+
+      '<button class="btn sm" data-act="export-book">导出花型清单</button>'+
+    '</div></div>';
+  h += '<div class="sect-title"><h3>下载记录</h3><span class="hint">每次下载都会记录版本、规格与来源任务，便于对账</span></div>';
+  h += '<div class="card"><table class="tbl"><thead><tr>'+
+    '<th>文件</th><th>花型编号</th><th>规格</th><th>时间</th><th>消耗</th><th></th></tr></thead><tbody>'+
+    S.assets.map(function(a,i){
+      var p = PAT[a.pid] || PATTERNS[0];
+      return '<tr><td style="display:flex;gap:10px;align-items:center">'+
+        '<span style="width:34px;height:34px;border-radius:8px;overflow:hidden;border:1px solid var(--line);display:block;flex:0 0 34px">'+patternSVG(p)+'</span>'+
+        '<span><b>'+esc(p.name)+'</b><br><span class="mono muted">'+esc(a.name)+'</span></span></td>'+
+        '<td class="mono">'+esc(a.pid)+'</td><td>'+esc(a.fmt)+'</td><td class="muted">'+esc(a.at)+'</td>'+
+        '<td>'+a.pts+' 点</td><td><button class="chip-btn" data-redl="'+i+'">重新下载</button></td></tr>';
+    }).join('') +'</tbody></table></div>';
+  h += '<div class="sect-title"><h3>花型项目册</h3><span class="hint">把选中的花型整理成可交付的表格，每行可带设计说明、趋势与卖点</span></div>';
+  h += '<div class="card card-pad"><div class="two-col"><div>'+
+    '<div class="small muted">导出内容包含：花型缩略图、编号、四维标签、设计说明、卖点、适用面料与接缝评分。'+
+    '适合销售提案、打样单附页与客户选稿留档。</div>'+
+    '<div style="margin-top:14px;display:flex;gap:9px"><button class="btn sm" data-act="export-book">生成并导出 XLSX</button></div>'+
+    '</div><div>'+bookPreviewHTML()+'</div></div></div>';
+  h += '</div>';
+  return h;
+}
+function bookPreviewHTML(){
+  var rows = ['PF-OWN-2026-000128','PF-OWN-2026-000131','PF-OWN-2026-000184'].map(function(id){
+    var p = PAT[id];
+    return '<tr><td class="mono">'+esc(p.id)+'</td><td><b>'+esc(p.name)+'</b></td>'+
+      '<td class="small">'+esc(p.style)+' / '+esc(p.element)+'</td><td class="small">'+esc(p.desc.slice(0,18))+'…</td></tr>';
+  }).join('');
+  return '<div class="card" style="box-shadow:none"><table class="tbl"><thead><tr>'+
+    '<th>编号</th><th>名称</th><th>标签</th><th>设计说明</th></tr></thead><tbody>'+rows+'</tbody></table></div>';
+}
+
+/* ---------- 点数与充值 ---------- */
+var PACKS = [
+  {id:'p1', price:99,  credits:1000,  note:'约可生成 8 次四方连续', flag:''},
+  {id:'p2', price:299, credits:3200,  note:'约可生成 26 次四方连续', flag:'多送 6%'},
+  {id:'p3', price:999, credits:12000, note:'适合工作室与企业批量使用', flag:'多送 20%'}
+];
+function viewBilling(){
+  var h = '<div class="wrap">';
+  h += '<div class="two-col" style="margin-bottom:4px">';
+  h += '<div class="hero" style="background:linear-gradient(120deg,#2A2A31 0%,#3B3A44 55%,#4B3B33 100%)">'+
+    '<div style="font-size:12px;color:#B9B2AA;letter-spacing:1px">点数钱包</div>'+
+    '<div style="font-size:38px;font-weight:680;letter-spacing:.6px;margin:4px 0 2px">'+S.credits.toLocaleString('zh-CN')+'<span style="font-size:14px;font-weight:400;color:#B9B2AA;margin-left:6px">点</span></div>'+
+    '<p>前台统一用「点数」结算，后台按模型Token、GPU 时间与存储成本核算。执行前预占、成功后确认扣费，系统失败自动退还。</p>'+
+    '<div class="hero-actions"><button class="btn accent" data-act="recharge">充值点数</button>'+
+    '<button class="btn ghost" data-act="invoice">申请发票</button></div></div>';
+  h += '<div class="card card-pad"><div class="sect-title" style="margin-top:0"><h3>计费口径</h3></div>'+
+    '<table class="tbl"><tbody>'+
+    '<tr><td>客服问答 / 余额查询</td><td style="text-align:right">免费</td></tr>'+
+    '<tr><td>花型库检索与预览</td><td style="text-align:right">免费</td></tr>'+
+    '<tr><td>四方连续</td><td style="text-align:right">30 点 / 张</td></tr>'+
+    '<tr><td>分层 PSD</td><td style="text-align:right">45 点 / 张</td></tr>'+
+    '<tr><td>描稿仿稿</td><td style="text-align:right">60 点 / 张</td></tr>'+
+    '<tr><td>全套交付包</td><td style="text-align:right">120 点 / 套</td></tr>'+
+    '</tbody></table></div></div>';
+
+  h += '<div class="sect-title"><h3>点数套餐</h3><span class="hint">企业额度、阶梯优惠与合同结算在 P1 版本开放</span></div>';
+  h += '<div class="grid" style="grid-template-columns:repeat(3,1fr)">'+ PACKS.map(function(k){
+    return '<button class="pack" data-pack="'+k.id+'">'+(k.flag?'<span class="flag">'+k.flag+'</span>':'')+
+      '<div class="pr">¥ '+k.price+'</div><div class="cr">'+k.credits.toLocaleString('zh-CN')+' 点</div>'+
+      '<div class="note">'+esc(k.note)+'</div></button>';
+  }).join('') +'</div>';
+
+  h += '<div class="sect-title"><h3>消费流水</h3><span class="hint">账本只追加，不覆盖历史余额</span></div>';
+  h += '<div class="card"><table class="tbl"><thead><tr><th>类型</th><th>时间</th><th style="text-align:right">点数变动</th></tr></thead><tbody>'+
+    S.ledger.slice().reverse().map(function(l){
+      return '<tr><td>'+esc(l.t)+'</td><td class="muted">'+esc(l.at)+'</td>'+
+        '<td style="text-align:right;font-weight:600;color:'+(l.kind==='in'?'var(--jade)':'var(--accent)')+'">'+
+        (l.amt>0?'+':'')+l.amt+'</td></tr>';
+    }).join('') +'</tbody></table></div>';
+  h += '</div>';
+  return h;
+}
+
+/* =========================================================================
+   __ENGINE__  引擎层：任务、计时器、通知
+   ========================================================================= */
+var TIMERS = new Map(), TSEQ = 0, TID = 0, MID = 0;
+function later(fn, ms){
+  var id = ++TSEQ;
+  var t = setTimeout(function(){ TIMERS.delete(id); fn(); }, ms);
+  TIMERS.set(id, {t:t, fn:fn}); return id;
+}
+function flushTimers(){
+  var guard = 0;
+  while (TIMERS.size && guard++ < 500){
+    var entries = Array.from(TIMERS.entries());
+    entries.forEach(function(e){
+      clearTimeout(e[1].t); TIMERS.delete(e[0]); e[1].fn();
+    });
+  }
+}
+function toast(text, warn){
+  var box = document.getElementById('toastbox');
+  var el = document.createElement('div');
+  el.className = 'toast' + (warn ? ' warn' : '');
+  el.textContent = text;
+  box.innerHTML = ''; box.appendChild(el);
+  later(function(){ if (el.parentNode) el.parentNode.removeChild(el); }, 2600);
+}
+function spend(n){
+  if (S.credits < n){ toast('点数不足，还差 ' + (n - S.credits) + ' 点', true); openRecharge(); return false; }
+  S.credits -= n; return true;
+}
+function newTask(type, pid, silent){
+  var T = TASK_TYPES[type];
+  var t = {
+    tid:'T' + (++TID).toString().padStart(4,'0') .replace('T','TJ-') , type:type, pid:pid,
+    status:'wait', progress:0, step:0
+  };
+  t.tid = 'TJ-' + String(1000 + TID);
+  t.statusText = function(){
+    return {wait:'待确认，等待你同意扣费', run:'处理中 · ' + TASK_TYPES[t.type].steps[Math.min(t.step, TASK_TYPES[t.type].steps.length-1)],
+      done:'已完成，可下载', fail:'失败，点数已退回'}[t.status] + ' · 消耗 ' + T.cost + ' 点';
+  };
+  S.tasks.unshift(t);
+  if (!silent) render();
+  return t;
+}
+function confirmTask(tid){
+  var t = S.tasks.filter(function(x){ return x.tid === tid; })[0];
+  if (!t) return;
+  var T = TASK_TYPES[t.type];
+  if (!spend(T.cost)) return;
+  S.ledger.push({t:T.name + ' · ' + (PAT[t.pid] ? PAT[t.pid].name : ''), amt:-T.cost, at:stamp(), kind:'out'});
+  t.status = 'run'; t.step = 0; t.progress = 0;
+  render();
+  runTask(t);
+}
+function runTask(t){
+  var T = TASK_TYPES[t.type], n = T.steps.length;
+  function advance(){
+    t.step++; t.progress = Math.round(t.step / n * 100);
+    if (t.step >= n){
+      t.status = 'done'; t.progress = 100;
+      var p = PAT[t.pid];
+      S.assets.unshift({name:p.name + '_' + p.id + '_' + t.tid + '_600dpi.png', pid:p.id,
+        fmt: t.type === 'psd' ? 'PSD · 分层' : (t.type === 'trace' ? 'SVG + PNG' : 'PNG/TIFF/PSD'),
+        at: stamp(), pts: T.cost});
+      if (S.page === 'tasks' || S.page === 'assets') render();
+      else renderChrome();
+      toast('任务完成：' + T.name + ' · ' + p.name + '，已加入交付与下载');
+      return;
+    }
+    if (S.page === 'tasks') render();
+    later(advance, 620);
+  }
+  later(advance, 620);
+}
+function stamp(){
+  var d = new Date();
+  function z(x){ return String(x).padStart(2,'0'); }
+  return z(d.getMonth()+1) + '-' + z(d.getDate()) + ' ' + z(d.getHours()) + ':' + z(d.getMinutes());
+}
+
+/* =========================================================================
+   __NODES__  领域行为层：对话策略、检索、导出
+   ========================================================================= */
+var KEYMAP = {
+  style:{'法式':'法式浪漫','国风':'新中式国风','中式':'新中式国风','复古':'复古波普','波普':'复古波普',
+    '极简':'现代极简','简约':'现代极简','童趣':'童趣插画','卡通':'童趣插画','儿童':'童趣插画',
+    '波西米亚':'波西米亚','民族':'波西米亚','y2k':'Y2K未来','未来':'Y2K未来','科技':'Y2K未来',
+    '田园':'田园草木','草木':'田园草木','植物':'田园草木'},
+  element:{'碎花':'花卉','花':'花卉','玫瑰':'花卉','花卉':'花卉','叶':'叶片藤蔓','藤':'叶片藤蔓','树枝':'叶片藤蔓',
+    '几何':'几何','格':'条纹格纹','条纹':'条纹格纹','格子':'条纹格纹','动物':'动物纹','豹':'动物纹','蛇':'动物纹',
+    '波点':'波点','圆点':'波点','点':'波点','海洋':'海洋贝壳','贝壳':'海洋贝壳','海':'海洋贝壳',
+    '抽象':'抽象笔触','水墨':'抽象笔触','笔触':'抽象笔触'},
+  color:{'莫兰迪':'莫兰迪灰调','灰':'莫兰迪灰调','马卡龙':'马卡龙甜彩','甜':'马卡龙甜彩','黑白':'黑白灰',
+    '撞色':'高饱和撞色','鲜艳':'高饱和撞色','大地':'大地色系','棕':'大地色系','蓝白':'蓝白青花',
+    '青花':'蓝白青花','蓝':'蓝白青花','粉':'粉紫梦幻','紫':'粉紫梦幻','橙':'暖橙焦糖','焦糖':'暖橙焦糖','暖':'暖橙焦糖'},
+  scene:{'连衣裙':'女装连衣裙','女装':'女装连衣裙','裙':'女装连衣裙','衬衫':'衬衫','衬衣':'衬衫','童装':'童装',
+    '儿童':'童装','家居':'家居布艺','家纺':'家居布艺','布艺':'家居布艺','窗帘':'家居布艺',
+    '箱包':'箱包配饰','包':'箱包配饰','鞋':'箱包配饰','泳装':'泳装','泳衣':'泳装','丝巾':'丝巾',
+    '运动':'运动服','瑜伽':'运动服'}
+};
+function extract(text){
+  var t = String(text).toLowerCase(), got = {};
+  DIMS.forEach(function(d){
+    var m = KEYMAP[d.key];
+    for (var k in m){ if (t.indexOf(k.toLowerCase()) >= 0){ got[d.key] = m[k]; break; } }
+  });
+  return got;
+}
+function push(agent, msg){
+  if (!S.chat[agent]) S.chat[agent] = [];
+  msg.agent = agent; msg.id = 'm' + (++MID);
+  S.chat[agent].push(msg);
+  return msg;
+}
+function lastAgentMsg(agent){
+  var arr = S.chat[agent] || [];
+  for (var i = arr.length - 1; i >= 0; i--) if (!arr[i].me) return arr[i];
+  return null;
+}
+var UNCLEAR = ['不知道','不清楚','没想好','随便','都可以','你决定','没概念','不确定'];
+
+function say(text){
+  var raw = String(text || '').trim();
+  if (!raw) return;
+  var a = S.agent;
+  push(a, {me:true, text:raw});
+  render();
+  later(function(){ reply(a, raw); }, 420);
+}
+function reply(a, raw){
+  if (a === 'assistant') return replyAssistant(raw);
+  if (a === 'engineer') return replyEngineer(raw);
+  return replyDesigner(raw);
+}
+function replyAssistant(raw){
+  var t = raw.toLowerCase(), r;
+  if (/充值|计费|点数|多少钱|价格/.test(t)) r = {text:'我们前台统一用「点数」结算，不按模型 Token 计费。',
+    list:['四方连续 30 点 / 张，分层 PSD 45 点 / 张，描稿仿稿 60 点 / 张','客服问答、花型库浏览与预览免费','任务失败自动退还点数，订单和流水可在「点数与充值」查看'],
+    card:optCard('需要我帮你做什么？', [{label:'去充值',act:'recharge'},{label:'看计费明细',act:'go-billing'}])};
+  else if (/发票|开票|抬头|税号/.test(t)) r = {text:'可以，我来帮你走开票申请。需要抬头、税号、开票金额范围和接收邮箱，提交后由财务实际开票，进度我会同步给你。',
+    card:'<div style="margin-top:8px"><button class="opt" data-act="invoice">填写开票信息</button></div>'};
+  else if (/表格|清单|整理|导出|项目册/.test(t)) r = {text:'可以。我会把你在平台下载过的花型整理成一张清单表，每行带编号、四维标签、设计说明和卖点，说明书和趋势内容可以按需要开关。',
+    card:'<div style="margin-top:8px"><button class="opt" data-act="export-book">打开导出面板</button></div>'};
+  else if (/点数不够|余额不足/.test(t)) r = {text:'余额不足时任务不会进入算力队列，也不会扣费。可以先充值，或把任务拆小一点先做四方连续。',
+    card:'<div style="margin-top:8px"><button class="opt" data-act="recharge">去充值</button></div>'};
+  else if (/四方连续|psd|分层|描稿|交付|文件/.test(t)) r = {text:'这些属于落地文件，建议直接找织印师。流程是：选定花型 → 确认工艺与规格 → 报价确认 → 生成文件 → 质检交付。',
+    card:'<div style="margin-top:8px"><button class="opt" data-act="goto-engineer">找织印师</button></div>'};
+  else r = {text:'我可以帮你解答平台功能、点数计费、发票申请，也能把下载的花型整理成清单表，或者帮你把需求转给设计师和织印师。',
+    card:optCard('你想先做哪一件事？', [{label:'怎么充值和计费？',say:'怎么充值和计费？'},{label:'我要开发票',say:'我要开发票'},{label:'整理成表格',say:'帮我把下载的图整理成表格'}])};
+  r.agent = 'assistant';
+  push('assistant', r); render();
+}
+function replyEngineer(raw){
+  var t = raw.toLowerCase();
+  if (/四方连续|连续/.test(t) || /psd|分层/.test(t) || /描稿|照片|上传|仿稿/.test(t)){
+    var pid = detectPattern(raw) || pickCurrent();
+    var type = /psd|分层/.test(t) ? 'psd' : (/描稿|照片|上传|仿稿/.test(t) ? 'trace' : 'repeat');
+    return offerTask(type, pid);
+  }
+  var r = {text:'我可以把花型做成可直接生产的文件：四方连续、分层 PSD、描稿仿稿。',
+    list:['四方连续：周期偏移补缝 + 接缝检测 + 3×3 平铺预览，输出 PNG/TIFF','分层 PSD：按主色聚类分层并命名分组，附色板表','描稿仿稿：照片去噪超分、主体分割、矢量描摹，输出 SVG/PNG'],
+    card:optCard('你现在想处理哪一种？', [{label:'四方连续',say:'做四方连续'},{label:'分层 PSD',say:'生成分层 PSD'},{label:'描稿仿稿',say:'我上传的照片能描稿吗'}])};
+  r.agent = 'engineer'; push('engineer', r); render();
+}
+function replyDesigner(raw){
+  var got = extract(raw);
+  var skip = UNCLEAR.some(function(k){ return raw.indexOf(k) >= 0; });
+  ['style','element','color','scene'].forEach(function(k){ if (got[k]) S.brief[k] = got[k]; });
+
+  var missing = ['style','element','color','scene'].filter(function(k){ return !S.brief[k]; });
+  var filled = 4 - missing.length;
+
+  if (filled === 0 && !skip){
+    S.rounds.designer = 1;
+    return askDim('style', '先从哪里开始都行——你希望这个花型偏什么感觉？',
+      '我可以先按风格筛，也可以你先告诉我用途场景，比如“春夏连衣裙”或“家居窗帘”。');
+  }
+  if (/趋势|流行|建议/.test(raw)){
+    var r0 = {text:'要给你趋势建议的话，我先说明来源与时间：以下为原型演示占位内容，正式版会标注数据来源与日期。',
+      list:['2026 春夏女装：低饱和灰粉持续走强，小碎花密度回落到中密','新中式：蓝白双色、缠枝线条仍是丝巾与礼赠线主流','运动线：高饱和撞色几何在电竞与潮牌联名里仍有需求'],
+      card:optCard('要不要按趋势方向继续筛选？', [{label:'按趋势出候选',act:'trend-picks'},{label:'我还是按自己的想法来',say:'不用趋势，按我说的来'}])};
+    r0.agent = 'designer'; push('designer', r0); render(); return;
+  }
+  if (skip || S.rounds.designer >= 2 || missing.length === 0){
+    return showPicks(missing);
+  }
+  S.rounds.designer++;
+  var next = missing.indexOf('element') >= 0 ? 'element' : missing[0];
+  var q = {
+    style:'这个花型主要想表达什么风格？',
+    element:'画面里希望出现什么元素？',
+    color:'配色上有偏好吗？',
+    scene:'最后用在什么品类上？'
+  }[next];
+  return askDim(next, q, '不确定也可以直接说“不知道”，我会按已知条件先出候选。');
+}
+function askDim(dim, q, note){
+  var d = DIMS.filter(function(x){ return x.key === dim; })[0];
+  var opts = d.opts.slice(0,5).map(function(o){ return {label:o, set:[dim,o]}; });
+  opts.push({label:'不知道', skip:dim});
+  var r = {text:q + (note ? '\n' + note : ''), opts:opts, card:''};
+  r.agent = 'designer'; push('designer', r); render();
+}
+function showPicks(missing){
+  var res = filtered();
+  var picks = (res.length ? res : PATTERNS).slice(0,4).map(function(p){ return p.id; });
+  var known = ['style','element','color','scene'].filter(function(k){ return S.brief[k]; })
+    .map(function(k){ return S.brief[k]; });
+  var r = {text:'按你给的条件' + (known.length ? '（' + known.join(' · ') + '）' : '') + '筛了一版。' +
+      (missing.length ? '还有 ' + missing.length + ' 个维度没定，所以匹配度会有波动——你在库里再勾一下会更准。' : '四个维度都对上了，优先推荐这几款：') +
+      '\n匹配逻辑：语义相关 40% + 标签 25% + 配色 15% + 场景 10% + 质量运营 10%。',
+    picks:picks};
+  r.agent = 'designer'; push('designer', r); render();
+}
+function explainPicks(){
+  var res = filtered().slice(0,4);
+  res.forEach(function(p, i){
+    push('designer', {text:'【' + p.name + '】' + p.desc + '\n卖点：' + p.sell.join('；') + '\n适用面料：' + p.fabric +
+      ' · 接缝评分 ' + p.seam + ' · 匹配度 ' + matchScore(p) + '%'});
+  });
+  render();
+  toast('设计说明已生成，可在「交付与下载」里导出成表');
+}
+function detectPattern(text){
+  for (var i = 0; i < PATTERNS.length; i++) if (text.indexOf(PATTERNS[i].name) >= 0) return PATTERNS[i].id;
+  return null;
+}
+function pickCurrent(){
+  var res = filtered();
+  return (res[0] || PATTERNS[0]).id;
+}
+function offerTask(type, pid){
+  var T = TASK_TYPES[type], p = PAT[pid];
+  var card = '<div class="card card-pad" style="margin-top:10px;box-shadow:none;background:#FCFAF7">'+
+    '<div style="display:flex;gap:12px;align-items:center">'+
+      '<span style="width:56px;height:56px;border-radius:10px;overflow:hidden;border:1px solid var(--line);display:block;flex:0 0 56px">'+patternSVG(p)+'</span>'+
+      '<span><b style="font-size:13.5px">'+esc(T.name)+' · '+esc(p.name)+'</b>'+
+      '<div class="small muted">'+esc(p.id)+' '+esc(p.v)+' · 接缝评分 '+p.seam+'</div></span></div>'+
+    '<div class="hr"></div>'+
+    '<div class="kv"><span class="k">输出</span><span>'+esc(T.out)+'</span>'+
+      '<span class="k">预计消耗</span><span><b>'+T.cost+' 点</b>（失败自动退还）</span>'+
+      '<span class="k">处理步骤</span><span>'+T.steps.join(' → ')+'</span></div>'+
+    '<div style="margin-top:12px" class="opt-row">'+
+      '<button class="opt" data-run="'+(type+'|'+pid)+'">确认执行并扣除 '+T.cost+' 点</button>'+
+      '<button class="opt" data-act="goto-tasks">先看看任务中心</button></div></div>';
+  var r = {text:'可以做。先跟你确认任务内容、输出规格和费用，你同意我再执行——这一版是原型，不会真的调用算力。',
+    card:card};
+  r.agent = 'engineer'; push('engineer', r); render();
+}
+function optCard(title, opts){
+  return '<div style="margin-top:10px"><div class="small muted" style="margin-bottom:6px">'+esc(title)+'</div>'+
+    '<div class="opt-row">'+ opts.map(function(o){
+      var attr = o.act ? 'data-act="'+o.act+'"' : 'data-say="'+esc(o.say)+'"';
+      return '<button class="opt" '+attr+'>'+esc(o.label)+'</button>';
+    }).join('') +'</div></div>';
+}
+function exportBook(){
+  var rows = PATTERNS.slice(0,6).map(function(p){
+    return '<tr><td style="width:40px"><span style="width:32px;height:32px;border-radius:7px;overflow:hidden;border:1px solid var(--line);display:block">'+patternSVG(p)+'</span></td>'+
+      '<td><b>'+esc(p.name)+'</b><br><span class="mono muted">'+esc(p.id)+'</span></td>'+
+      '<td class="small">'+esc(p.style)+'<br>'+esc(p.element)+'<br>'+esc(p.color)+'<br>'+esc(p.scene)+'</td>'+
+      '<td class="small">'+esc(p.desc)+'</td>'+
+      '<td class="small">'+esc(p.sell[0])+'</td></tr>';
+  }).join('');
+  openModal('导出花型清单',
+    '这些内容会写进表格；关闭后导出的是精简版（仅编号、名称、标签）。',
+    '<div class="switch"><div class="st"><b>包含设计说明</b><span>每款花型的构图、尺度与工艺适配说明</span></div>'+
+      '<button class="tog" aria-pressed="true" data-flag="desc"></button></div>'+
+    '<div class="switch"><div class="st"><b>包含趋势与卖点</b><span>流行方向摘要与销售话术，可直接给客户</span></div>'+
+      '<button class="tog" aria-pressed="true" data-flag="sell"></button></div>'+
+    '<div class="switch"><div class="st"><b>包含缩略图</b><span>表格内嵌小图，便于打印与提案</span></div>'+
+      '<button class="tog" aria-pressed="true" data-flag="thumb"></button></div>'+
+    '<div class="hr"></div>'+
+    '<div class="card" style="box-shadow:none;overflow:auto;max-height:280px"><table class="tbl"><thead><tr><th>图</th><th>花型</th><th>四维标签</th><th>设计说明</th><th>卖点</th></tr></thead><tbody>'+rows+'</tbody></table></div>',
+    [{label:'取消', act:'close-modal', ghost:true},{label:'导出 XLSX', act:'do-export'}]);
+}
+function bookFlags(){
+  var o = {};
+  document.querySelectorAll('[data-flag]').forEach(function(b){ o[b.dataset.flag] = b.getAttribute('aria-pressed') === 'true'; });
+  return o;
+}
+
+/* =========================================================================
+   __PANELS__  抽屉 / 弹窗 / 覆盖层
+   ========================================================================= */
+function openDrawer(pid){
+  var p = PAT[pid];
+  if (!p) return;
+  CUR_DRAWER = pid;
+  var why = [];
+  ['style','element','color','scene'].forEach(function(k){
+    if (S.brief[k]) why.push({k:k, v:S.brief[k], hit:S.brief[k] === p[k]});
+  });
+  var whyHTML = why.length
+    ? why.map(function(w){
+        return '<span class="tag '+(w.hit ? 'jade' : '')+'">'+w.v+' '+(w.hit ? '✓' : '✕ 未完全匹配')+'</span>';
+      }).join('')
+    : '<span class="small muted">还没有需求条件，先在工作室说一句需求，这里会显示匹配依据。</span>';
+
+  var pal = PALETTES[p.pal];
+  var body =
+    '<div class="detail-hero">'+patternSVG(p)+'</div>'+
+    '<div style="display:flex;gap:9px;align-items:center;margin-top:14px;flex-wrap:wrap">'+
+      '<b style="font-size:17px">'+esc(p.name)+'</b>'+
+      '<span class="tag">'+esc(p.v)+'</span><span class="tag gold">热度 '+p.heat+'</span>'+
+      '<span class="tag jade">质量 '+p.quality+'</span>'+
+      '<span class="mono muted">'+esc(p.id)+'</span></div>'+
+    '<div class="tags" style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px">'+
+      '<span class="tag">'+esc(p.style)+'</span><span class="tag jade">'+esc(p.element)+'</span>'+
+      '<span class="tag gold">'+esc(p.color)+'</span><span class="tag blue">'+esc(p.scene)+'</span></div>'+
+    '<div class="sect-title"><h3>匹配依据</h3><span class="hint">匹配度 '+matchScore(p)+'%</span></div>'+
+    '<div style="display:flex;gap:6px;flex-wrap:wrap">'+whyHTML+'</div>'+
+    '<div class="sect-title"><h3>设计说明</h3></div>'+
+    '<div class="small" style="color:var(--ink-2)">'+esc(p.desc)+'</div>'+
+    '<div class="sect-title"><h3>卖点</h3></div>'+
+    '<ul class="small" style="margin:0;padding-left:18px;color:var(--ink-2)">'+p.sell.map(function(s){ return '<li>'+esc(s)+'</li>'; }).join('')+'</ul>'+
+    '<div class="sect-title"><h3>主色板</h3></div>'+
+    '<div class="pal" style="margin-bottom:22px">'+ pal.slice(0,5).map(function(c){
+      return '<div class="sw" style="background:'+c+'"><span>'+c.toUpperCase()+'</span></div>';
+    }).join('') +'</div>'+
+    '<div class="sect-title"><h3>专业与生产属性</h3></div>'+
+    '<div class="kv">'+
+      '<span class="k">二级标签</span><span>'+p.l2.map(esc).join(' · ')+'</span>'+
+      '<span class="k">适用面料</span><span>'+esc(p.fabric)+'</span>'+
+      '<span class="k">接缝评分</span><span>'+p.seam+' / 100（3×3 平铺自动检测）</span>'+
+      '<span class="k">权利范围</span><span>'+ (p.id.indexOf('LIC') === 0 ? '授权素材，需按授权范围使用' : (p.id.indexOf('CUS') === 0 ? '客户私有，不对外流通' : '自有原创 / AI 生成，可商用')) +'</span>'+
+      '<span class="k">版本</span><span>'+esc(p.v)+'（每次修改形成新版本，不覆盖原文件）</span>'+
+    '</div>'+
+    '<div class="sect-title"><h3>平铺预览</h3><span class="hint">检查接缝与四方连续效果</span></div>'+
+    '<div class="seamwrap">'+tilePreviewSVG(p)+
+      '<i class="seamline v" style="left:50%"></i><i class="seamline h" style="top:50%"></i></div>';
+
+  var foot = '<button class="btn sm accent" data-mktask="repeat|'+p.id+'">四方连续（30 点）</button>'+
+    '<button class="btn sm" data-mktask="psd|'+p.id+'">分层 PSD（45 点）</button>'+
+    '<button class="btn sm ghost" data-mktask="pack|'+p.id+'">全套交付包（120 点）</button>'+
+    '<button class="btn sm ghost" data-fav="'+p.id+'">'+(S.fav.indexOf(p.id)>=0?'已收藏':'收藏')+'</button>';
+
+  var layer = document.getElementById('layer');
+  layer.innerHTML = '<div class="scrim" data-act="close-layer"></div>'+
+    '<div class="drawer"><div class="dh"><b style="font-size:15px">花型详情</b>'+
+    '<span class="mono muted small">'+esc(p.id)+'</span>'+
+    '<button class="close-x" data-act="close-layer" style="margin-left:auto">✕</button></div>'+
+    '<div class="db">'+body+'</div><div class="df">'+foot+'</div></div>';
+}
+function openRecharge(preId){
+  var packs = PACKS.map(function(k){
+    return '<button class="pack" data-pack-pick="'+k.id+'">'+(k.flag?'<span class="flag">'+k.flag+'</span>':'')+
+      '<div class="pr">¥ '+k.price+'</div><div class="cr">'+k.credits.toLocaleString('zh-CN')+' 点</div>'+
+      '<div class="note">'+esc(k.note)+'</div></button>';
+  }).join('');
+  openModal('充值点数',
+    '前台统一用点数结算。原型里点「模拟支付成功」即可看到余额与流水变化。',
+    '<div class="grid" style="grid-template-columns:repeat(3,1fr)">'+packs+'</div>'+
+    '<div class="qrbox" id="qrbox"><svg class="qr" viewBox="0 0 29 29" id="qrsvg"></svg>'+
+    '<div><b style="font-size:13.5px">微信扫码支付</b>'+
+    '<div class="small muted" style="margin-top:4px">订单号 <span class="mono">PF'+Date.now().toString().slice(-8)+'</span><br>'+
+    '支付成功后点数实时到账，可开发票。</div>'+
+    '<div style="margin-top:10px" class="small">当前选中：<b id="picksum">未选择套餐</b></div></div></div>',
+    [{label:'取消', act:'close-modal', ghost:true},{label:'模拟支付成功', act:'pay-ok'}]);
+  document.getElementById('qrsvg').innerHTML = fakeQR();
+  if (preId) selectPack(preId);
+}
+function openInvoice(){
+  openModal('申请发票',
+    '项目助理会先把信息收齐，再由财务实际开票。原型不会真正提交。',
+    '<div class="field"><label>发票抬头</label><input id="inv-title" placeholder="公司或个人名称" value="杭州云锦服饰有限公司"></div>'+
+    '<div class="field"><label>纳税人识别号</label><input id="inv-tax" placeholder="税号" value="91330100MA2XXXXX7B"></div>'+
+    '<div class="field"><label>开票金额范围</label><input id="inv-amt" placeholder="例如 500 - 1000 元" value="500 - 1000 元"></div>'+
+    '<div class="field"><label>接收邮箱</label><input id="inv-mail" placeholder="用于接收电子发票" value="finance@example.com"></div>'+
+    '<div class="field"><label>发票类型</label><select id="inv-type"><option>电子普通发票</option><option>增值税专用发票</option></select></div>'+
+    '<div class="small muted">提交后状态为「待财务处理」，可在「点数与充值」查看进度；Agent 不会绕过审批开票。</div>',
+    [{label:'取消', act:'close-modal', ghost:true},{label:'提交申请', act:'do-invoice'}]);
+}
+function openNewTask(){
+  var opts = Object.keys(TASK_TYPES).map(function(k){
+    var T = TASK_TYPES[k];
+    return '<button class="pack" data-pick-type="'+k+'"><div class="pr">'+esc(T.name)+'</div>'+
+      '<div class="cr">'+T.cost+' 点</div><div class="note">'+esc(T.out)+'</div></button>';
+  }).join('');
+  var pats = PATTERNS.slice(0,6).map(function(p){
+    return '<button class="pack" data-pick-pat="'+p.id+'" style="padding:8px">'+
+      '<span style="display:block;border-radius:8px;overflow:hidden;border:1px solid var(--line);margin-bottom:6px">'+patternSVG(p)+'</span>'+
+      '<div class="note" style="text-align:center">'+esc(p.name)+'</div></button>';
+  }).join('');
+  openModal('新建落地任务','先选处理类型，再选要处理的花型。',
+    '<div class="small muted" style="margin-bottom:7px">处理类型</div>'+
+    '<div class="grid" style="grid-template-columns:repeat(2,1fr)">'+opts+'</div>'+
+    '<div class="hr"></div><div class="small muted" style="margin-bottom:7px">选择花型</div>'+
+    '<div class="grid" style="grid-template-columns:repeat(3,1fr)">'+pats+'</div>'+
+    '<div class="small muted" style="margin-top:12px">也可以先在花型详情页点「四方连续 / 分层 PSD」，会带着花型直接建单。</div>',
+    [{label:'取消', act:'close-modal', ghost:true}]);
+}
+function openModal(title, sub, body, actions){
+  var layer = document.getElementById('layer');
+  layer.innerHTML = '<div class="scrim" data-act="close-layer"></div>'+
+    '<div class="modal-wrap"><div class="modal">'+
+    '<div class="mh"><h3>'+esc(title)+'</h3>'+(sub?'<p>'+esc(sub)+'</p>':'')+'</div>'+
+    '<div class="mb">'+body+'</div>'+
+    '<div class="mf">'+(actions||[]).map(function(a){
+      return '<button class="btn '+(a.ghost?'ghost':'')+' sm" data-act="'+a.act+'">'+esc(a.label)+'</button>';
+    }).join('')+'</div></div></div>';
+}
+function closeLayer(){
+  document.getElementById('layer').innerHTML = '';
+  MODAL_SEL = null; CUR_DRAWER = null;
+}
+var MODAL_SEL = null, CUR_DRAWER = null;
+function fakeQR(){
+  var R = rng(20260926), o = '', n = 29;
+  function finder(ox, oy){
+    return '<rect x="'+ox+'" y="'+oy+'" width="7" height="7" fill="#211E1B"/>'+
+      '<rect x="'+(ox+1)+'" y="'+(oy+1)+'" width="5" height="5" fill="#fff"/>'+
+      '<rect x="'+(ox+2)+'" y="'+(oy+2)+'" width="3" height="3" fill="#211E1B"/>';
+  }
+  o += '<rect width="'+n+'" height="'+n+'" fill="#fff"/>';
+  for (var y = 0; y < n; y++) for (var x = 0; x < n; x++){
+    if ((x < 8 && y < 8) || (x > n-9 && y < 8) || (x < 8 && y > n-9)) continue;
+    if (R() > .52) o += '<rect x="'+x+'" y="'+y+'" width="1" height="1" fill="#211E1B"/>';
+  }
+  o += finder(0,0) + finder(n-7,0) + finder(0,n-7);
+  return o;
+}
+function selectPack(id){
+  MODAL_SEL = id;
+  var k = PACKS.filter(function(x){ return x.id === id; })[0];
+  document.querySelectorAll('[data-pack-pick]').forEach(function(b){
+    b.setAttribute('aria-pressed', b.dataset.packPick === id);
+  });
+  var sum = document.getElementById('picksum');
+  if (sum && k) sum.textContent = '¥ ' + k.price + ' / ' + k.credits.toLocaleString('zh-CN') + ' 点';
+}
+function doPay(){
+  var k = PACKS.filter(function(x){ return x.id === MODAL_SEL; })[0];
+  if (!k){ toast('请先选择一个套餐', true); return; }
+  S.credits += k.credits;
+  S.ledger.push({t:'套餐充值 · ¥' + k.price + ' 档', amt:k.credits, at:stamp(), kind:'in'});
+  closeLayer(); render();
+  toast('支付成功，已到账 ' + k.credits.toLocaleString('zh-CN') + ' 点');
+}
+function doInvoice(){
+  var t = document.getElementById('inv-title'), m = document.getElementById('inv-mail');
+  var title = t ? t.value.trim() : '';
+  var mail = m ? m.value.trim() : '';
+  if (!title || !mail){ toast('抬头和接收邮箱不能为空', true); return; }
+  S.invoices.push({title:title, mail:mail, status:'待财务处理', at:stamp()});
+  closeLayer();
+  toast('开票申请已提交，状态：待财务处理');
+}
+function openHelp(){
+  openModal('新手指引','三步就能拿到可用于生产的文件。',
+    '<div class="stepline">'+
+      '<div class="st done"><span class="dotm"></span>① 在「AI 设计工作室」说一句需求，设计师帮你补齐风格 / 元素 / 配色 / 场景</div>'+
+      '<div class="st done"><span class="dotm"></span>② 在「花型库」用四维标签筛选，或让设计师说明几款候选的亮点</div>'+
+      '<div class="st now"><span class="dotm"></span>③ 选定花型后交给织印师，产出四方连续、分层 PSD 与交付包</div>'+
+    '</div>'+
+    '<div class="hr"></div>'+
+    '<div class="small muted">计费：客服问答与花型库浏览免费；四方连续 30 点、分层 PSD 45 点、描稿仿稿 60 点、全套交付包 120 点。任务失败自动退还点数。</div>',
+    [{label:'知道了', act:'close-modal'}]);
+}
+function upload(){
+  var a = S.agent;
+  push(a, {me:true, text:'（已上传参考图：ad_board_pattern.jpg · 2.1MB）'});
+  render();
+  later(function(){
+    if (a === 'engineer'){
+      var pid = pickCurrent();
+      push(a, {text:'图收到了，先做输入质量检查：清晰度 62 / 100、透视倾斜约 12°、右上角有遮挡。',
+        list:['原图分辨率不足，直接描摹会带出毛边','广告牌反光导致中间色偏亮，需要先做去噪与超分',
+          '建议路径：清晰化 → 主体分割 → 矢量描摹 → 色彩还原'],
+        card:'<div style="margin-top:8px"><button class="opt" data-mktask="trace|'+pid+'">按描稿仿稿流程处理（60 点）</button></div>'});
+    } else if (a === 'designer'){
+      push(a, {text:'看到图了。从画面判断元素偏「花卉」，风格接近「复古波普」，配色是「暖橙焦糖」。我先把这三项记进需求卡。',
+        card:optCard('要不要我按这三项出一版候选？', [{label:'按这三项出候选', act:'trend-picks'},{label:'再补充场景', say:'用在女装连衣裙上'}])});
+      S.brief.element = S.brief.element || '花卉';
+      S.brief.style = S.brief.style || '复古波普';
+      S.brief.color = S.brief.color || '暖橙焦糖';
+    } else {
+      push(a, {text:'图片已收进你的项目空间。需要的话我可以把它和其它下载记录一起整理成清单表。',
+        card:'<div style="margin-top:8px"><button class="opt" data-act="export-book">整理成表格</button></div>'});
+    }
+    render();
+  }, 520);
+}
+function go(page){
+  S.page = page; closeLayer(); render();
+}
+function setFilter(dim, val){
+  var arr = S.filters[dim], i = arr.indexOf(val);
+  if (i >= 0) arr.splice(i, 1); else arr.push(val);
+}
+function refreshLibGrid(){
+  var res = filtered();
+  var c = document.getElementById('rescount');
+  if (c) c.textContent = res.length;
+  var holder = document.getElementById('libresult');
+  if (!holder){ render(); return; }
+  var g = document.getElementById('libgrid');
+  if (!res.length){
+    holder.innerHTML = '<div class="card"><div class="empty"><div class="big">▦</div>'+
+      '<b>没有同时满足这些条件的花型</b>'+
+      '<p class="small">试着去掉一个筛选条件，或者让设计师按你的需求生成新方案。</p></div></div>';
+    return;
+  }
+  if (g){ g.innerHTML = res.map(pcardHTML).join(''); }
+  else { holder.innerHTML = '<div class="lib-grid" id="libgrid">'+ res.map(pcardHTML).join('') +'</div>'; }
+}
+function applyBriefToFilters(){
+  ['style','element','color','scene'].forEach(function(k){
+    if (S.brief[k] && S.filters[k].indexOf(S.brief[k]) < 0) S.filters[k].push(S.brief[k]);
+  });
+}
+function mkTask(type, pid){
+  closeLayer();
+  var T = TASK_TYPES[type], p = PAT[pid];
+  S.agent = 'engineer';
+  S.page = 'studio';
+  push('engineer', {me:true, text:'把「' + p.name + '」做成' + T.name + '，需要' + T.cost + ' 点。'});
+  render();
+  later(function(){ offerTask(type, pid); }, 400);
+}
+function startFromModal(){
+  var t = MODAL_SEL_TYPE, p = MODAL_SEL_PAT;
+  if (!t || !p){ toast('请先选择处理类型和花型', true); return; }
+  closeLayer();
+  var T = TASK_TYPES[t];
+  if (!spend(T.cost)) return;
+  S.ledger.push({t:T.name + ' · ' + PAT[p].name, amt:-T.cost, at:stamp(), kind:'out'});
+  var task = newTask(t, p, true);
+  task.status = 'run'; task.step = 0; task.progress = 0;
+  S.page = 'tasks'; render();
+  runTask(task);
+}
+/* 对话内确认执行：卡片已写明输出规格与失败退还规则，故直接扣费并开跑 */
+function runFromChat(type, pid){
+  closeLayer();
+  var T = TASK_TYPES[type], p = PAT[pid];
+  if (!p) return;
+  S.agent = 'engineer';
+  if (!spend(T.cost)) return;
+  S.ledger.push({t:T.name + ' · ' + p.name, amt:-T.cost, at:stamp(), kind:'out'});
+  push('engineer', {me:true, text:'确认执行，扣 ' + T.cost + ' 点。'});
+  var task = newTask(type, pid, true);
+  task.status = 'run'; task.step = 0; task.progress = 0;
+  S.page = 'tasks'; render();
+  runTask(task);
+  return task;
+}
+var MODAL_SEL_TYPE = null, MODAL_SEL_PAT = null;
+
+/* =========================================================================
+   __INIT__  事件委托与启动
+   ========================================================================= */
+var ACTS = {
+  'recharge': function(){ openRecharge(); },
+  'help': function(){ openHelp(); },
+  'start-chat': function(){ S.page = 'studio'; S.agent = 'designer'; render(); },
+  'upload': function(){ upload(); },
+  'start-upload': function(){ S.page = 'studio'; S.agent = 'engineer'; render(); upload(); },
+  'send': function(){ var el = document.getElementById('input'); say(el ? el.value : ''); },
+  'to-library': function(){ applyBriefToFilters(); go('library'); },
+  'reset-brief': function(){ S.brief = {style:null,element:null,color:null,scene:null}; S.rounds.designer = 0; toast('需求卡已重置'); render(); },
+  'clear-filters': function(){ S.filters = {style:[],element:[],color:[],scene:[],q:''}; render(); },
+  'new-task': function(){ MODAL_SEL_TYPE = null; MODAL_SEL_PAT = null; openNewTask(); },
+  'export-book': function(){ exportBook(); },
+  'preview-book': function(){ applyBriefToFilters(); go('library'); },
+  'do-export': function(){
+    var f = bookFlags(); closeLayer();
+    toast('已导出 XLSX：' + PATTERNS.length + ' 款花型 · ' + (f.desc ? '含设计说明 ' : '') + (f.sell ? '含卖点 ' : '') + (f.thumb ? '含缩略图' : ''));
+    S.assets.unshift({name:'花型清单_PatternFlow_' + stamp().replace(/[- :]/g,'') + '.xlsx',
+      pid:'PF-OWN-2026-000128', fmt:'XLSX · 清单', at:stamp(), pts:0});
+    if (S.page === 'assets') render();
+  },
+  'invoice': function(){ openInvoice(); },
+  'do-invoice': function(){ doInvoice(); },
+  'pay-ok': function(){ doPay(); },
+  'close-modal': function(){ closeLayer(); },
+  'close-layer': function(){ closeLayer(); },
+  'goto-engineer': function(){ S.agent = 'engineer'; render(); },
+  'goto-tasks': function(){ go('tasks'); },
+  'go-billing': function(){ go('billing'); },
+  'explain-picks': function(){ explainPicks(); },
+  'trend-picks': function(){
+    if (!S.brief.style) S.brief.style = '法式浪漫';
+    if (!S.brief.element) S.brief.element = '花卉';
+    if (!S.brief.color) S.brief.color = '莫兰迪灰调';
+    if (!S.brief.scene) S.brief.scene = '女装连衣裙';
+    showPicks(['style','element','color','scene'].filter(function(k){ return !S.brief[k]; }));
+  }
+};
+document.addEventListener('click', function(e){
+  var el = e.target.closest ? e.target.closest('[data-page],[data-act],[data-open],[data-fav],[data-opt],[data-say],[data-confirm],[data-cancel],[data-download],[data-retry],[data-fdim],[data-mktask],[data-run],[data-pack],[data-pack-pick],[data-pick-type],[data-pick-pat],[data-flag],[data-agent],[data-redl]') : null;
+  if (!el) return;
+  var d = el.dataset;
+
+  if (d.page){ go(d.page); return; }
+  if (d.agent){ S.agent = d.agent; render(); return; }
+  if (d.open){ openDrawer(d.open); return; }
+  if (d.fav){
+    var i = S.fav.indexOf(d.fav);
+    if (i >= 0) S.fav.splice(i,1); else S.fav.push(d.fav);
+    toast(i >= 0 ? '已取消收藏' : '已收藏');
+    var wasDrawer = CUR_DRAWER === d.fav;
+    render();
+    if (wasDrawer) openDrawer(d.fav);
+    return;
+  }
+  if (d.say){ say(d.say); return; }
+  if (d.opt){
+    var src = (S.chat[S.agent] || []).filter(function(m){ return m.id === d.opt; })[0];
+    var o = src && src.opts ? src.opts[+d.oi] : null;
+    if (o && o.set){ S.brief[o.set[0]] = o.set[1]; push(S.agent, {me:true, text:o.label}); render();
+      later(function(){ replyDesigner(o.label); }, 420);
+    } else if (o && o.skip){
+      push(S.agent, {me:true, text:o.label}); render();
+      var missing = ['style','element','color','scene'].filter(function(k){ return !S.brief[k]; });
+      later(function(){
+        if (missing.length === 1 || S.rounds.designer >= 2){ showPicks(missing); }
+        else { S.rounds.designer++; askDim(missing.indexOf('element')>=0?'element':missing[0],
+          '明白，那就先不定这一项。' + '还差一个维度：' + ({element:'画面里希望有什么元素？',color:'配色上有偏好吗？',scene:'最后用在什么品类上？',style:'想走什么风格？'}[missing[0]]),
+          '也可以直接说“先出候选”。'); }
+      }, 420);
+    }
+    return;
+  }
+  if (d.fdim){
+    setFilter(d.fdim, d.fval);
+    var p = el.getAttribute('aria-pressed') === 'true';
+    el.setAttribute('aria-pressed', !p);
+    refreshLibGrid();
+    return;
+  }
+  if (d.mktask){
+    var parts = d.mktask.split('|');
+    mkTask(parts[0], parts[1]);
+    return;
+  }
+  if (d.run){
+    var rp = d.run.split('|');
+    runFromChat(rp[0], rp[1]);
+    return;
+  }
+  if (d.confirm){ confirmTask(d.confirm); return; }
+  if (d.cancel){
+    S.tasks = S.tasks.filter(function(t){ return t.tid !== d.cancel; });
+    toast('已取消任务，未产生扣费'); render(); return;
+  }
+  if (d.download){
+    var t = S.tasks.filter(function(x){ return x.tid === d.download; })[0];
+    if (t) toast('开始下载交付包：' + TASK_TYPES[t.type].name + ' · ' + PAT[t.pid].name);
+    return;
+  }
+  if (d.retry){
+    var t2 = S.tasks.filter(function(x){ return x.tid === d.retry; })[0];
+    if (t2){ t2.status = 'run'; t2.step = 0; t2.progress = 0; render(); runTask(t2); }
+    return;
+  }
+  if (d.redl){ toast('已重新生成下载链接，有效期 24 小时'); return; }
+  if (d.pack){ openRecharge(d.pack); return; }
+  if (d.packPick){ selectPack(d.packPick); return; }
+  if (d.pickType){
+    MODAL_SEL_TYPE = d.pickType;
+    document.querySelectorAll('[data-pick-type]').forEach(function(b){ b.setAttribute('aria-pressed', b.dataset.pickType === MODAL_SEL_TYPE); });
+    if (MODAL_SEL_TYPE && MODAL_SEL_PAT) startFromModal();
+    return;
+  }
+  if (d.pickPat){
+    MODAL_SEL_PAT = d.pickPat;
+    document.querySelectorAll('[data-pick-pat]').forEach(function(b){ b.setAttribute('aria-pressed', b.dataset.pickPat === MODAL_SEL_PAT); });
+    if (MODAL_SEL_TYPE && MODAL_SEL_PAT) startFromModal();
+    return;
+  }
+  if (d.flag){
+    var on = el.getAttribute('aria-pressed') === 'true';
+    el.setAttribute('aria-pressed', !on);
+    return;
+  }
+  if (d.act && ACTS[d.act]){ ACTS[d.act](); return; }
+});
+document.addEventListener('input', function(e){
+  var el = e.target;
+  if (el.id === 'libq'){ S.filters.q = el.value; refreshLibGrid(); return; }
+  if (el.id === 'input'){ el.style.height = 'auto'; el.style.height = Math.min(120, el.scrollHeight) + 'px'; return; }
+});
+document.addEventListener('keydown', function(e){
+  if (e.target && e.target.id === 'input' && e.key === 'Enter' && !e.shiftKey){
+    e.preventDefault();
+    say(e.target.value);
+  }
+});
+
+/* 自测钩子 */
+window.__YQ = {
+  get S(){ return S; }, get PATTERNS(){ return PATTERNS; }, get PAT(){ return PAT; },
+  get TASKS(){ return S.tasks; }, get TIMERS(){ return TIMERS; },
+  AGENTS:AGENTS, TASK_TYPES:TASK_TYPES, PACKS:PACKS, DIMS:DIMS,
+  render:render, go:go, say:say, reply:reply, filtered:filtered, matchScore:matchScore,
+  setFilter:setFilter, setAgent:function(k){ S.agent = k; render(); },
+  openDrawer:openDrawer, closeLayer:closeLayer, openRecharge:openRecharge, openInvoice:openInvoice,
+  selectPack:selectPack, doPay:doPay, doInvoice:doInvoice, exportBook:exportBook, bookFlags:bookFlags,
+  confirmTask:confirmTask, newTask:newTask, runTask:runTask, spend:spend,
+  mkTask:mkTask, runFromChat:runFromChat, startFromModal:startFromModal, showPicks:showPicks, askDim:askDim, upload:upload,
+  introOf:introOf, placeholderOf:placeholderOf, patternSVG:patternSVG,
+  fakeQR:fakeQR, flushTimers:flushTimers, stamp:stamp,
+  layer:function(){ return document.getElementById('layer'); }
+};
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+{
+  "name": "generate_pattern",
+  "version": "0.3.0",
+  "description": "按需求卡（风格/元素/配色/场景 + 识图得到的构图/密度/尺度）生成面料花型稿：先用九宫格元素图拆出单个元素，再做环面排版（元素不重叠）、自动拼版和三格环绕合成，每版都过逐像素无缝自检——所以产出的每一版本身就是**可直接平铺的无缝花型**，不再是需要织印师二次处理的平面稿。一次出多版不同的排布供挑选（版数由 patgen.variants 配置，默认 4）。调用后不会立刻出图，会先返回一份待确认方案（含总点数），用户点确认才真正生成。花型库里没有对得上的款时，应主动建议用户走这条路。",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "prompt": {"type": "string", "description": "你对画面的补充描述（可选）。需求卡里的标签会自动拼进去，不用重复写。"},
+      "confirmed": {"type": "boolean", "description": "用户是否已点确认。只有用户明确同意后才传 true；否则传 false。"},
+      "n": {"type": "integer", "description": "出几版（每版都可直接平铺），不传就用配置的默认值（4）。一次最多 4 版。"}
+    },
+    "required": ["confirmed"]
+  },
+  "confirm": true,
+  "cost": 60,
+  "handler": "handler.py"
+}

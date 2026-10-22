@@ -1,0 +1,25 @@
+{
+  "id": "auto-20261019-04-A-fast",
+  "date": "2026-10-19",
+  "title": "[自动打回] A-fast 未通过接缝审查",
+  "source": "auto-rejected",
+  "status": "open",
+  "symptom": "[{\"axis\":\"vertical\",\"pos\":0.499,\"px\":415,\"mean\":57.11,\"frac\":0.78,\"z\":27},{\"axis\":\"vertical\",\"pos\":0.621,\"px\":517,\"mean\":37.04,\"frac\":0.63,\"z\":15.6},{\"axis\":\"horizontal\",\"pos\":0.404,\"px\":433,\"mean\":35.17,\"frac\":0.56,\"z\":13.3},{\"axis\":\"horizontal\",\"pos\":0.499,\"px\":535,\"mean\":63.12,\"frac\":0.75,\"z\":27.5}]",
+  "root_cause": "",
+  "fix": "",
+  "regression": "",
+  "artifacts": [
+    "rejected-preview.png",
+    "base-preview.png"
+  ],
+  "tags": [
+    "auto-rejected",
+    "A-fast"
+  ],
+  "features": {
+    "satMean": 0.177,
+    "hueConc": 0.987,
+    "edgeMean": 25.44,
+    "lowGradFrac": 0.069
+  }
+}

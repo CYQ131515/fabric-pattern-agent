@@ -1,0 +1,25 @@
+{
+  "id": "auto-20261019-07-D-clean+tile-multi",
+  "date": "2026-10-19",
+  "title": "[自动打回] D-clean+tile-multi 未通过接缝审查",
+  "source": "auto-rejected",
+  "status": "open",
+  "symptom": "[]",
+  "root_cause": "",
+  "fix": "",
+  "regression": "",
+  "artifacts": [
+    "rejected-preview.png",
+    "base-preview.png"
+  ],
+  "tags": [
+    "auto-rejected",
+    "D-clean+tile-multi"
+  ],
+  "features": {
+    "satMean": 0.229,
+    "hueConc": 0.994,
+    "edgeMean": 28.78,
+    "lowGradFrac": 0.092
+  }
+}

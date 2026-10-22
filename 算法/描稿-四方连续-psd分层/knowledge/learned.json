@@ -1,0 +1,347 @@
+{
+  "updated_at": "2026-10-19T22:26:40.180Z",
+  "min_samples": 1,
+  "clusters": {
+    "lg0-hc2-ed0": {
+      "paths": {
+        "B-clean+ai": {
+          "n": 1,
+          "ok": 1,
+          "fail": 0,
+          "score": 0.667,
+          "weighted": 0.667,
+          "tags": {
+            "structure": 1
+          }
+        }
+      },
+      "total": 1,
+      "recommended": [
+        "B-clean+ai"
+      ]
+    },
+    "lg3-hc1-ed0": {
+      "paths": {
+        "B-clean+ai": {
+          "n": 1,
+          "ok": 1,
+          "fail": 0,
+          "score": 0.667,
+          "weighted": 0.667,
+          "tags": {}
+        },
+        "A-fast": {
+          "n": 1,
+          "ok": 0,
+          "fail": 1,
+          "score": 0.333,
+          "weighted": 0.333,
+          "tags": {
+            "auto-rejected": 2,
+            "A-fast": 1
+          }
+        }
+      },
+      "total": 2,
+      "recommended": [
+        "B-clean+ai",
+        "A-fast"
+      ]
+    },
+    "lg2-hc2-ed0": {
+      "paths": {
+        "B-clean+ai": {
+          "n": 1,
+          "ok": 0,
+          "fail": 1,
+          "score": 0.333,
+          "weighted": 0.333,
+          "tags": {
+            "band-boundary": 1,
+            "lineart": 1,
+            "feather-ghost": 1
+          }
+        },
+        "C-clean+regenerate": {
+          "n": 1,
+          "ok": 0,
+          "fail": 1,
+          "score": 0.333,
+          "weighted": 0.333,
+          "tags": {
+            "rect-overlay": 1,
+            "regenerate": 1,
+            "review-gap": 1
+          }
+        },
+        "A-fast": {
+          "n": 1,
+          "ok": 0,
+          "fail": 1,
+          "score": 0.333,
+          "weighted": 0.333,
+          "tags": {
+            "auto-rejected": 2,
+            "A-fast": 1
+          }
+        }
+      },
+      "total": 3,
+      "recommended": [
+        "B-clean+ai",
+        "C-clean+regenerate",
+        "A-fast"
+      ]
+    },
+    "lg0-hc2-ed1": {
+      "paths": {
+        "B-clean+ai": {
+          "n": 2,
+          "ok": 0,
+          "fail": 2,
+          "score": 0.25,
+          "weighted": 0.5,
+          "tags": {
+            "band-boundary": 1,
+            "feather-ghost": 1,
+            "seam-mismatch": 1,
+            "auto-rejected": 2,
+            "B-clean+ai": 1
+          }
+        },
+        "B-clean+ai(bugfix)": {
+          "n": 1,
+          "ok": 0,
+          "fail": 1,
+          "score": 0.333,
+          "weighted": 0.333,
+          "tags": {
+            "band-boundary": 1,
+            "cut-seam": 1,
+            "review-gap": 1
+          }
+        },
+        "C15 = C2 + donor-strip content-aware fill + Poisson (region repair)": {
+          "n": 1,
+          "ok": 1,
+          "fail": 0,
+          "score": 0.667,
+          "weighted": 0.667,
+          "tags": {}
+        },
+        "unknown": {
+          "n": 3,
+          "ok": 0,
+          "fail": 3,
+          "score": 0.2,
+          "weighted": 0.6,
+          "tags": {
+            "auto-rejected": 6,
+            "B-clean+det": 2,
+            "D-clean+tile-multi": 1
+          }
+        },
+        "A-fast": {
+          "n": 2,
+          "ok": 0,
+          "fail": 2,
+          "score": 0.25,
+          "weighted": 0.5,
+          "tags": {
+            "auto-rejected": 4,
+            "A-fast": 2
+          }
+        },
+        "C-clean+regenerate": {
+          "n": 1,
+          "ok": 0,
+          "fail": 1,
+          "score": 0.333,
+          "weighted": 0.333,
+          "tags": {
+            "auto-rejected": 2,
+            "C-clean+regenerate": 1
+          }
+        }
+      },
+      "total": 10,
+      "recommended": [
+        "C15 = C2 + donor-strip content-aware fill + Poisson (region repair)",
+        "B-clean+ai(bugfix)",
+        "C-clean+regenerate",
+        "B-clean+ai",
+        "A-fast",
+        "unknown"
+      ]
+    },
+    "lg2-hc0-ed0": {
+      "paths": {
+        "描稿: clean(pass1 style) + flatten(pass2) → AI seam → band fix → PSD": {
+          "n": 1,
+          "ok": 0,
+          "fail": 1,
+          "score": 0.333,
+          "weighted": 0.333,
+          "tags": {
+            "background-dirty": 1,
+            "style-ok": 1
+          }
+        }
+      },
+      "total": 1,
+      "recommended": [
+        "描稿: clean(pass1 style) + flatten(pass2) → AI seam → band fix → PSD"
+      ]
+    },
+    "lg1-hc0-ed0": {
+      "paths": {
+        "描稿: clean(保花型) → AI平绿底 → 2×2 inpaint(低频边缘offset) → PSD": {
+          "n": 1,
+          "ok": 1,
+          "fail": 0,
+          "score": 0.667,
+          "weighted": 0.667,
+          "tags": {}
+        }
+      },
+      "total": 1,
+      "recommended": [
+        "描稿: clean(保花型) → AI平绿底 → 2×2 inpaint(低频边缘offset) → PSD"
+      ]
+    },
+    "lg2-hc1-ed1": {
+      "paths": {
+        "描稿: clean(去手/褶皱/水印) → AI缝带/2×2 inpaint(band 76, safe offset) → PSD": {
+          "n": 1,
+          "ok": 1,
+          "fail": 0,
+          "score": 0.667,
+          "weighted": 0.667,
+          "tags": {}
+        }
+      },
+      "total": 1,
+      "recommended": [
+        "描稿: clean(去手/褶皱/水印) → AI缝带/2×2 inpaint(band 76, safe offset) → PSD"
+      ]
+    },
+    "lg1-hc0-ed1": {
+      "paths": {
+        "描稿: clean(去褶皱/阴影) → AI缝带(band160,feather14) → 修复带亮度修正 → PSD": {
+          "n": 1,
+          "ok": 0,
+          "fail": 1,
+          "score": 0.333,
+          "weighted": 0.333,
+          "tags": {
+            "warp": 1,
+            "unwarp": 1,
+            "optimize": 1
+          }
+        },
+        "反向展平(undo warp)@2048 → AI缝带band200 → wrap stitch → PSD (v2)": {
+          "n": 1,
+          "ok": 0,
+          "fail": 1,
+          "score": 0.333,
+          "weighted": 0.333,
+          "tags": {
+            "unwarp-wrong": 1,
+            "rule": 1
+          }
+        },
+        "平铺还原@2048 → AI缝带120 → 不规则混合(色调中性化) → 平滑色调补偿 → PSD (v3)": {
+          "n": 1,
+          "ok": 0,
+          "fail": 1,
+          "score": 0.333,
+          "weighted": 0.333,
+          "tags": {
+            "overprocessed": 1,
+            "revert": 1
+          }
+        },
+        "扭曲面料规则: 想象平铺还原@2048 → AI缝带band120 → PSD": {
+          "n": 1,
+          "ok": 1,
+          "fail": 0,
+          "score": 0.667,
+          "weighted": 0.667,
+          "tags": {}
+        },
+        "扭曲面料: 想象平铺还原@2048 → 缩1024 → 2×2 inpaint(90,原生分辨率) → PSD": {
+          "n": 1,
+          "ok": 1,
+          "fail": 0,
+          "score": 0.667,
+          "weighted": 0.667,
+          "tags": {}
+        }
+      },
+      "total": 5,
+      "recommended": [
+        "扭曲面料规则: 想象平铺还原@2048 → AI缝带band120 → PSD",
+        "扭曲面料: 想象平铺还原@2048 → 缩1024 → 2×2 inpaint(90,原生分辨率) → PSD",
+        "描稿: clean(去褶皱/阴影) → AI缝带(band160,feather14) → 修复带亮度修正 → PSD",
+        "反向展平(undo warp)@2048 → AI缝带band200 → wrap stitch → PSD (v2)",
+        "平铺还原@2048 → AI缝带120 → 不规则混合(色调中性化) → 平滑色调补偿 → PSD (v3)"
+      ]
+    },
+    "lg0-hc0-ed1": {
+      "paths": {
+        "B-clean+ai": {
+          "n": 1,
+          "ok": 0,
+          "fail": 1,
+          "score": 0.333,
+          "weighted": 0.333,
+          "tags": {
+            "auto-rejected": 2,
+            "B-clean+ai": 1
+          }
+        },
+        "unknown": {
+          "n": 2,
+          "ok": 0,
+          "fail": 2,
+          "score": 0.25,
+          "weighted": 0.5,
+          "tags": {
+            "auto-rejected": 4,
+            "B-clean+det": 1,
+            "D-clean+tile-multi": 1
+          }
+        },
+        "A-fast": {
+          "n": 1,
+          "ok": 0,
+          "fail": 1,
+          "score": 0.333,
+          "weighted": 0.333,
+          "tags": {
+            "auto-rejected": 2,
+            "A-fast": 1
+          }
+        },
+        "C-clean+regenerate": {
+          "n": 1,
+          "ok": 0,
+          "fail": 1,
+          "score": 0.333,
+          "weighted": 0.333,
+          "tags": {
+            "auto-rejected": 2,
+            "C-clean+regenerate": 1
+          }
+        }
+      },
+      "total": 5,
+      "recommended": [
+        "B-clean+ai",
+        "A-fast",
+        "C-clean+regenerate",
+        "unknown"
+      ]
+    }
+  }
+}

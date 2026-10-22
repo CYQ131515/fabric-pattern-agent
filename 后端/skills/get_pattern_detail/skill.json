@@ -1,0 +1,16 @@
+{
+  "name": "get_pattern_detail",
+  "version": "0.1.0",
+  "description": "按花型编号或名称取详情：设计说明、卖点、适用面料、接缝评分、权利范围、版本。",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "pattern_id": {"type": "string", "description": "花型编号，如 PF-OWN-2026-000128"},
+      "name": {"type": "string", "description": "花型名称，如 山茶小径"}
+    },
+    "required": []
+  },
+  "confirm": false,
+  "cost": 0,
+  "handler": "handler.py"
+}

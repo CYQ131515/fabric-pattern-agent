@@ -1,0 +1,25 @@
+{
+  "id": "case-20261019-12",
+  "date": "2026-10-19",
+  "title": "[用户打回] v2/v3 的破线/色调修饰效果不如第一版，用户要求回到 v1",
+  "source": "user-feedback",
+  "status": "open",
+  "symptom": "v2/v3 的破线/色调修饰效果不如第一版，用户要求回到 v1",
+  "root_cause": "",
+  "fix": "",
+  "regression": "",
+  "tags": [
+    "overprocessed",
+    "revert"
+  ],
+  "delivery_id": "d-1792447244520",
+  "chosen_path": "平铺还原@2048 → AI缝带120 → 不规则混合(色调中性化) → 平滑色调补偿 → PSD (v3)",
+  "features": {
+    "lowGradFrac": 0.25,
+    "hueConc": 0.3,
+    "satMean": 0.55,
+    "edgeMean": 22
+  },
+  "artifacts": [],
+  "file": "$HOME/deepseek herness/REA/.rea-web/samples/input17-pink-paisley-colorlayers-v3-9382.psd"
+}

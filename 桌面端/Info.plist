@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>CFBundleName</key><string>PatternFlow 花型智造</string>
+  <key>CFBundleDisplayName</key><string>PatternFlow 花型智造</string>
+  <key>CFBundleIdentifier</key><string>com.cyq.patternflow.desktop</string>
+  <key>CFBundleVersion</key><string>0.1.0</string>
+  <key>CFBundleShortVersionString</key><string>0.1.0</string>
+  <key>CFBundlePackageType</key><string>APPL</string>
+  <key>CFBundleExecutable</key><string>PatternFlow</string>
+  <key>CFBundleIconFile</key><string>AppIcon</string>
+  <key>LSMinimumSystemVersion</key><string>12.0</string>
+  <key>NSHighResolutionCapable</key><true/>
+  <key>NSHumanReadableCopyright</key><string>CYQ · PatternFlow</string>
+  <key>NSPrincipalClass</key><string>NSApplication</string>
+  <key>NSAppTransportSecurity</key>
+  <dict>
+    <key>NSAllowsLocalNetworking</key><true/>
+    <key>NSExceptionDomains</key>
+    <dict>
+      <key>127.0.0.1</key>
+      <dict>
+        <key>NSExceptionAllowsInsecureHTTPLoads</key><true/>
+        <key>NSIncludesSubdomains</key><true/>
+      </dict>
+      <key>localhost</key>
+      <dict>
+        <key>NSExceptionAllowsInsecureHTTPLoads</key><true/>
+        <key>NSIncludesSubdomains</key><true/>
+      </dict>
+    </dict>
+  </dict>
+</dict>
+</plist>

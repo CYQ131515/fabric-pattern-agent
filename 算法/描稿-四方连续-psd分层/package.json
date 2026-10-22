@@ -1,0 +1,10 @@
+{
+  "name": "miaogao-seamless-psd",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "服装面料描稿：AI 清洗 → 四方连续 → 分色方式判断 → 300dpi 分层 PSD",
+  "dependencies": {
+    "sharp": "^0.34.0"
+  }
+}

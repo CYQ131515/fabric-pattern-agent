@@ -1,0 +1,30 @@
+{
+  "id": "case-20261019-07",
+  "date": "2026-10-19",
+  "title": "[用户打回] 上下左右接缝都没对上；中间羽化过渡不自然",
+  "source": "user-feedback",
+  "status": "fixed",
+  "symptom": "上下左右接缝都没对上；中间羽化过渡不自然",
+  "root_cause": "02-seam-ai 后处理把 AI 重绘结果合成了『未平移的原图』而非『平移后的图』：外缘永不连续、中间内容错位、羽化产生不自然过渡",
+  "fix": "合成基准改为 off（平移图）；修复后 wrap 从 59/61 降到 15/17（相邻 11），内部十字自然",
+  "regression": "1:1 内部十字自然；2×2 平铺连续；合成 max diff=0",
+  "tags": [
+    "band-boundary",
+    "feather-ghost",
+    "seam-mismatch"
+  ],
+  "delivery_id": "d-1792407962001",
+  "chosen_path": "B-clean+ai",
+  "features": {
+    "satMean": 0.177,
+    "hueConc": 0.987,
+    "edgeMean": 25.44,
+    "lowGradFrac": 0.069
+  },
+  "artifacts": [
+    "rejected-seamless.png",
+    "rejected-band.png",
+    "fixed-preview.png"
+  ],
+  "file": "/tmp/i9run/input9-watercolor-colorlayers-9382.psd"
+}

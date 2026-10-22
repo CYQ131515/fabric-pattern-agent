@@ -1,0 +1,26 @@
+{
+  "id": "case-20261019-10",
+  "date": "2026-10-19",
+  "title": "[用户打回] 勉强可以；要求先反向展平（undo 布料扭曲）再描稿优化",
+  "source": "user-feedback",
+  "status": "mitigated",
+  "symptom": "勉强可以；要求先反向展平（undo 布料扭曲）再描稿优化",
+  "root_cause": "v1 只按扭曲显示形状重画，花纹几何仍是扭的；用户要求先反向展平（想象布料平铺后的原始花版）",
+  "fix": "新增'反向展平重建'pass：明确要求 undo warp/folds/perspective，把纹样几何拉直成平版；2048 输出后再做 AI 缝带 + wrap stitch；v2 已出",
+  "regression": "",
+  "tags": [
+    "warp",
+    "unwarp",
+    "optimize"
+  ],
+  "delivery_id": "d-1792444715025",
+  "chosen_path": "描稿: clean(去褶皱/阴影) → AI缝带(band160,feather14) → 修复带亮度修正 → PSD",
+  "features": {
+    "lowGradFrac": 0.3,
+    "hueConc": 0.35,
+    "satMean": 0.4,
+    "edgeMean": 20
+  },
+  "artifacts": [],
+  "file": "$HOME/deepseek herness/REA/.rea-web/samples/input16-paisley-silk-colorlayers-9382.psd"
+}

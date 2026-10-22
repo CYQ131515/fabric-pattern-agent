@@ -1,0 +1,22 @@
+{
+  "id": "auto-20261019-02-A-fast",
+  "date": "2026-10-19",
+  "title": "[自动打回] A-fast 未通过接缝审查（input8 星空）",
+  "source": "auto-rejected",
+  "status": "open",
+  "symptom": "[{\"axis\": \"horizontal\", \"pos\": 0.499, \"px\": 698, \"mean\": 78.23, \"frac\": 1, \"z\": 36.6}]",
+  "root_cause": "",
+  "fix": "",
+  "regression": "",
+  "artifacts": [],
+  "tags": [
+    "auto-rejected",
+    "A-fast"
+  ],
+  "features": {
+    "satMean": 0.423,
+    "hueConc": 0.969,
+    "edgeMean": 11.92,
+    "lowGradFrac": 0.669
+  }
+}

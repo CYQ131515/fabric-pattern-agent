@@ -1,0 +1,99 @@
+{
+ "title": "浪漫小碎花",
+ "raw_keywords": "浪漫风 小碎花 密集",
+ "style": [
+  "法式小碎花",
+  "水彩"
+ ],
+ "style_en": [
+  "watercolor"
+ ],
+ "style_detail_en": [
+  "French ditsy floral, tiny delicate flowers",
+  "airy spacing between small motifs",
+  "soft muted pastel palette, hand-drawn",
+  "fine thin stems and tiny leaves"
+ ],
+ "subjects": [
+  "玫瑰",
+  "雏菊"
+ ],
+ "subjects_en": [
+  "tiny rose",
+  "daisy"
+ ],
+ "palette": {
+  "name": "粉雾花园",
+  "colors": [
+   "#f7c9d3",
+   "#e79aab",
+   "#fdf9f4",
+   "#b9cfe0",
+   "#9dbb95",
+   "#d9b26a"
+  ],
+  "note": "colors[2] 是底色/paper（fade 目标色）"
+ },
+ "density": 0.62,
+ "pattern": {
+  "type": "scatter",
+  "color": "#fdf9f4"
+ },
+ "elements": [
+  {
+   "name": "小玫瑰",
+   "type": "bloom_small",
+   "rel_size": 1.0,
+   "weight": 4,
+   "cells": 2,
+   "layer": 1,
+   "describe": "one tiny open watercolor rose in soft pink, only a few loose petals, delicate thin outline"
+  },
+  {
+   "name": "小雏菊",
+   "type": "flower_small",
+   "rel_size": 0.9,
+   "weight": 3,
+   "cells": 2,
+   "layer": 1,
+   "describe": "one tiny white daisy with thin petals and a small golden center"
+  },
+  {
+   "name": "花苞",
+   "type": "bud",
+   "rel_size": 0.7,
+   "weight": 2,
+   "cells": 1,
+   "layer": 2,
+   "describe": "one small pink rosebud with two slender sepals"
+  },
+  {
+   "name": "细叶",
+   "type": "leaf",
+   "rel_size": 0.9,
+   "weight": 3,
+   "cells": 2,
+   "layer": 2,
+   "describe": "one delicate sage-green leaf sprig with three tiny leaves on a fine stem"
+  },
+  {
+   "name": "星点点缀",
+   "type": "dot",
+   "rel_size": 0.5,
+   "weight": 2,
+   "cells": 1,
+   "layer": 2,
+   "describe": "a tiny cluster of three small star flowers and two dots, very light touch"
+  },
+  {
+   "name": "细枝",
+   "type": "vine",
+   "rel_size": 0.9,
+   "weight": 2,
+   "cells": 1,
+   "layer": 2,
+   "describe": "one thin curved stem with three tiny buds along it"
+  }
+ ],
+ "notes": "法式浪漫小碎花：元素小、数量多、颜色柔和、留空气感"
+}

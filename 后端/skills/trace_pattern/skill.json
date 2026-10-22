@@ -1,0 +1,23 @@
+{
+  "name": "trace_pattern",
+  "version": "0.1.0",
+  "description": "描稿仿稿：把用户上传的照片（裙子、布料、样衣局部，随手拍的也算）上的印花图案提取出来，还原成一张平整的平面花型设计稿。只属于织印师。调用后不会立刻出图，先返回待确认方案（含照片体检结果和点数），用户点确认才执行。",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "fidelity": {
+        "type": "string",
+        "enum": ["strict", "clean", "vector"],
+        "description": "还原度。strict=严格复刻（元素位置造型完全照照片）；clean=清晰化重绘（默认，保留特征但画得更干净）；vector=简化描摹（合并碎细节，适合印花分色）。用户没说就传 clean。"
+      },
+      "prompt": {"type": "string", "description": "用户**这一轮明确说出来**的额外要求（可选），比如“配色改成粉紫”“花再小一点”。图案本身仍以照片为准；用户没说就别填，尤其不要拿花型师需求卡里的风格/配色来填。"},
+      "prompt_full": {"type": "string", "description": "内部参数，只在“重新生成”时由系统重放完整提示词用。模型不要传。"},
+      "confirmed": {"type": "boolean", "description": "用户是否已点确认。只有用户明确同意后才传 true；否则传 false。"},
+      "n": {"type": "integer", "description": "生成张数，默认 1"}
+    },
+    "required": ["confirmed"]
+  },
+  "confirm": true,
+  "cost": 60,
+  "handler": "handler.py"
+}

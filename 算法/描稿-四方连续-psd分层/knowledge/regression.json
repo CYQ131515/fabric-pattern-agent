@@ -1,0 +1,42 @@
+{
+ "description": "回归集：每张图都必须满足 expect（fail=审查器必须打回；pass=必须放行）。新增案例时必须加一条。路径相对 knowledge/。",
+ "cases": [
+  {
+   "id": "reg-01",
+   "image": "cases/case-20261019-04/rejected-preview.png",
+   "expect": "fail",
+   "note": "原生重生成的矩形 overlay（当前审查器漏检 → 红）"
+  },
+  {
+   "id": "reg-02",
+   "image": "../deliverables/seamless/input7-seamless.png",
+   "expect": "pass",
+   "note": "海岸图 AI 清洗+补缝（A 级交付样，不能误报）"
+  },
+  {
+   "id": "reg-03",
+   "image": "../deliverables/inputs/input7-coastal.webp",
+   "expect": "fail",
+   "note": "未补缝原图：本身不可平铺，wrap 硬指标必须拒绝"
+  },
+  {
+   "id": "reg-04",
+   "image": "../deliverables/previews/input10-preview.png",
+   "expect": "pass",
+   "note": "已交付色层合成预览：不能误报"
+  },
+  {
+   "id": "reg-05",
+   "image": "../deliverables/_rejected/input19-blue-poppy-seamless-B-HARD-LINE-rejected.png",
+   "expect": "fail",
+   "note": "硬线样张：03 必须打回（2026-10-21 用户打回样）"
+  },
+  {
+   "id": "reg-06",
+   "image": "regression-assets/band-visible.png",
+   "expect": "fail",
+   "note": "合成修复带亮度差样张：03 或 03b 必须拒绝",
+   "bands": "h:512,120"
+  }
+ ]
+}

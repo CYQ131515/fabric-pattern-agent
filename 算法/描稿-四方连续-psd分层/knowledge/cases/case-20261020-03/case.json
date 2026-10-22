@@ -1,0 +1,19 @@
+{
+  "id": "case-20261020-03",
+  "date": "2026-10-20",
+  "title": "B级门禁过松：贯穿直线被当软带交付",
+  "source": "user-reported",
+  "status": "fixed",
+  "symptom": "产品四方连续按B级交付的 tile，2×2平铺后每块中心出现重复硬线：行梯度58、基线12.7（z≈20），四条贯穿线；用户实测打回“两条缝对不上”",
+  "root_cause": "产品侧 B 级兜底只按“缺陷分最小”挑候选，未排除 03 审查已检出贯穿直线的候选——硬缺陷被当成“轻微可见的软带”放行",
+  "fix": "B 级只接受 03 通过 + 03b 修复带软带（亮度/颗粒轻微不一致）；03 检出直线、wrap 断裂一律拒单；补单测",
+  "regression": "",
+  "artifacts": [
+    "rejected-preview.png",
+    "input-preview.png"
+  ],
+  "tags": [
+    "band-boundary",
+    "product-integration"
+  ]
+}

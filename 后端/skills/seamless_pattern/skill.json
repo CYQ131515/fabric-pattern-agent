@@ -1,0 +1,29 @@
+{
+  "name": "seamless_pattern",
+  "version": "0.1.0",
+  "description": "四方连续：把一张花型图做成可以无缝平铺的四方连续单元（接缝看不到，能直接拿去印花）。底图是本会话最近一张图：用户上传的、花型师刚生成的、或刚从花型库选的都行。调用后不会立刻出图，先返回待确认方案（含输入体检结论和点数），用户点确认才执行。只属于织印师。",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "engine": {
+        "type": "string",
+        "enum": [
+          "auto",
+          "pure",
+          "model"
+        ],
+        "description": "用哪条路线。auto=按输入体检的结论自动选（默认，推荐）；pure=只跑纯算法（快、不调模型，接缝带可能有轻微重影）；model=一定调模型补缝（慢一两分钟，接缝处会真正补出新内容）。用户没特别说就传 auto。"
+      },
+      "confirmed": {
+        "type": "boolean",
+        "description": "用户是否已点确认。只有用户明确同意后才传 true；否则传 false。"
+      }
+    },
+    "required": [
+      "confirmed"
+    ]
+  },
+  "confirm": true,
+  "cost": 30,
+  "handler": "handler.py"
+}

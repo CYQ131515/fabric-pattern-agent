@@ -1,0 +1,89 @@
+{
+ "title": "复古水彩豆沙花",
+ "raw_keywords": "复古水彩 手绘 豆沙色 墨线叶 花型",
+ "style": [
+  "复古手绘",
+  "水彩"
+ ],
+ "style_en": [
+  "vintage hand-painted watercolor"
+ ],
+ "style_detail_en": [
+  "loose expressive brushwork with visible watercolor washes",
+  "thin brown contour lines over the washes",
+  "muted earthy palette of cream, camel and mocha",
+  "hand-painted folk art feel, slightly imperfect edges"
+ ],
+ "subjects": [
+  "牡丹",
+  "野花"
+ ],
+ "subjects_en": [
+  "peony bloom",
+  "small wildflower"
+ ],
+ "palette": {
+  "name": "豆沙·奶油·墨",
+  "colors": [
+   "#f2e6d6",
+   "#efe4d4",
+   "#d8c0a8",
+   "#907050",
+   "#cfc0c4",
+   "#2a2018"
+  ]
+ },
+ "density": 0.84,
+ "pattern": {
+  "type": "halfdrop",
+  "color": "#f2e6d6"
+ },
+ "elements": [
+  {
+   "name": "大花·盛开",
+   "type": "bloom",
+   "rel_size": 2.0,
+   "weight": 6,
+   "cells": 2,
+   "layer": 0,
+   "describe": "one large loose watercolor peony bloom in cream and camel tones, open layered petals with a thin brown contour line, dense black ink speckled stamen center, hand-painted vintage watercolor"
+  },
+  {
+   "name": "中花·豆沙",
+   "type": "bloom_small",
+   "rel_size": 1.0,
+   "weight": 3,
+   "cells": 2,
+   "layer": 1,
+   "describe": "one medium brushy five-petal blossom painted in solid mocha brown watercolor with darker petal edges and a small dark center, loose brush strokes"
+  },
+  {
+   "name": "小花·四瓣",
+   "type": "flower_small",
+   "rel_size": 0.5,
+   "weight": 6,
+   "cells": 2,
+   "layer": 2,
+   "describe": "one small four-petal wildflower in pale dusty mauve with a thin dark outline and tiny dark center dots"
+  },
+  {
+   "name": "墨线叶",
+   "type": "leaf_ink",
+   "rel_size": 1.2,
+   "weight": 7,
+   "cells": 2,
+   "layer": 2,
+   "describe": "one black ink brush leaf sprig, five tapered leaves on a thin curved stem, solid black brush strokes with sharp tips"
+  },
+  {
+   "name": "描边叶",
+   "type": "leaf_outline",
+   "rel_size": 1.1,
+   "weight": 3,
+   "cells": 1,
+   "layer": 2,
+   "describe": "one watercolor leaf sprig in warm tan with a thin dark outline, three simple pointed leaves on a slender stem"
+  }
+ ],
+ "notes": "参考图：复古水彩+墨线叶，元素允许叠层（墨线叶/小花压在大花上），底色纯奶油色"
+}

@@ -1,0 +1,15 @@
+{
+  "name": "list_trends",
+  "version": "0.1.0",
+  "description": "列出与当前需求卡相关的流行趋势方向。必须先征得用户同意才能调用。",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "limit": {"type": "integer", "description": "返回条数，默认 3"}
+    },
+    "required": []
+  },
+  "confirm": true,
+  "cost": 0,
+  "handler": "handler.py"
+}

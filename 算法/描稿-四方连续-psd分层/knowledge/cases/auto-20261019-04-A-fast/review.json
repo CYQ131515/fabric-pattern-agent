@@ -1,0 +1,54 @@
+{
+  "image": "/tmp/i9run2/02-seamless-fast.png",
+  "size": [
+    832,
+    1072
+  ],
+  "ok": false,
+  "suspicious_lines": [
+    {
+      "axis": "vertical",
+      "pos": 0.499,
+      "px": 415,
+      "mean": 57.11,
+      "frac": 0.78,
+      "z": 27
+    },
+    {
+      "axis": "vertical",
+      "pos": 0.621,
+      "px": 517,
+      "mean": 37.04,
+      "frac": 0.63,
+      "z": 15.6
+    },
+    {
+      "axis": "horizontal",
+      "pos": 0.404,
+      "px": 433,
+      "mean": 35.17,
+      "frac": 0.56,
+      "z": 13.3
+    },
+    {
+      "axis": "horizontal",
+      "pos": 0.499,
+      "px": 535,
+      "mean": 63.12,
+      "frac": 0.75,
+      "z": 27.5
+    }
+  ],
+  "wrap": {
+    "wrapX": 8.43,
+    "wrapY": 8.73,
+    "ratioX": 0.87
+  },
+  "baseline": {
+    "col_median": 9.35,
+    "col_sigma": 1.77,
+    "row_median": 9.13,
+    "row_sigma": 1.96
+  },
+  "rule": "整图扫描：跨线梯度离群（z≥8.0 且 ≥1.8×中位）且跨度≥18% 的直线 → 接缝"
+}

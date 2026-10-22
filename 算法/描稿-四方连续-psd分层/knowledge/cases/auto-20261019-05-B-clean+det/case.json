@@ -1,0 +1,25 @@
+{
+  "id": "auto-20261019-05-B-clean+det",
+  "date": "2026-10-19",
+  "title": "[自动打回] B-clean+det 未通过接缝审查",
+  "source": "auto-rejected",
+  "status": "open",
+  "symptom": "[{\"axis\":\"horizontal\",\"pos\":0.499,\"px\":511,\"mean\":30.87,\"frac\":0.56,\"z\":10.7}]",
+  "root_cause": "",
+  "fix": "",
+  "regression": "",
+  "artifacts": [
+    "rejected-preview.png",
+    "base-preview.png"
+  ],
+  "tags": [
+    "auto-rejected",
+    "B-clean+det"
+  ],
+  "features": {
+    "satMean": 0.229,
+    "hueConc": 0.994,
+    "edgeMean": 28.78,
+    "lowGradFrac": 0.092
+  }
+}

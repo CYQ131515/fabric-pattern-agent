@@ -1,0 +1,19 @@
+{
+  "id": "case-20261019-06",
+  "date": "2026-10-19",
+  "title": "人脸/裙子照片：模型重画花型、保留褶皱",
+  "source": "user-reported",
+  "status": "fixed",
+  "symptom": "花型被重画、风格偏离；2.5 单参考仍保留布料褶皱",
+  "root_cause": "gpt-image-1.5 布局保真差（NCC≈0.03）；2.5 单参考以原图为准会保留褶皱",
+  "fix": "改用 2.5 世代；褶皱图用『原图保花型 + 干净版保平整』双参考合成",
+  "regression": "布局保真 0.88–0.99，风格接近原图",
+  "artifacts": [
+    "../../../.rea-web/unisevenai-report.md#14"
+  ],
+  "tags": [
+    "model-choice",
+    "double-reference",
+    "fidelity"
+  ]
+}

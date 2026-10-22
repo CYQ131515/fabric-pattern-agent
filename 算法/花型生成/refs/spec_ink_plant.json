@@ -1,0 +1,92 @@
+{
+ "title": "水墨植物",
+ "raw_keywords": "水墨风 植物 疏朗",
+ "style": [
+  "水墨",
+  "国风"
+ ],
+ "style_en": [
+  "ink wash painting"
+ ],
+ "style_detail_en": [
+  "monochrome ink with a single warm ochre accent",
+  "dry brush texture, wet ink bleed, expressive splashes",
+  "generous negative space, literati painting spirit"
+ ],
+ "subjects": [
+  "荷",
+  "兰",
+  "竹",
+  "梅"
+ ],
+ "subjects_en": [
+  "lotus",
+  "orchid",
+  "bamboo",
+  "plum branch"
+ ],
+ "palette": {
+  "name": "墨·宣纸",
+  "colors": [
+   "#1c1c1a",
+   "#5a5a56",
+   "#f3efe4",
+   "#8a8a84",
+   "#a8845c"
+  ],
+  "note": "colors[2] 是底色/paper（fade 目标色）"
+ },
+ "density": 0.24,
+ "pattern": {
+  "type": "scatter",
+  "color": "#f3efe4"
+ },
+ "elements": [
+  {
+   "name": "墨荷",
+   "type": "bloom",
+   "rel_size": 2.2,
+   "weight": 3,
+   "cells": 2,
+   "layer": 0,
+   "describe": "one large ink-wash lotus: a broad wet-ink leaf and a loose blossom, dry brush edges, ink bleeding, minimal strokes"
+  },
+  {
+   "name": "兰叶",
+   "type": "leaf",
+   "rel_size": 1.3,
+   "weight": 2,
+   "cells": 2,
+   "layer": 1,
+   "describe": "one ink orchid with three long sword-shaped leaves in confident single strokes and two small blossoms"
+  },
+  {
+   "name": "竹枝",
+   "type": "leaf",
+   "rel_size": 1.2,
+   "weight": 2,
+   "cells": 1,
+   "layer": 1,
+   "describe": "one ink bamboo sprig, two slender stems with a few sharp pointed leaves, crisp dark strokes"
+  },
+  {
+   "name": "梅枝",
+   "type": "branch",
+   "rel_size": 1.15,
+   "weight": 2,
+   "cells": 2,
+   "layer": 1,
+   "describe": "one dry ink plum branch with angular twigs and five small blossoms, sparse petals, calligraphic strokes"
+  },
+  {
+   "name": "墨点芦苇",
+   "type": "grass",
+   "rel_size": 0.6,
+   "weight": 2,
+   "cells": 2,
+   "layer": 2,
+   "describe": "a small cluster of splashed ink dots with one thin reed stalk, expressive dry-brush texture"
+  }
+ ],
+ "notes": "水墨风植物：留白多、笔触干湿对比、单色为主 + 一点赭石"
+}

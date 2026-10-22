@@ -1,0 +1,25 @@
+{
+  "id": "auto-20261019-08-B-clean+ai",
+  "date": "2026-10-19",
+  "title": "[自动打回] B-clean+ai 未通过接缝审查",
+  "source": "auto-rejected",
+  "status": "open",
+  "symptom": "[{\"axis\":\"horizontal\",\"pos\":0.499,\"px\":511,\"mean\":29.69,\"frac\":0.54,\"z\":8.5}]",
+  "root_cause": "",
+  "fix": "",
+  "regression": "",
+  "artifacts": [
+    "rejected-preview.png",
+    "base-preview.png"
+  ],
+  "tags": [
+    "auto-rejected",
+    "B-clean+ai"
+  ],
+  "features": {
+    "satMean": 0.229,
+    "hueConc": 0.994,
+    "edgeMean": 28.78,
+    "lowGradFrac": 0.092
+  }
+}

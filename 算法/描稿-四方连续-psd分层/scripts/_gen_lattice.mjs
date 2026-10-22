@@ -1,0 +1,15 @@
+import fs from 'node:fs';
+import sharp from '../lib/sharp.mjs';
+import { apiConfig, generateImage, download } from '../lib/env.mjs';
+import { fileURLToPath } from 'node:url';
+const ROOT = fileURLToPath(new URL('..', import.meta.url));
+const [,, inPath, outPath] = process.argv;
+const meta = await sharp(inPath).metadata();
+const ref = await sharp(inPath).resize({ width: Math.min(1254, meta.width) }).png().toBuffer();
+const prompt = `A seamless repeating textile pattern of a regular diamond lattice / woven grid in grey on white, hand-drawn crayon texture, exactly tileable. Keep the same motif: evenly spaced diagonal double-lines forming diamonds, small cross and dot marks at intersections. Flat 2D, no shading, no perspective, no borders, high detail.`;
+const { base, key } = apiConfig(ROOT);
+const r = await generateImage({ base, key, model: 'gpt-image-2.5-sunburst', prompt, size: '2048x2048', imageUrls: [`data:image/png;base64,${ref.toString('base64')}`], label: 'lattice-2k' });
+if (!r.urls.length) throw new Error('no url');
+await download(r.urls[0], outPath);
+const m = await sharp(outPath).metadata();
+console.log(JSON.stringify({ out: outPath, size: [m.width, m.height], cost_usd: r.cost }));

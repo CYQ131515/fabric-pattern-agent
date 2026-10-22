@@ -1,0 +1,16 @@
+# 算法/psd分层 — 核心依赖（现役 rhpsd 方案）
+# Python 3.13 (macOS arm64 / Apple Silicon)
+#
+# 现役把分割放在云端（RunningHub 的 SAM 3.1），本地只负责看图诊断、拼底布、写 PSD，
+# 所以不需要 torch，也不需要下载模型权重。
+#
+# 重建环境：
+#   python3.13 -m venv .venv
+#   .venv/bin/pip install -r requirements.txt
+#
+# 历史完整依赖（含 torch / sam2 / timm，约 924MB）见 requirements-legacy.txt
+
+numpy==2.3.5
+pillow==12.3.0
+psd-tools==1.24.0
+scipy==1.18.1

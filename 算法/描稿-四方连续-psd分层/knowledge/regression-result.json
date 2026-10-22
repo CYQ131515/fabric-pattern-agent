@@ -1,0 +1,71 @@
+{
+  "ran_at": "2026-10-21T09:44:27.171Z",
+  "failed": 1,
+  "rows": [
+    {
+      "id": "reg-01",
+      "image": "rejected-preview.png",
+      "expect": "fail",
+      "actual": "pass",
+      "pass": false,
+      "lines": []
+    },
+    {
+      "id": "reg-02",
+      "image": "input7-seamless.png",
+      "expect": "pass",
+      "actual": "pass",
+      "pass": true,
+      "lines": []
+    },
+    {
+      "id": "reg-03",
+      "image": "input7-coastal.webp",
+      "expect": "fail",
+      "actual": "fail",
+      "pass": true,
+      "lines": []
+    },
+    {
+      "id": "reg-04",
+      "image": "input10-preview.png",
+      "expect": "pass",
+      "actual": "pass",
+      "pass": true,
+      "lines": []
+    },
+    {
+      "id": "reg-05",
+      "image": "input19-blue-poppy-seamless-B-HARD-LINE-rejected.png",
+      "expect": "fail",
+      "actual": "fail",
+      "pass": true,
+      "lines": [
+        {
+          "axis": "vertical",
+          "pos": 0.499,
+          "px": 511,
+          "mean": 42.78,
+          "frac": 0.8,
+          "z": 14.4
+        },
+        {
+          "axis": "horizontal",
+          "pos": 0.399,
+          "px": 409,
+          "mean": 26.49,
+          "frac": 0.61,
+          "z": 9.1
+        }
+      ]
+    },
+    {
+      "id": "reg-06",
+      "image": "band-visible.png",
+      "expect": "fail",
+      "actual": "fail",
+      "pass": true,
+      "lines": []
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "name": "export_list",
+  "version": "0.1.0",
+  "description": "把用户选中的花型整理成一张可下载的 Excel 清单（xlsx），每款附一张压缩过的缩略图。**服务端自己调用**：对话链路里不给模型这件工具，由 runtime 在识别到「导出花型清单」意图时确定性执行，文件直接挂在回复下方当下载按钮。",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "ids": {"type": "array", "items": {"type": "string"},
+              "description": "要导出的花型编号；不传就用会话里记着的「用户已选中」清单"},
+      "include_desc": {"type": "boolean", "description": "是否带设计说明，默认带"},
+      "include_sell": {"type": "boolean", "description": "是否带卖点，默认带"}
+    },
+    "required": []
+  },
+  "confirm": false,
+  "cost": 0,
+  "handler": "handler.py"
+}

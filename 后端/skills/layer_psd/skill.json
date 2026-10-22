@@ -1,0 +1,25 @@
+{
+  "name": "layer_psd",
+  "version": "0.1.0",
+  "description": "分层 PSD：把一张花型图按元素拆成带中文图层名的多层 PSD（每一层是一类元素，透明底，底布单独一层；合成起来和原图逐像素相同）。底图是本会话最近一张图：用户上传的、花型师刚生成的、或从花型库选的都行。调用后不会立刻出图，先返回待确认方案（含打算分成哪几层、点数），用户点确认才执行。只属于织印师。",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "max_layers": {
+        "type": "integer",
+        "description": "最多分几层，默认 4。用户的图案本身就是一两种元素时给小一点；满地碎花想分得细可以到 4。"
+      },
+      "confirmed": {
+        "type": "boolean",
+        "description": "用户是否已点确认。只有用户明确同意后才传 true；否则传 false。"
+      }
+    },
+    "required": [
+      "confirmed"
+    ]
+  },
+  "confirm": true,
+  "cost": 45,
+  "ingest": false,
+  "handler": "handler.py"
+}

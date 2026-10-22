@@ -1,0 +1,3 @@
+{
+  "error": "Command failed: $HOME/deepseek herness/REA/tools/node/bin/node $PROJECT/算法/描稿-四方连续-psd分层/steps/02-seam-tile-multi.mjs --base /tmp/i11run/01-base.png --out /tmp/i11run/02-seamless."
+}

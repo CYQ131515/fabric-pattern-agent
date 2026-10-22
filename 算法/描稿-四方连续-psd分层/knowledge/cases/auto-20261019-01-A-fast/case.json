@@ -1,0 +1,22 @@
+{
+  "id": "auto-20261019-01-A-fast",
+  "date": "2026-10-19",
+  "title": "[自动打回] A-fast 未通过接缝审查（input7 海岸）",
+  "source": "auto-rejected",
+  "status": "open",
+  "symptom": "[{\"axis\": \"vertical\", \"pos\": 0.499, \"px\": 418, \"mean\": 12.86, \"frac\": 0.2, \"z\": 11.2}]",
+  "root_cause": "",
+  "fix": "",
+  "regression": "",
+  "artifacts": [],
+  "tags": [
+    "auto-rejected",
+    "A-fast"
+  ],
+  "features": {
+    "satMean": 0.112,
+    "hueConc": 0.605,
+    "edgeMean": 7.23,
+    "lowGradFrac": 0.807
+  }
+}

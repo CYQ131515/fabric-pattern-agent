@@ -1,0 +1,22 @@
+{
+  "name": "edit_pattern",
+  "version": "0.1.0",
+  "description": "在现有花型图上做定向修改：改配色、改元素、改疏密度、改尺度、改构图、改风格。底图是本会话最近一张图（用户上传的或刚生成的）。同样需要先确认再执行。",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "color": {"type": "string", "description": "改成什么配色，如 蓝白青花 / 莫兰迪灰调 / 大地色系"},
+      "element": {"type": "string", "description": "改成什么主体元素，如 花卉 / 几何 / 波点 / 条纹格纹"},
+      "density": {"type": "string", "description": "改成什么疏密度：疏 / 中 / 密"},
+      "scale": {"type": "string", "description": "改成什么尺度：小碎花 / 中花 / 大花"},
+      "composition": {"type": "string", "description": "改成什么构图：散点 / 满地 / 定位 / 条纹 / 边花"},
+      "style": {"type": "string", "description": "改成什么风格，如 新中式国风 / 现代极简"},
+      "prompt": {"type": "string", "description": "其它补充修改要求（可选）"},
+      "confirmed": {"type": "boolean", "description": "用户是否已点确认。只有用户明确同意后才传 true。"}
+    },
+    "required": ["confirmed"]
+  },
+  "confirm": true,
+  "cost": 60,
+  "handler": "handler.py"
+}

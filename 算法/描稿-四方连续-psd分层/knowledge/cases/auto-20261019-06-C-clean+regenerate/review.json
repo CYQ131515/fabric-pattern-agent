@@ -1,0 +1,23 @@
+{
+  "image": "/tmp/i10run/02-seamless.png",
+  "size": [
+    1024,
+    1024
+  ],
+  "ok": false,
+  "suspicious_lines": [],
+  "wrap": {
+    "wrapX": 23.23,
+    "wrapY": 23.32,
+    "ratioX": 1.79,
+    "ratioY": 1.83,
+    "fail": true
+  },
+  "baseline": {
+    "col_median": 13.39,
+    "col_sigma": 5.14,
+    "row_median": 12.76,
+    "row_sigma": 3.15
+  },
+  "rule": "整图扫描：跨线梯度离群（z≥8.0 且 ≥1.8×中位）且跨度≥18% 的直线 → 接缝"
+}
