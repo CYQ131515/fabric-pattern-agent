@@ -14,7 +14,7 @@
 
 </div>
 
-![PatternFlow 花型智造 · macOS 桌面端](docs/screenshots/01-home.png)
+![PatternFlow 界面](docs/screenshots/01-home.png)
 
 ---
 
@@ -209,6 +209,8 @@ Node 24 脚本 + Python 3.13（uv/PSD 工具链）+ 图像生成 API，负责：
 - 菜单：刷新（⌘R）、浏览器打开（⌘⇧O）、重启服务（⌘⇧R）、管理后台（⌘⇧A）；
 - 支持原生文件选择面板；退出只停自己拉起的进程；
 - 构建、安装和截图自检见 [桌面端/README.md](桌面端/README.md)。
+
+![PatternFlow 桌面端](docs/screenshots/02-desktop.png)
 
 
 ## 测试
